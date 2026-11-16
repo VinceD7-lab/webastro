@@ -1,0 +1,39 @@
+---
+/** Repère équatorial horaire : angle horaire H, ascension droite α, déclinaison δ et distance polaire p (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, cross, comb, slerp, type V3 } from '../../lib/projection';
+// Repère du monde : X vers l’ouest, Y vers le sud, Z vers le zénith ; latitude 45°.
+const R = Math.PI / 180, phi = 45 * R;
+const v = new Vue(300, 270, 190, 22, 14);
+const O: V3 = [0, 0, 0], W: V3 = [1, 0, 0], E: V3 = [-1, 0, 0];
+const P: V3 = [0, -Math.cos(phi), Math.sin(phi)], Pp = mul(P, -1), Q: V3 = [0, Math.sin(phi), Math.cos(phi)];
+const Hd = 52 * R, dd = 28 * R, Tg = 140 * R;
+const pied = comb([Math.cos(Hd), Q], [Math.sin(Hd), W]), astre = comb([Math.cos(dd), pied], [Math.sin(dd), P]);
+const G = comb([Math.cos(Tg), Q], [Math.sin(Tg), W]);
+const T = (p: V3, s: string, o: object = {}) => v.texte(p, s, { taille: 16, ...o });
+let s = v.contour();
+s += v.cercle(P, 0, { epaisseur: 1.3 }) + v.cercle(W, 0, { epaisseur: 1 });
+s += v.arc(P, pied, { epaisseur: 1 }) + v.arc(pied, Pp, { epaisseur: 1 });
+s += v.ligne(Pp, O, { tirets: '5 4', epaisseur: 1 }) + v.ligne(O, mul(P, 1.4), { fleche: 'fin', epaisseur: 1.3 });
+s += v.ligne(O, mul(Q, 1.42), { fleche: 'fin', epaisseur: 1.3 }) + v.ligne(O, mul(W, 1.45), { fleche: 'fin', epaisseur: 1.3 }) + v.ligne(O, E, { tirets: '5 4', epaisseur: 1 });
+s += v.ligne(O, mul(G, 1.3), { fleche: 'fin', couleur: 'var(--orbit)', epaisseur: 1.3 });
+s += v.ligne(O, astre, { epaisseur: 1.1, couleur: 'var(--brass)' }) + v.ligne(O, pied, { epaisseur: 1.1, couleur: 'var(--ko)' });
+s += v.arc(Q, pied, { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+s += v.arc(G, pied, { couleur: 'var(--orbit)', epaisseur: 2.4, fleche: 'fin' }, 0.985);
+s += v.arc(pied, astre, { couleur: 'var(--brass)', epaisseur: 2.4, fleche: 'fin' });
+s += v.arc(P, astre, { couleur: 'var(--ok)', epaisseur: 2.2, fleche: 'fin' }, 1.04);
+s += v.point(astre, 4.5) + v.point(P, 3.5) + v.point(Pp, 3.5) + v.point(E, 3) + v.point(W, 3) + v.point(G, 3.2);
+s += T(mul(P, 1.4), 'z', { dx: -16, dy: 0, italique: true, taille: 17 }) + T(mul(P, 1.4), 'pôle céleste nord', { dx: 10, dy: -4, taille: 14 }) + T(P, 'P', { dx: -20, dy: 4 }) + T(Pp, 'P′', { dx: 8, dy: 18 });
+s += T(mul(Q, 1.42), 'x', { dx: 6, dy: 4, italique: true, taille: 17 }) + T(mul(W, 1.45), 'y', { dx: 8, dy: 10, italique: true, taille: 17 });
+s += T(W, 'ouest', { dx: 12, dy: 4, taille: 14 }) + T(E, 'est', { dx: -10, dy: -6, ancre: 'end', taille: 14 });
+s += T([0, 1, 0], 'sud', { dx: 8, dy: 4, taille: 14 }) + T([0, -1, 0], 'nord', { dx: -8, dy: 4, ancre: 'end', taille: 14 });
+s += T(mul(G, 1.3), 'γ', { dx: -14, dy: 8, taille: 19, couleur: 'var(--orbit)' }) + T(astre, 'astre', { dx: 8, dy: -6 });
+s += T(slerp(Q, pied, 0.5), 'H', { dx: 10, dy: 0, italique: true, couleur: 'var(--ko)', taille: 18 });
+s += T(slerp(G, pied, 0.5), 'α', { dx: -6, dy: -8, couleur: 'var(--orbit)', taille: 18 });
+s += T(slerp(pied, astre, 0.5), 'δ', { dx: -18, dy: 4, couleur: 'var(--brass)', taille: 18 });
+s += T(slerp(P, astre, 0.45), 'p', { dx: 6, dy: -14, italique: true, couleur: 'var(--ok)', taille: 18 });
+s += T(slerp(pied, Pp, 0.55), 'cercle horaire', { dx: 10, dy: 0, taille: 14 });
+s += T(slerp(Q, P, 0.3), 'méridien du lieu', { dx: 6, dy: -14, taille: 14 });
+s += T(comb([Math.cos(150 * R), Q], [Math.sin(150 * R), W]), 'équateur céleste', { dx: 30, dy: 30, taille: 14 });
+---
+<Figure titre="Repère équatorial horaire : l’angle horaire H se compte sur l’équateur depuis le méridien vers l’ouest, l’ascension droite α depuis le point γ vers l’est, la déclinaison δ depuis l’équateur" largeur={600} hauteur={540} svg={s}><slot /></Figure>

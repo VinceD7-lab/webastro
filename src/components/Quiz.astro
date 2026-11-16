@@ -1,0 +1,48 @@
+---
+/**
+ * Quiz à corriger dans la page.
+ * `reponse` : index de la bonne réponse (à partir de 0), ou tableau d’index s’il y en a plusieurs (cases à cocher).
+ * `explication` : texte facultatif affiché après la vérification.
+ */
+interface Question { question: string; choix: string[]; reponse: number | number[]; explication?: string }
+interface Props { questions: Question[] }
+const { questions } = Astro.props;
+const id = 'q' + Math.random().toString(36).slice(2, 8);
+---
+<form class="quiz" data-pagefind-ignore onsubmit="return false">
+  {questions.map((q, i) => {
+    const multiple = Array.isArray(q.reponse);
+    const bonnes = (multiple ? (q.reponse as number[]) : [q.reponse as number]).slice().sort((a, b) => a - b);
+    return (
+      <fieldset data-answer={bonnes.join(',')}>
+        <legend>{i + 1}. {q.question}{multiple && <span class="multi"> (plusieurs réponses possibles)</span>}</legend>
+        {q.choix.map((c, j) => <label><input type={multiple ? 'checkbox' : 'radio'} name={`${id}-${i}`} value={String(j)} /> {c}</label>)}
+        <p class="fb" aria-live="polite"></p>
+        {q.explication && <p class="explication" hidden>{q.explication}</p>}
+      </fieldset>
+    );
+  })}
+  <button class="btn" type="button" data-check>Vérifier mes réponses</button><span class="score" aria-live="polite"></span>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form.quiz').forEach((form) => {
+    form.querySelector('[data-check]')!.addEventListener('click', () => {
+      let ok = 0;
+      const blocs = form.querySelectorAll<HTMLFieldSetElement>('fieldset');
+      blocs.forEach((fs) => {
+        const choisies = [...fs.querySelectorAll<HTMLInputElement>('input:checked')].map((e) => e.value);
+        const bonnes = fs.dataset.answer!.split(',');
+        const multiple = bonnes.length > 1;
+        const fb = fs.querySelector('.fb')!, expl = fs.querySelector<HTMLElement>('.explication');
+        if (!choisies.length) { fb.className = 'fb ko'; fb.textContent = 'Choisissez une réponse.'; if (expl) expl.hidden = true; return; }
+        const justes = choisies.filter((v) => bonnes.includes(v)).length;
+        if (justes === bonnes.length && choisies.length === bonnes.length) { ok++; fb.className = 'fb ok'; fb.textContent = 'Bonne réponse.'; }
+        else if (multiple && justes > 0) { fb.className = 'fb ko'; fb.textContent = `Pas tout à fait : ${bonnes.length} réponses sont justes, vous en avez trouvé ${justes}${choisies.length - justes > 1 ? ', et coché des réponses fausses' : choisies.length > justes ? ', et coché une réponse fausse' : ''}.`; }
+        else { fb.className = 'fb ko'; fb.textContent = 'Ce n’est pas ça. Relisez la section correspondante.'; }
+        if (expl) expl.hidden = false;
+      });
+      form.querySelector('.score')!.textContent = `${ok} / ${blocs.length}`;
+    });
+  });
+</script>

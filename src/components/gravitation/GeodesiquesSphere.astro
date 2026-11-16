@@ -1,0 +1,29 @@
+---
+/** Sphère : deux mobiles lancés parallèlement depuis l’équateur suivent des grands cercles et se rejoignent au pôle (redessiné d’après CNRS / J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { Vue, sph, ind, type V3 } from '../../lib/projection';
+const v = new Vue(300, 212, 168, 0, 22);
+const lA = -18, lB = 18;
+const meridien = (lon: number, b0: number, b1: number): V3[] => Array.from({ length: 61 }, (_, i) => sph(lon, b0 + ((b1 - b0) * i) / 60));
+const parallele = (lat: number, l0: number, l1: number): V3[] => Array.from({ length: 41 }, (_, i) => sph(l0 + ((l1 - l0) * i) / 40, lat));
+let s = v.contour({ remplir: 'var(--sector)', couleur: 'var(--ink-soft)', epaisseur: 1.3 });
+for (const lat of [30, 60]) s += v.cercle([0, 0, 1], Math.sin((lat * Math.PI) / 180), { couleur: 'var(--rule)', epaisseur: 1, arriere: 'masque' });
+s += v.cercle([0, 0, 1], 0, { couleur: 'var(--ink-soft)', epaisseur: 1.4 });
+s += v.texte(sph(44, 0), 'équateur', { dy: 30, ancre: 'middle', taille: 13, couleur: 'var(--ink-soft)' });
+for (const [lon, n] of [[lA, 'A'], [lB, 'B']] as [number, string][]) {
+  s += v.courbe(meridien(lon, 0, 90), { couleur: 'var(--orbit)', epaisseur: 2.2, tirets: '7 5' });
+  s += v.courbe(meridien(lon, 0, 21), { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+  s += v.point(sph(lon, 0), 5, 'var(--orbit)');
+  s += v.texte(sph(lon, 0), n, { dx: lon < 0 ? -18 : 8, dy: 22, taille: 16, gras: true });
+  s += v.texte(sph(lon, 16), `v${ind(n)}`, { dx: lon < 0 ? -30 : 10, taille: 15, italique: true, couleur: 'var(--ko)', brut: true });
+}
+// L’écart entre A et B diminue en montant vers le pôle.
+for (const lat of [34, 62]) s += v.courbe(parallele(lat, lA + 2.5, lB - 2.5), { couleur: 'var(--brass)', epaisseur: 1.3, fleche: 'deux' }, false);
+s += v.texte(sph(0, 34), 'd', { dy: -7, ancre: 'middle', taille: 15, italique: true, couleur: 'var(--brass)' });
+s += v.texte(sph(lB, 62), 'd′ < d', { dx: 10, dy: 5, taille: 14, italique: true, couleur: 'var(--brass)' });
+s += v.point([0, 0, 1], 5, 'var(--ko)');
+s += v.texte([0, 0, 1], 'N', { dx: 0, dy: -12, ancre: 'middle', taille: 17, gras: true });
+s += v.texte([v.cx + v.R * 0.78, v.cy - v.R * 0.78], 'S', { taille: 20, italique: true, couleur: 'var(--ink-soft)' });
+s += v.texte([590, 410], 'Les grands cercles se rapprochent : A et B se rejoignent en N', { ancre: 'end', taille: 13, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Sphère S : deux corps A et B lancés parallèlement depuis l’équateur suivent des grands cercles et se rejoignent au pôle N" largeur={600} hauteur={420} svg={s}><slot /></Figure>

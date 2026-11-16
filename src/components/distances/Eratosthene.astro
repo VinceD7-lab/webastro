@@ -1,0 +1,24 @@
+---
+/** La mesure d’Ératosthène : rayons solaires parallèles, verticales qui se coupent au centre de la Terre (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, chemin, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+const O: P2 = [300, 500], R = 280, aSy = 90, aAl = 114; // angle exagéré : 24° au lieu de 7° ; Soleil au zénith de Syène
+const p = (a: number, r = R): P2 => [O[0] + r * Math.cos((a * Math.PI) / 180), O[1] - r * Math.sin((a * Math.PI) / 180)];
+const Sy = p(aSy), Al = p(aAl);
+const arc: P2[] = []; for (let i = 0; i <= 80; i++) arc.push(p(58 + i));
+let s = `<path d="${chemin([...arc, O], true)}" fill="var(--orbit)" fill-opacity=".12" stroke="none"/><path d="${chemin(arc)}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+s += trait2D([430, O[1] - Math.sqrt(R * R - 130 * 130)], [430, 40], { couleur: 'var(--sun)', epaisseur: 3, fleche: 'fin' });
+s += trait2D(O, p(aSy, R + 60), { tirets: '6 4', epaisseur: 1.2 }) + trait2D(O, p(aAl, R + 130), { tirets: '6 4', epaisseur: 1.2 });
+s += trait2D(Al, [Al[0], 40], { couleur: 'var(--sun)', epaisseur: 3, fleche: 'fin' }) + trait2D(Sy, [Sy[0], 40], { couleur: 'var(--sun)', epaisseur: 3, fleche: 'fin' });
+s += arcAngle(Al, 90, aAl, 60, 'var(--ko)', 2) + texte2D([Al[0] - 20, Al[1] - 70], 'α', { taille: 20, couleur: 'var(--ko)' });
+s += arcAngle(O, aSy, aAl, 70, 'var(--ko)', 2) + texte2D([O[0] - 6, O[1] - 80], 'α', { taille: 20, couleur: 'var(--ko)' });
+const d: P2[] = []; for (let i = 0; i <= 30; i++) d.push(p(aSy + ((aAl - aSy) * i) / 30, R + 5));
+s += `<path d="${chemin(d)}" fill="none" stroke="var(--brass)" stroke-width="3"/>` + texte2D(p((aSy + aAl) / 2, R + 14), 'd', { ancre: 'middle', italique: true, taille: 18, couleur: 'var(--brass)' });
+s += point2D(Al, 4.5) + point2D(Sy, 4.5) + point2D(O, 4);
+s += texte2D(Al, 'Alexandrie', { dx: -10, dy: 20, ancre: 'end', taille: 14 }) + texte2D(Sy, 'Syène', { dx: 10, dy: 20, taille: 14 });
+s += texte2D(O, 'centre de la Terre', { dx: 10, dy: -6, taille: 13 });
+s += texte2D([300, 26], 'direction du Soleil lointain : rayons parallèles', { ancre: 'middle', taille: 14, couleur: 'var(--brass)' });
+s += texte2D(p(aAl, R + 130), 'verticale d’Alexandrie', { dx: -6, dy: -4, ancre: 'end', taille: 13 }) + texte2D(p(aSy, R + 60), 'verticale de Syène', { dx: 8, dy: 10, taille: 13 });
+---
+<Figure titre="Ératosthène : les rayons du Soleil, très lointain, arrivent parallèles ; l’angle α entre la verticale d’Alexandrie et les rayons est aussi l’angle au centre de la Terre entre Alexandrie et Syène" largeur={600} hauteur={520} svg={s}><slot /></Figure>

@@ -1,0 +1,91 @@
+---
+/** Orbite képlérienne animée : deux secteurs d’aires égales parcourus en des durées égales. */
+---
+<div class="sim" data-sim data-pagefind-ignore>
+  <svg viewBox="0 0 600 360" role="img" aria-label="Simulation d’une orbite elliptique avec deux secteurs d’aires égales">
+    <path data-s1 fill="var(--sector)" stroke="var(--orbit)" stroke-width="1"/>
+    <path data-s2 fill="var(--sector-2)" stroke="var(--brass)" stroke-width="1"/>
+    <ellipse data-orb fill="none" stroke="var(--orbit)" stroke-width="2"/>
+    <g data-ticks></g>
+    <line data-ray stroke="var(--ink-soft)" stroke-width="1"/>
+    <circle data-sun r="11" fill="var(--sun)"/>
+    <circle data-planet r="7" fill="var(--ink)"/>
+  </svg>
+  <div class="controls">
+    <label>Excentricité <input data-ecc type="range" min="0" max="0.97" step="0.001" value="0.5" /> <output data-ecc-out>0,50</output></label>
+    <button class="tool" data-play type="button" aria-pressed="false">Lancer</button>
+    <div class="presets" role="group" aria-label="Exemples d’orbites">
+      <button class="tool" data-e="0.017" type="button">Terre</button>
+      <button class="tool" data-e="0.093" type="button">Mars</button>
+      <button class="tool" data-e="0.206" type="button">Mercure</button>
+      <button class="tool" data-e="0.967" type="button">Comète de Halley</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-q>–</b><span>distance au périhélie (en a)</span></div>
+    <div><b data-Q>–</b><span>distance à l’aphélie (en a)</span></div>
+    <div><b data-v>–</b><span>rapport des vitesses extrêmes</span></div>
+  </div>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.6rem;flex:1 1 240px}
+  input[type=range]{flex:1;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+</style>
+
+<script>
+  const NS = 'http://www.w3.org/2000/svg';
+  const fmt = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-sim]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const CX = 300, CY = 180, A = 235;
+    const ecc = q<HTMLInputElement>('[data-ecc]');
+    let e = parseFloat(ecc.value), M = 0.6, enCours = false, dernier = 0;
+
+    const resoudre = (Mv: number) => { let E = e < 0.8 ? Mv : Math.PI; for (let i = 0; i < 40; i++) { const d = (E - e * Math.sin(E) - Mv) / (1 - e * Math.cos(E)); E -= d; if (Math.abs(d) < 1e-10) break; } return E; };
+    const pos = (Mv: number) => { const E = resoudre(Mv), b = A * Math.sqrt(1 - e * e); return [CX + A * Math.cos(E), CY - b * Math.sin(E)]; };
+    const secteur = (m1: number, m2: number) => { let d = `M${CX + A * e},${CY}`; for (let i = 0; i <= 30; i++) { const p = pos(m1 + (m2 - m1) * i / 30); d += ` L${p[0].toFixed(2)},${p[1].toFixed(2)}`; } return d + ' Z'; };
+
+    function fixe() {
+      const orb = q<SVGEllipseElement>('[data-orb]');
+      orb.setAttribute('cx', String(CX)); orb.setAttribute('cy', String(CY));
+      orb.setAttribute('rx', String(A)); orb.setAttribute('ry', String(A * Math.sqrt(1 - e * e)));
+      const sun = q('[data-sun]'); sun.setAttribute('cx', String(CX + A * e)); sun.setAttribute('cy', String(CY));
+      const pas = 2 * Math.PI / 12;
+      q('[data-s1]').setAttribute('d', secteur(-pas / 2, pas / 2));
+      q('[data-s2]').setAttribute('d', secteur(Math.PI - pas / 2, Math.PI + pas / 2));
+      const g = q('[data-ticks]'); g.innerHTML = '';
+      for (let k = 0; k < 12; k++) { const p = pos(k * pas + pas / 2), c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', String(p[0])); c.setAttribute('cy', String(p[1])); c.setAttribute('r', '2.6'); c.setAttribute('fill', 'var(--ink-soft)'); g.append(c); }
+      q('[data-ecc-out]').textContent = fmt(e, e < 0.1 ? 3 : 2);
+      q('[data-q]').textContent = fmt(1 - e, 3);
+      q('[data-Q]').textContent = fmt(1 + e, 3);
+      q('[data-v]').textContent = fmt((1 + e) / (1 - e), 2) + ' ×';
+    }
+    function planete() {
+      const p = pos(M), pl = q('[data-planet]'), r = q('[data-ray]');
+      pl.setAttribute('cx', String(p[0])); pl.setAttribute('cy', String(p[1]));
+      r.setAttribute('x1', String(CX + A * e)); r.setAttribute('y1', String(CY)); r.setAttribute('x2', String(p[0])); r.setAttribute('y2', String(p[1]));
+    }
+    function boucle(t: number) { if (!enCours) return; if (dernier) M = (M + 2 * Math.PI * (t - dernier) / 12000) % (2 * Math.PI); dernier = t; planete(); requestAnimationFrame(boucle); }
+    const bouton = q<HTMLButtonElement>('[data-play]');
+    const jouer = (v: boolean) => { enCours = v; dernier = 0; bouton.textContent = v ? 'Pause' : 'Lancer'; bouton.setAttribute('aria-pressed', String(v)); if (v) requestAnimationFrame(boucle); };
+    bouton.addEventListener('click', () => jouer(!enCours));
+    ecc.addEventListener('input', () => { e = parseFloat(ecc.value); fixe(); planete(); });
+    root.querySelectorAll<HTMLButtonElement>('[data-e]').forEach((b) => b.addEventListener('click', () => { e = parseFloat(b.dataset.e!); ecc.value = String(e); fixe(); planete(); }));
+    fixe(); planete();
+    if (!reduit) {
+      let lance = false;
+      new IntersectionObserver((en) => { if (en[0].isIntersecting && !lance) { lance = true; jouer(true); } }, { threshold: 0.5 }).observe(root);
+    }
+  });
+</script>

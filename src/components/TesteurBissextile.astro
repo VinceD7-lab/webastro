@@ -1,0 +1,21 @@
+---
+---
+<div class="tool-box" data-bissextile data-pagefind-ignore>
+  <label for="annee-bissextile">Tester une année</label>
+  <input id="annee-bissextile" type="number" inputmode="numeric" value="2100" step="1" />
+  <output for="annee-bissextile" aria-live="polite"></output>
+</div>
+<script>
+  import { bissextileGregorien, bissextileJulien } from '../lib/calendriers';
+  document.querySelectorAll<HTMLElement>('[data-bissextile]').forEach((root) => {
+    const input = root.querySelector('input')!, out = root.querySelector('output')!;
+    const maj = () => {
+      const y = parseInt(input.value, 10);
+      if (isNaN(y)) { out.textContent = 'Saisissez une année, par exemple 1900 ou 2000.'; return; }
+      const j = bissextileJulien(y), g = bissextileGregorien(y);
+      const pourquoi = y % 100 === 0 ? (g ? ' (divisible par 400)' : ' (divisible par 100 mais pas par 400)') : '';
+      out.innerHTML = `<strong>${y}</strong>&#8239;: ${j ? 'bissextile' : 'commune'} dans le calendrier julien, ${g ? 'bissextile' : 'commune'} dans le calendrier grégorien${pourquoi}.`;
+    };
+    input.addEventListener('input', maj); maj();
+  });
+</script>

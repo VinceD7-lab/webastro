@@ -1,0 +1,12 @@
+---
+/**
+ * Nom d’une personnalité : un clic ouvre le volet latéral avec sa fiche (résumé Wikipédia et portrait).
+ * Les fiches sont dans src/data/personnalites.json (générées par scripts/wiki-personnes.mjs).
+ */
+import personnalites from '../data/personnalites.json';
+interface Props { id: keyof typeof personnalites }
+const { id } = Astro.props;
+const p = personnalites[id];
+if (!p) throw new Error(`Personnalité inconnue : « ${id} ». Ajoutez-la à scripts/wiki-personnes.mjs puis relancez le script.`);
+---
+<button type="button" class="personne" data-personne={id} aria-haspopup="dialog" aria-controls="volet-personne" title={`${p.nom} : afficher la fiche`}><slot /></button>

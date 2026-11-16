@@ -1,0 +1,18 @@
+---
+/** Le raisonnement d’Anaxagore : sur une Terre supposée plate, le Soleil paraît proche (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, type P2 } from '../../lib/projection';
+import { disque, arcAngle, direction } from '../../lib/dessin';
+const sol = 330, Al: P2 = [110, sol], Sy: P2 = [450, sol], S: P2 = [450, 80];
+let s = `<rect x="0" y="${sol}" width="600" height="60" fill="var(--surface-2)"/><line x1="0" y1="${sol}" x2="600" y2="${sol}" stroke="var(--ink-soft)" stroke-width="1.4"/>`;
+s += trait2D(Al, [110, 110], { couleur: 'var(--orbit)', epaisseur: 2 });
+s += trait2D(S, Al, { couleur: 'var(--sun)', epaisseur: 4 }) + trait2D(S, Sy, { couleur: 'var(--sun)', epaisseur: 4 });
+s += disque(S, 26, 'var(--sun)');
+s += arcAngle(Al, direction(Al, S), 90, 80, 'var(--orbit)', 2) + texte2D([Al[0] + 26, Al[1] - 90], 'α', { taille: 20, couleur: 'var(--orbit)' });
+s += trait2D([Al[0], sol + 28], [Sy[0], sol + 28], { fleche: 'deux', epaisseur: 1.2 }) + texte2D([(Al[0] + Sy[0]) / 2, sol + 50], 'd = 800 km', { ancre: 'middle', taille: 15 });
+s += point2D(Al, 4.5, 'var(--orbit)') + point2D(Sy, 4.5, 'var(--orbit)');
+s += texte2D(Al, 'Alexandrie', { dy: 22, ancre: 'middle', taille: 14 }) + texte2D(Sy, 'Syène', { dx: 10, dy: 22, taille: 14 });
+s += texte2D([Sy[0] + 14, 210], 'distance du Soleil ?', { taille: 14 });
+s += texte2D([130, 130], 'verticale', { taille: 13, couleur: 'var(--orbit)' });
+---
+<Figure titre="Sur une Terre supposée plate, le Soleil au zénith de Syène et vu à α du zénith à Alexandrie, 800 km plus loin, serait à quelques milliers de kilomètres seulement" largeur={600} hauteur={390} svg={s}><slot /></Figure>

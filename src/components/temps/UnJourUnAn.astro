@@ -1,0 +1,28 @@
+---
+/** Les deux mouvements de la Terre qui définissent le jour et l’année (redessiné d’après ASM / J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+const RAD = Math.PI / 180, S: P2 = [80, 165], R = 260, E: P2 = [S[0] + R, 165], r = 36;
+const orb = (a: number): P2 => [S[0] + R * Math.cos(a * RAD), S[1] - R * Math.sin(a * RAD)];
+let s = '';
+// Orbite (arc) et flèche de révolution (sens direct : la Terre monte du côté droit de l’orbite vue du pôle Nord).
+s += `<path d="${chemin(Array.from({ length: 61 }, (_, i) => orb(-30 + (60 * i) / 60)))}" fill="none" stroke="var(--ink-soft)" stroke-width="1.4" stroke-dasharray="6 5"/>`;
+s += trait2D(orb(-24), orb(-12), { couleur: 'var(--brass)', epaisseur: 2.6, fleche: 'fin' });
+s += texte2D(orb(-24), 'révolution autour du Soleil : 1 an', { dx: -16, dy: 32, ancre: 'end', taille: 14, couleur: 'var(--brass)' });
+// Soleil.
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="34" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>` + texte2D(S, 'Soleil', { dy: 58, ancre: 'middle', taille: 15 });
+// Terre : disque, équateur, axe incliné de 23,4°, flèche de rotation (dans le groupe incliné).
+const [x, y] = E;
+s += `<g transform="rotate(23.4 ${x} ${y})">`
+  + `<circle cx="${x}" cy="${y}" r="${r}" fill="var(--orbit)" fill-opacity=".28" stroke="var(--ink)" stroke-width="1.5"/>`
+  + `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 0.22}" fill="none" stroke="var(--orbit)" stroke-width="1"/>`
+  + `<line x1="${x}" y1="${y - r - 20}" x2="${x}" y2="${y + r + 20}" stroke="var(--ink)" stroke-width="1.6"/>`
+  + `<path d="M${x - 56},${y - 2} A56,17 0 0 1 ${x + 56},${y - 2}" fill="none" stroke="var(--ko)" stroke-width="2.2"/>`
+  + `<path d="M${x + 56},${y + 4} L${x + 49},${y - 8} L${x + 63},${y - 8} Z" fill="var(--ko)"/>`
+  + `</g>`;
+s += texte2D([x + 24, y - r - 32], 'N', { taille: 15, gras: true });
+s += texte2D([x - 52, y + 6], 'Terre', { ancre: 'end', taille: 15 });
+s += texte2D([x + 40, y + r + 40], 'rotation autour de l’axe : 1 jour', { ancre: 'middle', taille: 14, couleur: 'var(--ko)' });
+s += texte2D([592, 318], 'Tailles et distances non respectées', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="La rotation de la Terre autour de son axe définit le jour ; sa révolution autour du Soleil définit l’année" largeur={600} hauteur={330} svg={s}><slot /></Figure>

@@ -1,0 +1,31 @@
+---
+/** Coupe méridienne de la sphère locale : passages au méridien supérieur ou inférieur (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, chemin, etoile, point2D, type P2 } from '../../lib/projection';
+interface Props { passage?: 'superieur' | 'inferieur' }
+const { passage = 'superieur' } = Astro.props;
+const O: P2 = [300, 228], R = 165, phi = 45;
+const pt = (a: number, r = R): P2 => [O[0] + r * Math.cos((a * Math.PI) / 180), O[1] - r * Math.sin((a * Math.PI) / 180)];
+const arc = (a0: number, a1: number, c: string, w = 2.6) => { const p: P2[] = []; for (let i = 0; i <= 90; i++) p.push(pt(a0 + ((a1 - a0) * i) / 90)); return `<path d="${chemin(p)}" fill="none" stroke="${c}" stroke-width="${w}"/>`; };
+// Angles à l’écran : sud = 0°, zénith = 90°, nord = 180°. Pôle nord à 180° − φ.
+const aP = 180 - phi;
+let s = arc(aP - 180, aP, 'var(--ko)') + arc(aP, aP + 180, 'var(--orbit)');
+s += trait2D(pt(180), pt(0), { tirets: '2 4', epaisseur: 1 }) + trait2D(pt(90), pt(270), { tirets: '2 4', epaisseur: 1 });
+s += trait2D(pt(aP, R + 14), pt(aP + 180, R + 14), { tirets: '5 4', epaisseur: 1 });
+s += trait2D(pt(aP - 90), pt(aP + 90), { tirets: '5 4', epaisseur: 1 });
+s += texte2D(pt(aP + 90, 105), 'équateur', { rotation: -(90 - phi), taille: 14, ancre: 'middle', dy: -6 });
+s += texte2D(pt(0, 70), 'horizon', { dy: 20, ancre: 'middle', taille: 14 });
+for (const [a, n] of [[90, 'Z'], [270, 'N'], [aP, 'P'], [aP + 180, 'P′']] as const) s += point2D(pt(a), 4, 'var(--ko)') ;
+s += texte2D(pt(90), 'Zénith Z', { dy: -12, ancre: 'middle' }) + texte2D(pt(270), 'Nadir N', { dy: 24, ancre: 'middle' });
+s += texte2D(pt(aP), 'P (pôle céleste nord)', { dx: -10, dy: -10, ancre: 'end' }) + texte2D(pt(aP + 180), 'P′ (pôle céleste sud)', { dx: 10, dy: 20 });
+s += texte2D(pt(180), 'nord', { dx: -8, dy: 5, ancre: 'end' }) + texte2D(pt(0), 'sud', { dx: 8, dy: 5 });
+s += texte2D(pt(180 - phi / 2, 48), 'φ', { ancre: 'middle', dy: 6, italique: true, taille: 17 });
+s += texte2D(pt((90 - phi) / 2, 120), 'π/2 − φ', { ancre: 'middle', dy: 6, italique: true, taille: 15 });
+const etoiles = passage === 'superieur'
+  ? [[90 - phi + 70, '(2)'], [90 - phi + 20, '(1)'], [90 - phi - 40, '(1)'], [90 - phi - 70, '(1)']]
+  : [[aP + 20, '(4)'], [aP + 52, '(4)'], [aP + 100, '(4)'], [aP + 160, '(3)']];
+for (const [a, n] of etoiles as [number, string][]) s += etoile(pt(a), 10) + texte2D(pt(a, R - 26), n, { ancre: 'middle', dy: 5, taille: 14 });
+s += texte2D([16, 26], 'ZPN : cercle azimutal nord', { taille: 13 }) + texte2D([16, 44], 'ZP′N : cercle azimutal sud', { taille: 13 });
+s += texte2D([584, 26], 'PZP′ : méridien supérieur', { taille: 13, ancre: 'end', couleur: 'var(--ko)' }) + texte2D([584, 44], 'PNP′ : méridien inférieur', { taille: 13, ancre: 'end', couleur: 'var(--orbit)' });
+---
+<Figure titre={passage === 'superieur' ? 'Coupe méridienne pour une latitude de 45° nord : étoiles passant au méridien supérieur, au nord (2) ou au sud (1)' : 'Coupe méridienne pour une latitude de 45° nord : étoiles passant au méridien inférieur, au nord (4) ou au sud (3)'} largeur={600} hauteur={430} svg={s}><slot /></Figure>

@@ -1,0 +1,140 @@
+---
+import '@fontsource-variable/literata';
+import '@fontsource-variable/literata/wght-italic.css';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/500-italic.css';
+import '../styles/global.css';
+import { url } from '../lib/url';
+
+interface Props { title: string; description?: string; actif?: 'plan' | 'glossaire' }
+const { title, description = 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).', actif } = Astro.props;
+const titreComplet = title === 'Accueil' ? 'Mécanique céleste, Temps et Calendriers' : `${title} – Mécanique céleste, Temps et Calendriers`;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{titreComplet}</title>
+  <meta name="description" content={description} />
+  {canonical && <link rel="canonical" href={canonical} />}
+  <meta property="og:title" content={titreComplet} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+  <!-- Appliqué avant l’affichage pour éviter un flash de mauvais thème -->
+  <script is:inline>
+    try { const t = localStorage.getItem('mctc-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href={url('/')}>Mécanique céleste, Temps et Calendriers</a>
+      <nav class="topnav" aria-label="Navigation principale">
+        <a href={url('/#plan')} aria-current={actif === 'plan' ? 'page' : undefined}>Plan du cours</a>
+        <a href={url('/glossaire/')} aria-current={actif === 'glossaire' ? 'page' : undefined}>Glossaire</a>
+      </nav>
+      <button class="tool" id="openSearch" type="button" aria-label="Rechercher dans le cours">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span class="lbl">Rechercher</span> <kbd>/</kbd>
+      </button>
+      <button class="tool" id="themeToggle" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <span class="lbl" id="themeLabel">Thème</span>
+      </button>
+    </div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+  </header>
+
+  <main id="top"><slot /></main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>D’après le cours de Jean-Eudes Arlot publié par l’Observatoire de Paris dans la collection <a href="https://media4.obspm.fr/public/ressources_lu/pages_mctc/index.html">Lumières sur l’Univers</a>. Version modernisée, textes adaptés.</p>
+    </div>
+  </footer>
+
+  <div class="tip" id="tip" role="tooltip" hidden></div>
+
+  <dialog class="search" id="searchDlg" aria-labelledby="search-title">
+    <div class="head">
+      <h2 id="search-title">Rechercher dans le cours</h2>
+      <button class="tool" type="button" id="closeSearch">Fermer</button>
+    </div>
+    <div id="pagefind"></div>
+    <p class="small" id="searchMsg" hidden>La recherche est disponible sur le site construit (<code>npm run build</code> puis <code>npm run preview</code>), pas en mode développement.</p>
+  </dialog>
+
+  <script>
+    /* ---------- thème ---------- */
+    const root = document.documentElement;
+    const label = document.getElementById('themeLabel')!;
+    const courant = () => root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const majLabel = () => { label.textContent = courant() === 'dark' ? 'Mode clair' : 'Mode sombre'; };
+    majLabel();
+    document.getElementById('themeToggle')!.addEventListener('click', () => {
+      const t = courant() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = t;
+      try { localStorage.setItem('mctc-theme', t); } catch (e) {}
+      majLabel();
+    });
+
+    /* ---------- infobulles du glossaire ---------- */
+    const tip = document.getElementById('tip')!;
+    let ouvert: HTMLElement | null = null;
+    function montrer(el: HTMLElement) {
+      tip.innerHTML = '';
+      const s = document.createElement('strong'); s.textContent = el.dataset.titre || '';
+      tip.append(s, document.createTextNode(el.dataset.def || ''));
+      tip.hidden = false; ouvert = el; el.setAttribute('aria-describedby', 'tip');
+      const r = el.getBoundingClientRect(), w = tip.offsetWidth;
+      tip.style.left = Math.max(8, Math.min(scrollX + r.left, scrollX + document.documentElement.clientWidth - w - 8)) + 'px';
+      tip.style.top = (scrollY + r.bottom + 8) + 'px';
+    }
+    function cacher() { tip.hidden = true; ouvert?.removeAttribute('aria-describedby'); ouvert = null; }
+    document.querySelectorAll<HTMLElement>('.term').forEach((el) => {
+      el.addEventListener('click', (ev) => { ev.stopPropagation(); ouvert === el ? cacher() : montrer(el); });
+      el.addEventListener('mouseenter', () => montrer(el));
+      el.addEventListener('mouseleave', cacher);
+      el.addEventListener('focus', () => montrer(el));
+      el.addEventListener('blur', cacher);
+    });
+    document.addEventListener('click', cacher);
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') cacher(); });
+
+    /* ---------- recherche Pagefind (chargée à la première ouverture) ---------- */
+    const dlg = document.getElementById('searchDlg') as HTMLDialogElement;
+    let charge = false;
+    async function chargerPagefind() {
+      if (charge) return; charge = true;
+      const base = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'pagefind/';
+      const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = base + 'pagefind-ui.css';
+      document.head.append(css);
+      await new Promise<void>((ok) => {
+        const s = document.createElement('script'); s.src = base + 'pagefind-ui.js';
+        s.onload = () => ok(); s.onerror = () => { document.getElementById('searchMsg')!.hidden = false; ok(); };
+        document.head.append(s);
+      });
+      const PF = (window as any).PagefindUI;
+      if (PF) new PF({ element: '#pagefind', showSubResults: true, showImages: false, resetStyles: false,
+        translations: { placeholder: 'Chercher une notion, un calendrier…', zero_results: 'Aucun résultat pour [SEARCH_TERM]' } });
+    }
+    async function ouvrir() {
+      dlg.showModal();
+      await chargerPagefind();
+      dlg.querySelector<HTMLInputElement>('input')?.focus();
+    }
+    document.getElementById('openSearch')!.addEventListener('click', ouvrir);
+    document.getElementById('closeSearch')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (ev) => { if (ev.target === dlg) dlg.close(); });
+    dlg.addEventListener('click', (ev) => { if ((ev.target as HTMLElement).closest('a')) dlg.close(); });
+    document.addEventListener('keydown', (ev) => {
+      const tag = document.activeElement?.tagName || '';
+      if (ev.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(tag) && !dlg.open) { ev.preventDefault(); ouvrir(); }
+    });
+  </script>
+</body>
+</html>

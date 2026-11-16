@@ -1,0 +1,67 @@
+---
+/**
+ * Sphère locale vue de l’ouest, méridien dans le plan de la figure (redessiné d’après ASM, P. Rocher).
+ * Variantes : nord, sud (lieu de l’hémisphère sud), circumpolaires, digression.
+ */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, add, dot, comb, slerp, renvoi, type V3, type P2 } from '../../lib/projection';
+interface Props { variante?: 'nord' | 'sud' | 'circumpolaires' | 'digression' }
+const { variante = 'nord' } = Astro.props;
+const sud = variante === 'sud';
+const R = Math.PI / 180, phiD = sud ? -38 : 45, phi = phiD * R;
+// Repère du monde : X vers l’ouest (vers le lecteur), Y vers le sud, Z vers le zénith.
+const v = new Vue(300, 245, 180, -8, 9);
+const O: V3 = [0, 0, 0], Z: V3 = [0, 0, 1], Nad: V3 = [0, 0, -1], S: V3 = [0, 1, 0], N: V3 = [0, -1, 0], W: V3 = [1, 0, 0];
+const P: V3 = [0, -Math.cos(phi), Math.sin(phi)], Pp = mul(P, -1), Q: V3 = [0, Math.sin(phi), Math.cos(phi)];
+const astreHd = (H: number, d: number) => comb([Math.cos(d * R) * Math.cos(H * R), Q], [Math.cos(d * R) * Math.sin(H * R), W], [Math.sin(d * R), P]);
+const T = (p: V3 | P2, s: string, o: object = {}) => (p.length === 3 ? v.texte(p as V3, s, { taille: 15, ...o }) : '');
+const rouge = 'var(--ko)', bleu = 'var(--orbit)', vert = 'var(--ok)';
+let s = '';
+s += v.arc(P, Z, { couleur: rouge, epaisseur: 2.6, arriere: 'plein' }) + v.arc(Z, Pp, { couleur: rouge, epaisseur: 2.6, arriere: 'plein' });
+s += v.arc(P, Nad, { couleur: bleu, epaisseur: 2.6, arriere: 'plein' }) + v.arc(Nad, Pp, { couleur: bleu, epaisseur: 2.6, arriere: 'plein' });
+s += v.cercle(Z, 0, { epaisseur: 1.1 }) + v.cercle(P, 0, { epaisseur: 1.1 });
+s += v.ligne(mul(P, 1.1), mul(Pp, 1.1), { tirets: '5 4', epaisseur: 0.9 }) + v.ligne(Z, Nad, { tirets: '2 4', epaisseur: 0.9 }) + v.ligne(N, S, { tirets: '2 4', epaisseur: 0.9 });
+s += [Z, Nad, P, Pp].map((p) => v.point(p, 4, rouge)).join('') + v.point(W, 3.5);
+s += T(Z, 'Zénith Z', { dy: -12, ancre: 'middle' }) + T(Nad, 'Nadir N', { dy: 24, ancre: 'middle' });
+s += T(P, 'P (pôle céleste nord)', { dx: sud ? -10 : -12, dy: sud ? 22 : -10, ancre: 'end' }) + T(Pp, 'P′ (pôle céleste sud)', { dx: 12, dy: sud ? -8 : 20 });
+s += T(N, 'Nord', { dx: -10, dy: 5, ancre: 'end' }) + T(S, 'Sud', { dx: 10, dy: 5 }) + T(W, 'Ouest', { dx: -4, dy: 20, ancre: 'middle' });
+s += T(slerp(W, S, 0.45), 'horizon', { dy: -6, taille: 14 }) + T(comb([Math.cos(125 * R), Q], [Math.sin(125 * R), W]), 'équateur', { dy: 20, ancre: 'middle', taille: 14 });
+s += T(slerp(sud ? Pp : P, Z, 0.5), sud ? 'π/2 + φ' : 'π/2 − φ', { dx: sud ? -8 : 8, dy: 22, taille: 14, ancre: sud ? 'end' : 'start' });
+s += T(mul(sud ? Pp : P, 0.25), 'φ', { dx: sud ? -4 : 6, dy: sud ? -14 : 18, italique: true, taille: 16 });
+s += renvoi(['Méridien supérieur', '(H = 0 h)'], [440, 32], [455, 58], v.xy(slerp(Z, Pp, 0.3)), { couleur: rouge });
+s += sud ? renvoi(['Méridien inférieur', '(H = 12 h)'], [450, 430], [480, 412], v.xy(slerp(Nad, Pp, 0.45)), { couleur: bleu }) : renvoi(['Méridien inférieur', '(H = 12 h)'], [16, 430], [80, 412], v.xy(slerp(Nad, P, 0.45)), { couleur: bleu });
+if (variante === 'nord' || variante === 'sud') {
+  const H = sud ? 60 : 55, d = sud ? -40 : 15;
+  const Pv = sud ? Pp : P, A = astreHd(H, d), Mp = unit(add(A, mul(P, -dot(A, P)))), M = unit([A[0], A[1], 0]);
+  s += v.arc(P, Mp, { epaisseur: 1 }) + v.arc(Mp, Pp, { epaisseur: 1 });
+  s += v.arc(Z, M, { couleur: vert, epaisseur: 2.4 }) + v.arc(M, Nad, { couleur: vert, epaisseur: 2.4 });
+  s += v.angle(Z, A, Pp, 0.12) + v.angle(Pv, Z, A, 0.1);
+  s += v.etoile(A, 8) + v.point(M, 3.5) + v.point(Mp, 3.5);
+  s += T(A, 'A', { dx: 10, dy: -2 }) + T(M, 'M', { dx: 8, dy: 16 }) + T(Mp, 'M′', { dx: 8, dy: -4 });
+  s += T(slerp(A, Mp, 0.5), 'δ', { dx: 8, dy: 6 }) + T(slerp(A, M, 0.5), 'h', { dx: 8, dy: 4, italique: true }) + T(slerp(Z, A, 0.5), 'z', { dx: 8, italique: true });
+  s += v.texte(v.dansAngle(Z, A, Pp, 0.22), 'a', { ancre: 'middle', dy: 4, italique: true, taille: 15 }) + v.texte(v.dansAngle(Pv, Z, A, 0.18), 'H', { ancre: 'middle', dy: 6, italique: true, taille: 14 });
+  s += T(slerp(Pv, A, 0.5), sud ? 'π/2 + δ' : 'π/2 − δ', { dx: 0, dy: 20, taille: 13, ancre: 'middle' });
+  s += renvoi(['Demi-cercle', 'azimutal'], [470, 290], [478, 278], v.xy(slerp(A, M, 0.75)), { couleur: vert });
+} else if (variante === 'circumpolaires') {
+  const lim = Math.cos(phi);
+  s += v.cercle(P, lim, { epaisseur: 2, tirets: '8 5', arriere: 'masque' }) + v.cercle(P, -lim, { epaisseur: 2, tirets: '8 5', arriere: 'masque' });
+  s += v.etoile(astreHd(60, 65), 8);
+  s += renvoi(['Limite des astres', 'circumpolaires'], [16, 52], [90, 76], v.xy(astreHd(100, 90 - phiD)));
+  s += renvoi(['Limite des astres', 'qui ne se lèvent pas'], [440, 330], [470, 315], v.xy(astreHd(-20, phiD - 90)));
+} else {
+  const d = 65, H = Math.acos(Math.tan(phi) / Math.tan(d * R)) / R, A = astreHd(H, d), M = unit([A[0], A[1], 0]);
+  s += v.cercle(P, Math.sin(phi), { epaisseur: 2, tirets: '8 5', arriere: 'masque' }) + v.cercle(P, Math.sin(d * R), { epaisseur: 1, arriere: 'masque' });
+  s += v.arc(Z, M, { couleur: vert, epaisseur: 2.4 }) + v.arc(M, Nad, { couleur: vert, epaisseur: 2.4 });
+  s += v.angle(Z, A, Pp, 0.14) + v.etoile(A, 8);
+  s += v.texte(v.dansAngle(Z, A, Pp, 0.24), 'a', { ancre: 'middle', dy: 4, italique: true, taille: 15 });
+  s += renvoi(['Limite des astres observables', 'ayant une plus grande digression'], [16, 52], [110, 76], v.xy(astreHd(120, phiD)));
+  s += renvoi(['Demi-cercle azimutal de la', 'plus grande digression ouest'], [400, 288], [430, 276], v.xy(slerp(A, M, 0.5)), { couleur: vert, taille: 13 });
+}
+const titres = {
+  nord: 'Sphère locale pour un lieu de l’hémisphère nord : méridien supérieur et inférieur, horizon, équateur, cercle horaire et demi-cercle azimutal d’un astre A',
+  sud: 'Sphère locale pour un lieu de l’hémisphère sud : le pôle céleste nord est sous l’horizon, le pôle sud au-dessus',
+  circumpolaires: 'Sphère locale : les astres situés au-dessus du petit cercle limite ne se couchent jamais ; ceux situés sous l’autre limite ne se lèvent jamais',
+  digression: 'Sphère locale : un astre qui passe entre le zénith et le pôle atteint une plus grande digression, où son demi-cercle azimutal est tangent à sa trajectoire diurne',
+};
+---
+<Figure titre={titres[variante]} largeur={600} hauteur={470} svg={s}><slot /></Figure>

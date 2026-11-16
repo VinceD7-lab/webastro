@@ -1,0 +1,30 @@
+---
+/** Repère galactique J2000 dans le repère équatorial (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, sph, mul, unit, cross, dot, slerp, ind, renvoi, type V3 } from '../../lib/projection';
+const v = new Vue(300, 270, 200, -118, 12);
+const O: V3 = [0, 0, 0], Z: V3 = [0, 0, 1], X: V3 = [1, 0, 0];
+const PG = sph(192.86, 27.13), G = sph(266.40, -28.94), A = unit(cross(Z, PG)), M = sph(300, 38);
+const T = (p: V3, s: string, o: object = {}) => v.texte(p, s, { taille: 15, ...o });
+let s = v.contour();
+s += v.cercle(Z, 0, { epaisseur: 1.4 }) + v.cercle(PG, 0, { epaisseur: 1.6, couleur: 'var(--orbit)' });
+s += v.cercle(unit(cross(PG, G)), 0, { epaisseur: 1, arriere: 'masque' }) + v.cercle(unit(cross(Z, PG)), 0, { epaisseur: 1, arriere: 'masque', couleur: 'var(--ink-soft)' });
+s += v.cercle(unit(cross(Z, M)), 0, { epaisseur: 0.8, arriere: 'masque', couleur: 'var(--ink-soft)' });
+s += v.ligne(O, Z, { tirets: '5 4', epaisseur: 1 }) + v.ligne(O, mul(PG, 1.4), { tirets: '5 4', epaisseur: 1, fleche: 'fin' }) + v.ligne(O, mul(X, 1.42), { tirets: '5 4', epaisseur: 1, fleche: 'fin' });
+s += v.ligne(O, mul(G, 1.45), { couleur: 'var(--ko)', epaisseur: 2, fleche: 'fin' }) + v.ligne(O, A, { tirets: '3 3', epaisseur: 0.8 });
+s += v.arc(A, G, { couleur: 'var(--brass)', epaisseur: 2.6 }) + v.arc(Z, PG, { couleur: 'var(--ink)', epaisseur: 1.6 });
+s += [Z, PG, G, A, X, O].map((p) => v.point(p, 3.5)).join('') + v.point(M, 4.5, 'var(--ko)');
+s += T(Z, 'P', { dx: -6, dy: -10, ancre: 'end' }) + T(Z, 'pôle céleste', { dx: 10, dy: -10 });
+s += T(PG, `P${ind('G')}`, { dx: -28, dy: 18, brut: true }) + T(mul(PG, 1.4), 'pôle galactique (α₀, δ₀)', { dx: -20, dy: -10 });
+s += T(slerp(Z, PG, 0.5), 'π/2 − δ₀', { dx: -6, dy: -8, ancre: 'end', italique: true });
+s += T(G, 'G', { dx: 12, dy: 16 });
+s += T(mul(G, 1.45), 'direction du centre galactique', { dx: 0, dy: 22, ancre: 'middle', couleur: 'var(--ko)', taille: 14 });
+s += T(A, 'A', { dx: 8, dy: 18 }) + T(slerp(A, G, 0.5), 'l₀', { dx: 8, dy: 4, italique: true, couleur: 'var(--brass)', taille: 17 });
+s += T(M, 'M (α, δ)', { dx: 10, dy: 4 }) + T(mul(X, 1.42), 'ligne des équinoxes', { dx: 0, dy: -10, ancre: 'end', taille: 14 }) + T(X, 'γ', { dx: -6, dy: 20, taille: 18 });
+s += T(O, 'O', { dx: 8, dy: -8, italique: true });
+s += T(sph(320, 0), 'équateur', { dx: 14, dy: 18, taille: 14 });
+const B = cross(PG, A), surPlan = (t: number): V3 => [Math.cos(t) * A[0] + Math.sin(t) * B[0], Math.cos(t) * A[1] + Math.sin(t) * B[1], Math.cos(t) * A[2] + Math.sin(t) * B[2]];
+s += T(surPlan(Math.atan2(dot(G, B), dot(G, A)) - 1.6), 'plan galactique', { dx: 8, dy: -6, taille: 14, couleur: 'var(--orbit)' });
+s += renvoi(['méridien origine des', 'longitudes galactiques'], [10, 455], [60, 440], v.xy(slerp(PG, G, 0.72)), { taille: 13 });
+---
+<Figure titre="Repère galactique : le plan galactique est incliné sur l’équateur céleste ; les longitudes galactiques se comptent depuis la direction G du centre galactique, les latitudes depuis le plan galactique" largeur={600} hauteur={540} svg={s}><slot /></Figure>

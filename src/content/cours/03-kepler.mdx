@@ -1,0 +1,114 @@
+---
+title: Les lois de Kepler
+slug: kepler
+numero: 3
+resume: Héliocentrisme, orbites elliptiques, loi des aires et loi des périodes.
+source: https://media4.obspm.fr/public/ressources_lu/pages_kepler/introduction-kepler.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import SchemaEllipse from '../../components/SchemaEllipse.astro';
+import SimulateurKepler from '../../components/SimulateurKepler.astro';
+import TableauKepler from '../../components/TableauKepler.astro';
+
+## Introduction
+
+Regarder le ciel ne suffit pas à connaître la distance des astres ni à comprendre leur mouvement. On commence par formuler des hypothèses théoriques, que l’observation vient ensuite confirmer ou réfuter. C’est exactement le chemin suivi par les lois de Kepler : énoncées à partir de mesures, elles ont été validées par l’observation.
+
+## L’héliocentrisme
+
+Le modèle de Copernic place le Soleil, et non la Terre, au centre du système. Il explique simplement les boucles apparentes que décrivent les planètes sur le fond du ciel : elles résultent du mouvement de la Terre elle-même. Mais Copernic conserve des orbites circulaires, et son modèle ne prédit pas mieux les positions que celui de Ptolémée.
+
+<Encadre type="hist">
+Les observations de Tycho Brahe, menées à l’œil nu avec une précision de l’ordre de la minute d’arc, sont celles que Kepler exploite. L’écart de quelques minutes d’arc entre l’orbite de Mars et un cercle le conduit à abandonner le mouvement circulaire.
+</Encadre>
+
+## Première loi : les orbites
+
+> Chaque planète décrit, dans le <Terme id="sens-direct">sens direct</Terme>, une ellipse dont le Soleil occupe l’un des <Terme id="foyer">foyers</Terme>.
+
+Jusqu’à Kepler, seul le cercle semblait digne des corps célestes. Pourtant l’<Terme id="excentricite">excentricité</Terme> des orbites planétaires est si faible que, dessinée sur une feuille, l’orbite de la Terre se confond avec un cercle : la différence tient dans l’épaisseur du trait. Ce qui se voit, en revanche, c’est que le Soleil n’est pas au centre mais décalé vers un foyer.
+
+<SchemaEllipse>
+Paramètres d’une orbite elliptique. P est le <Terme id="perihelie">périhélie</Terme>, A l’<Terme id="aphelie">aphélie</Terme>. L’excentricité est volontairement exagérée (e ≈ 0,83) ; celle de la Terre ne vaut que 0,017. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</SchemaEllipse>
+
+En coordonnées polaires centrées sur le Soleil, avec $\theta$ l’angle compté depuis le périhélie, l’orbite s’écrit :
+
+$$
+r = \frac{a\,(1-e^2)}{1 + e\cos\theta}
+$$
+
+## Deuxième loi : les aires
+
+> Le segment qui relie le Soleil à la planète balaie des aires égales en des durées égales.
+
+Conséquence directe : une planète va plus vite près du Soleil et plus lentement loin de lui. Dans le simulateur ci-dessous, les deux secteurs colorés correspondent chacun à un douzième de la période. Ils ont la même aire, mais l’arc parcouru près du périhélie est bien plus long. Augmentez l’excentricité pour accentuer l’effet.
+
+<SimulateurKepler />
+
+<Encadre type="retenir">
+La vitesse aux deux extrémités de l’orbite vérifie $v_P / v_A = (1+e)/(1-e)$. Pour la Terre, l’écart n’est que d’environ 3 %, ce qui suffit pourtant à rendre l’hiver boréal quelques jours plus court que l’été.
+</Encadre>
+
+## Troisième loi : les périodes
+
+> Le cube du demi-grand axe divisé par le carré de la période est le même pour toutes les planètes.
+
+$$
+\frac{a^3}{T^2} = \text{constante}
+$$
+
+En exprimant le <Terme id="demi-grand-axe">demi-grand axe</Terme> en <Terme id="unite-astronomique">unités astronomiques</Terme> et la période en années, cette constante vaut 1. Le tableau le vérifie pour les huit planètes ; la dernière colonne est calculée à partir des deux précédentes.
+
+<TableauKepler />
+
+Newton montrera plus tard que cette constante dépend de la masse du Soleil, et plus exactement de la somme des masses des deux corps :
+
+$$
+\frac{a^3}{T^2} = \frac{G\,(M+m)}{4\pi^2}
+$$
+
+## En savoir plus : l’ellipse
+
+<span class="tag plus">Niveau licence</span>
+
+Une ellipse est l’ensemble des points dont la somme des distances à deux points fixes, les foyers, est constante et égale à $2a$. Ses paramètres sont liés par :
+
+$$
+c = ae, \qquad b = a\sqrt{1-e^2}, \qquad q = a(1-e), \qquad Q = a(1+e)
+$$
+
+<Repli titre="Où est la planète à un instant donné ?">
+On introduit l’anomalie moyenne $M$, qui croît uniformément avec le temps, et l’anomalie excentrique $E$. Elles sont reliées par l’équation de Kepler, que le simulateur résout à chaque image par la méthode de Newton :
+
+$$
+M = E - e\sin E
+$$
+
+La position s’en déduit par $x = a(\cos E - e)$ et $y = b\sin E$, dans un repère centré sur le Soleil.
+</Repli>
+
+## Exercices
+
+**1.** La période sidérale de Mars vaut 1,881 an. Calculez son demi-grand axe en ua.
+
+<Repli>
+Avec les unités choisies, $a^3 = T^2$, donc $a = T^{2/3} = 1{,}881^{2/3} \approx 1{,}524$ ua.
+</Repli>
+
+**2.** En supposant les orbites circulaires, entre quelles valeurs varie la distance Terre–Saturne ? Donnez le résultat en ua puis en kilomètres.
+
+<Repli>
+Saturne est à 9,54 ua du Soleil. La distance minimale (opposition) vaut 9,54 − 1 = 8,54 ua, soit environ 1,28 milliard de km. La distance maximale (conjonction) vaut 9,54 + 1 = 10,54 ua, soit environ 1,58 milliard de km.
+</Repli>
+
+## Testez-vous
+
+<Quiz questions={[
+  { question: "Où se trouve le Soleil par rapport à l’orbite d’une planète ?", choix: ["Au centre de l’ellipse", "À l’un des foyers", "Au périhélie"], reponse: 1 },
+  { question: "À quel endroit une planète se déplace-t-elle le plus vite ?", choix: ["À l’aphélie", "Au périhélie", "Sa vitesse est constante"], reponse: 1 },
+  { question: "Un astéroïde a une période de 8 ans. Que vaut son demi-grand axe ?", choix: ["2 ua", "4 ua", "8 ua"], reponse: 1 },
+]} />

@@ -1,0 +1,92 @@
+---
+/**
+ * Parallaxe et précision des mesures : pour une base et une distance données, la parallaxe
+ * est-elle assez grande pour être mesurée avec l’instrument choisi ?
+ */
+---
+<div class="sim" data-parallaxe data-pagefind-ignore>
+  <svg viewBox="0 0 600 270" role="img" aria-label="Triangle de parallaxe : la base en bas, l’objet visé en haut, l’angle de parallaxe à l’objet">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Base</span> <input data-base type="range" min="-3" max="8.48" step="any" /> <output data-base-out></output></label>
+    <label><span>Distance de l’objet</span> <input data-dist type="range" min="-2" max="14" step="any" /> <output data-dist-out></output></label>
+    <label><span>Précision de l’instrument</span>
+      <select data-prec>
+        <option value="0.0166667">1′ (œil nu)</option>
+        <option value="0.00277778">10″ (instruments du XVIIe siècle)</option>
+        <option value="0.000277778">1″ (lunette méridienne)</option>
+        <option value="2.77778e-7" selected>0,001″ (satellite Hipparcos)</option>
+        <option value="5.55556e-9">0,00002″ (satellite Gaia)</option>
+      </select>
+    </label>
+    <div class="presets" role="group" aria-label="Exemples">
+      <button class="tool" type="button" data-pre="0.05,0.3">Un arbre</button>
+      <button class="tool" type="button" data-pre="12756,384400">La Lune</button>
+      <button class="tool" type="button" data-pre="12756,149597870.7">Le Soleil</button>
+      <button class="tool" type="button" data-pre="149597870.7,40175000000000">Proxima du Centaure</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-p>–</b><span>parallaxe (angle sous lequel on voit la base)</span></div>
+    <div><b data-prec-out>–</b><span>précision de l’instrument</span></div>
+    <div><b data-verdict>–</b><span>la distance est-elle mesurable ?</span></div>
+  </div>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:8em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .ok{color:var(--ok)} .ko{color:var(--ko)}
+</style>
+
+<script>
+  import { parallaxe, fmtAngle, fmtDistance } from '../lib/distances';
+  import { trait2D, texte2D, chemin, type P2 } from '../lib/projection';
+  import { arcAngle, direction, observateur } from '../lib/dessin';
+
+  document.querySelectorAll<HTMLElement>('[data-parallaxe]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const base = q<HTMLInputElement>('[data-base]'), dist = q<HTMLInputElement>('[data-dist]'), prec = q<HTMLSelectElement>('[data-prec]'), dessin = q<SVGGElement>('[data-dessin]');
+    const regler = (b: number, d: number) => { base.value = String(Math.log10(b)); dist.value = String(Math.log10(d)); };
+    regler(12756, 384400);
+
+    function maj() {
+      const b = 10 ** parseFloat(base.value), d = 10 ** parseFloat(dist.value), pr = parseFloat(prec.value);
+      const p = parallaxe(b, d), ok = p >= pr;
+      // Dessin schématique : l’angle est exagéré, mais il se referme quand le rapport distance/base grandit.
+      const ratio = Math.log10(Math.max(d / b, 0.1)); // de −1 (objet proche) à plus de 6 (étoiles)
+      const h = 40 + Math.min(1, (ratio + 1) / 8) * 175, demi = 150 * Math.max(0.04, 1 - (ratio + 1) / 9);
+      const A: P2 = [300 - demi, 240], B: P2 = [300 + demi, 240], C: P2 = [300, 240 - h];
+      let s = `<path d="${chemin([A, C, B], true)}" fill="var(--orbit)" fill-opacity=".12" stroke="none"/>`;
+      s += trait2D(A, C, { epaisseur: 1.4 }) + trait2D(B, C, { epaisseur: 1.4 }) + trait2D(A, B, { couleur: 'var(--brass)', epaisseur: 3 });
+      s += arcAngle(C, direction(C, B), direction(C, A), 26, ok ? 'var(--ok)' : 'var(--ko)', 2);
+      s += `<circle cx="${C[0]}" cy="${C[1]}" r="5" fill="var(--sun)" stroke="var(--ink)"/>`;
+      s += observateur(A, direction(A, C), 26).svg + observateur(B, direction(B, C), 26).svg;
+      s += texte2D([300, 262], `base : ${fmtDistance(b)}`, { ancre: 'middle', taille: 14, couleur: 'var(--brass)' });
+      s += texte2D([C[0] + 14, C[1] + 4], `parallaxe ${fmtAngle(p)}`, { taille: 14, couleur: ok ? 'var(--ok)' : 'var(--ko)' });
+      s += texte2D([C[0] - 14, C[1] + 4], `objet à ${fmtDistance(d)}`, { ancre: 'end', taille: 14 });
+      s += texte2D([590, 20], 'angle exagéré sur le dessin', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+      dessin.innerHTML = s;
+      q('[data-base-out]').textContent = fmtDistance(b);
+      q('[data-dist-out]').textContent = fmtDistance(d);
+      q('[data-p]').textContent = fmtAngle(p);
+      q('[data-prec-out]').textContent = fmtAngle(pr);
+      const v = q('[data-verdict]');
+      const f = pr / p; v.textContent = ok ? (p / pr >= 10 ? 'oui, largement' : 'oui, de justesse') : `non : ${f.toLocaleString('fr-FR', { maximumFractionDigits: f < 10 ? 1 : 0 })} fois trop petite`;
+      v.className = ok ? 'ok' : 'ko';
+    }
+    [base, dist].forEach((e) => e.addEventListener('input', maj));
+    prec.addEventListener('change', maj);
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((bt) => bt.addEventListener('click', () => { const [b, d] = bt.dataset.pre!.split(',').map(Number); regler(b, d); maj(); }));
+    maj();
+  });
+</script>

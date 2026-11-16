@@ -1,0 +1,23 @@
+---
+/** Transfert d’orbite : la sonde quitte l’orbite autour de A pour une orbite autour de B (redessiné d’après CNRS / J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, point2D, pointe, type P2 } from '../../lib/projection';
+const ell = (c: P2, rx: number, ry: number, a: number): P2 => [c[0] + rx * Math.cos((a * Math.PI) / 180), c[1] - ry * Math.sin((a * Math.PI) / 180)];
+const CA: P2 = [180, 170], CB: P2 = [460, 175];
+const [ax, ay, bx, by] = [150, 82, 130, 72];
+// L’ellipse B passe par le point le plus à droite de A (point de transfert).
+CB[0] = CA[0] + ax + bx; CB[1] = CA[1];
+const A: P2 = [CA[0] - Math.sqrt(ax * ax - ay * ay), CA[1]], B: P2 = [CB[0] + Math.sqrt(bx * bx - by * by), CB[1]];
+let s = '';
+for (const [c, rx, ry] of [[CA, ax, ay], [CB, bx, by]] as [P2, number, number][]) s += `<ellipse cx="${c[0]}" cy="${c[1]}" rx="${rx}" ry="${ry}" fill="none" stroke="var(--ink-soft)" stroke-width="1.4"/>`;
+const traj: P2[] = [];
+for (let a = 250; a <= 360; a += 2) traj.push(ell(CA, ax, ay, a));
+for (let a = 180; a >= 70; a -= 2) traj.push(ell(CB, bx, by, a));
+s += `<path d="${chemin(traj)}" fill="none" stroke="var(--ko)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.1 8"/>`;
+s += pointe(traj[traj.length - 2], traj[traj.length - 1], 'var(--ko)', 18);
+s += point2D(A, 9) + texte2D(A, 'A', { dx: 14, dy: 6, taille: 18 }) + point2D(B, 9) + texte2D(B, 'B', { dx: 14, dy: 6, taille: 18 });
+s += texte2D([60, 62], 'orbite autour de A', { taille: 14 }) + texte2D([60, 80], 'en l’absence de B', { taille: 14 });
+s += texte2D([420, 280], 'orbite autour de B', { taille: 14 }) + texte2D([420, 298], 'en l’absence de A', { taille: 14 });
+s += texte2D([20, 300], 'en pointillé : trajet de la sonde', { taille: 13, couleur: 'var(--ko)' });
+---
+<Figure titre="Transfert d’orbite : près de l’apogée de son orbite autour de A, la sonde passe sous l’influence prépondérante de B et poursuit sur une orbite autour de B" largeur={600} hauteur={310} svg={s}><slot /></Figure>

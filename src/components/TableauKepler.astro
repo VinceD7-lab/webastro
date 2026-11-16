@@ -1,0 +1,19 @@
+---
+/** Vérification de la troisième loi : a³/T² calculé au moment de la construction du site. */
+const planetes: [string, number, number][] = [
+  ['Mercure', 0.387, 0.241], ['Vénus', 0.723, 0.615], ['Terre', 1.0, 1.0], ['Mars', 1.524, 1.881],
+  ['Jupiter', 5.203, 11.86], ['Saturne', 9.537, 29.45], ['Uranus', 19.19, 84.02], ['Neptune', 30.07, 164.8],
+];
+const fmt = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+---
+<div class="table-wrap">
+  <table>
+    <caption>Valeurs moyennes des demi-grands axes et des périodes sidérales.</caption>
+    <thead><tr><th scope="col">Planète</th><th scope="col">a (ua)</th><th scope="col">T (années)</th><th scope="col">a³ / T²</th></tr></thead>
+    <tbody>
+      {planetes.map(([nom, a, T]) => (
+        <tr><td>{nom}</td><td>{fmt(a, 3)}</td><td>{fmt(T, T < 10 ? 3 : 2)}</td><td class="ratio">{fmt(a ** 3 / T ** 2, 3)}</td></tr>
+      ))}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,115 @@
+---
+/**
+ * Le canon de Newton : un objet lancé horizontalement à 300 km d’altitude, à une vitesse choisie.
+ * Selon la vitesse, il retombe, tourne en cercle, décrit une ellipse ou s’échappe (parabole, hyperbole).
+ */
+---
+<div class="sim" data-canon data-pagefind-ignore>
+  <svg viewBox="0 0 600 400" role="img" aria-label="Trajectoire d’un objet lancé horizontalement autour de la Terre">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+    <circle data-mobile r="6" fill="var(--ko)" stroke="var(--surface)" stroke-width="2" visibility="hidden"></circle>
+  </svg>
+  <div class="controls">
+    <label><span>Vitesse de lancement</span> <input data-vitesse type="range" min="0" max="14" step="any" value="9.5" /> <output data-vitesse-out></output></label>
+    <button class="tool" data-lancer type="button">Lancer</button>
+    <div class="presets" role="group" aria-label="Exemples de vitesses">
+      <button class="tool" type="button" data-pre="6">Retombe</button>
+      <button class="tool" type="button" data-pre="7.726">Cercle</button>
+      <button class="tool" type="button" data-pre="9.5">Ellipse</button>
+      <button class="tool" type="button" data-pre="10.926">Libération</button>
+      <button class="tool" type="button" data-pre="12.5">Hyperbole</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-type>–</b><span>trajectoire</span></div>
+    <div><b data-loin>–</b><span data-loin-lib>altitude maximale</span></div>
+    <div><b data-periode>–</b><span>durée d’une révolution</span></div>
+    <div><b data-seuils>–</b><span>vitesses circulaire et de libération à 300 km</span></div>
+  </div>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:6em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+</style>
+
+<script>
+  import { orbiteLancement, vitesseCirculaire, vitesseLiberation, fmtDuree, fmtKm, fmtVitesse, RAYON_TERRE } from '../lib/mecanique';
+  import { chemin, texte2D, trait2D, type P2 } from '../lib/projection';
+  import { terre } from '../lib/dessin';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NOMS = { retombe: 'retombe sur Terre', circulaire: 'cercle', ellipse: 'ellipse', parabole: 'parabole : libération', hyperbole: 'hyperbole : libération' };
+
+  document.querySelectorAll<HTMLElement>('[data-canon]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const vit = q<HTMLInputElement>('[data-vitesse]'), dessin = q<SVGGElement>('[data-dessin]'), mobile = q<SVGCircleElement>('[data-mobile]');
+    const r0 = RAYON_TERRE + 300, vc = vitesseCirculaire(r0), vl = vitesseLiberation(r0);
+    q('[data-seuils]').textContent = `${fmtVitesse(vc).replace(' km/s', '')} et ${fmtVitesse(vl)}`;
+    let anim = 0;
+    let etat = { C: [300, 200] as P2, k: 1, o: orbiteLancement(r0, 9.5) };
+
+    const pos = (C: P2, k: number, r: number, th: number): P2 => [C[0] + r * k * Math.sin(th), C[1] - r * k * Math.cos(th)];
+
+    function maj() {
+      cancelAnimationFrame(anim); mobile.setAttribute('visibility', 'hidden');
+      const v = parseFloat(vit.value), o = orbiteLancement(r0, v);
+      // Échelle : on cadre la Terre et l’orbite fermée ; pour une trajectoire ouverte, on garde une Terre bien visible.
+      const etendue = o.ae < 1 && o.type !== 'retombe' ? o.apogee : o.type === 'retombe' ? r0 : 4 * RAYON_TERRE;
+      const k = Math.min(120 / RAYON_TERRE, 175 / Math.max(etendue, r0));
+      // Orbite fermée : on centre verticalement l’ensemble « point de tir (en haut) – apogée (en bas) ».
+      const C: P2 = [300, o.ae < 1 && o.type !== 'retombe' ? (30 + r0 * k + 390 - o.apogee * k) / 2 : 200];
+      etat = { C, k, o };
+      const fin = o.impact ?? (o.ae < 1 ? 2 * Math.PI : Math.acos(-1 / o.e) - 0.02);
+      const pts: P2[] = [];
+      for (let j = 0; j <= 600; j++) { const th = (fin * j) / 600, p = pos(C, k, o.r(th), th); pts.push(p); if (p[0] < -50 || p[0] > 650 || p[1] < -50 || p[1] > 450) break; }
+      let s = `<circle cx="${C[0]}" cy="${C[1]}" r="${(r0 * k).toFixed(1)}" fill="var(--orbit)" fill-opacity=".12"/>` + terre(C, RAYON_TERRE * k);
+      s += `<path d="${chemin(pts)}" fill="none" stroke="${o.type === 'retombe' ? 'var(--ko)' : 'var(--orbit)'}" stroke-width="2.4"/>`;
+      if (o.impact !== null) { const p = pts[pts.length - 1]; s += `<path d="M${p[0] - 6},${p[1] - 6} L${p[0] + 6},${p[1] + 6} M${p[0] + 6},${p[1] - 6} L${p[0] - 6},${p[1] + 6}" stroke="var(--ko)" stroke-width="2.4"/>`; }
+      const L = pos(C, k, r0, 0);
+      s += trait2D(L, [L[0] + 20 + v * 5, L[1]], { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+      s += texte2D([594, 22], `échelle : rayon de la Terre = ${fmtKm(RAYON_TERRE)}`, { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+      dessin.innerHTML = s;
+      q('[data-vitesse-out]').textContent = fmtVitesse(v);
+      q('[data-type]').textContent = NOMS[o.type];
+      if (o.type === 'retombe') { q('[data-loin-lib]').textContent = 'distance parcourue au sol'; q('[data-loin]').textContent = fmtKm(o.impact! * RAYON_TERRE); }
+      else { q('[data-loin-lib]').textContent = 'altitude maximale'; q('[data-loin]').textContent = o.ae < 1 ? fmtKm(o.apogee - RAYON_TERRE) : 'infinie'; }
+      q('[data-periode]').textContent = o.type === 'retombe' ? '—' : fmtDuree(o.periode);
+    }
+
+    function lancer() {
+      cancelAnimationFrame(anim);
+      const { C, k, o } = etat, h = r0 * parseFloat(vit.value); // moment cinétique par unité de masse (km²/s)
+      const fin = o.impact ?? (o.ae < 1 ? 2 * Math.PI : Math.acos(-1 / o.e));
+      let th = 0, avant = 0;
+      const vitesseTemps = 1100; // une seconde à l’écran = 1100 s de vol (une orbite basse dure ~5 s)
+      mobile.setAttribute('visibility', 'visible');
+      const place = () => { const p = pos(C, k, o.r(th), th); mobile.setAttribute('cx', p[0].toFixed(1)); mobile.setAttribute('cy', p[1].toFixed(1)); return p; };
+      if (reduit) { th = Math.min(fin, Math.PI) * 0.5; place(); return; }
+      const pas = (t: number) => {
+        const dt = avant ? Math.min(0.05, (t - avant) / 1000) * vitesseTemps : 0; avant = t;
+        // Loi des aires : dθ/dt = h / r², intégrée par petits pas.
+        for (let i = 0; i < 20; i++) { const r = o.r(th); if (!Number.isFinite(r)) break; th += ((h / (r * r)) * dt) / 20; }
+        if (th >= fin && o.ae < 1 && o.type !== 'retombe') th -= 2 * Math.PI;
+        if (th >= fin) { th = fin; place(); return; }
+        const p = place();
+        if (p[0] < -20 || p[0] > 620 || p[1] < -20 || p[1] > 420) { mobile.setAttribute('visibility', 'hidden'); return; }
+        anim = requestAnimationFrame(pas);
+      };
+      anim = requestAnimationFrame(pas);
+    }
+
+    vit.addEventListener('input', maj);
+    q('[data-lancer]').addEventListener('click', lancer);
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((b) => b.addEventListener('click', () => { vit.value = b.dataset.pre!; maj(); lancer(); }));
+    maj();
+  });
+</script>

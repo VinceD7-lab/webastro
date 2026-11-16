@@ -1,0 +1,271 @@
+---
+title: La gravitation universelle et la relativité
+slug: gravitation
+numero: 5
+resume: "De Newton à Einstein : limites de la gravitation universelle, relativité restreinte et générale."
+source: https://media4.obspm.fr/public/ressources_lu/pages_gravitation/introduction-gravitation.html
+---
+import { Image } from 'astro:assets';
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import Frise from '../../components/Frise.astro';
+import Personne from '../../components/Personne.astro';
+import SimulateurPerihelie from '../../components/SimulateurPerihelie.astro';
+import SimulateurLorentz from '../../components/SimulateurLorentz.astro';
+import SimulateurGeodesiques from '../../components/SimulateurGeodesiques.astro';
+import SimulateurLentille from '../../components/SimulateurLentille.astro';
+import Perihelie from '../../components/gravitation/Perihelie.astro';
+import GeodesiquesPlan from '../../components/gravitation/GeodesiquesPlan.astro';
+import GeodesiquesSphere from '../../components/gravitation/GeodesiquesSphere.astro';
+import LentilleSchema from '../../components/gravitation/LentilleSchema.astro';
+import abell2218 from '../../assets/gravitation/abell2218.jpg';
+
+## Introduction
+
+La gravitation universelle a expliqué beaucoup de choses mais reste en elle-même inexpliquée. Une nouvelle approche de la description de l’Univers va permettre d’expliquer certaines choses que la gravitation universelle de Newton n’expliquait pas.
+
+<Frise evenements={[
+  { date: "1632-1638", titre: "Galilée", texte: "Principe de relativité (le navire en mouvement) et principe d’inertie." },
+  { date: "1687", titre: "Newton", texte: "Gravitation universelle, temps et espace absolus (<i>Principia</i>)." },
+  { date: "1798", titre: "Cavendish", texte: "Balance de torsion : attraction entre deux masses au laboratoire, densité de la Terre." },
+  { date: "1859", titre: "Le Verrier", texte: "Le périhélie de Mercure avance plus vite que ne le prévoit la théorie." },
+  { date: "1865-1873", titre: "Maxwell", texte: "Équations de l’électromagnétisme ; la lumière est une onde électromagnétique." },
+  { date: "1881-1887", titre: "Michelson et Morley", texte: "Aucun mouvement de la Terre par rapport à l’« éther » n’est détecté." },
+  { date: "1904-1905", titre: "Lorentz et Poincaré", texte: "Transformation de Lorentz, qui laisse invariantes les équations de Maxwell." },
+  { date: "1905", titre: "Einstein", texte: "Relativité restreinte ; équivalence de la masse et de l’énergie." },
+  { date: "1915-1916", titre: "Einstein", texte: "Relativité générale ; elle explique l’avance du périhélie de Mercure." },
+  { date: "1919", titre: "Eddington", texte: "Déviation de la lumière des étoiles par le Soleil, mesurée pendant une éclipse totale." },
+  { date: "1927-1929", titre: "Lemaître et Hubble", texte: "Expansion de l’Univers." },
+]} />
+
+## La gravitation newtonienne
+
+### Les limites de la gravitation universelle
+
+Rappelons la [loi de Newton](../mecanique-celeste/#la-gravitation-universelle) : deux corps de masses $m$ et $m'$, séparés d’une distance $r$, s’attirent avec une force
+
+$$
+F = G\,\frac{m\,m'}{r^2}
+$$
+
+où $G$ est appelée constante de la gravitation. D’autre part, le principe d’inertie, découvert par <Personne id="galilee">Galilée</Personne> et précisé par Descartes, stipule qu’un corps qui se déplace sans interaction avec l’extérieur continue indéfiniment sur une trajectoire rectiligne. <Personne id="newton">Newton</Personne> ajoute que le seul moyen de modifier cette trajectoire est d’exercer une force : un objet soumis à une force subit, dans la direction de cette force, une accélération inversement proportionnelle à sa masse.
+
+Tous ces principes vont nous permettre de décrire les mouvements dans le système solaire mais, avouons-le, ils n’expliquent pas grand-chose. On est en présence d’une action à distance. Pourquoi les corps s’attirent-ils ? Nul ne le sait. Avant Newton, on pensait que des anges poussaient les planètes sur leurs orbites ; après Newton, on sait que les anges ne poussent pas les planètes, mais les tirent vers le corps central pour contrecarrer le principe d’inertie ! Aucun mécanisme n’a été mis en évidence pour expliquer l’action de cette force.
+
+La théorie de Newton explique aussi l’aplatissement du globe terrestre et permet de décrire correctement les marées. On avait bien pensé auparavant que la Lune pouvait attirer l’eau des mers, mais alors la marée n’aurait dû être haute que du côté de la Lune. Newton l’explique : la Terre et la Lune tournent autour de leur centre de masse commun, et la Terre est donc en chute libre vers la Lune. L’eau située du côté de la Lune est un peu plus attirée que le centre de la Terre, celle du côté opposé un peu moins. Rien ne retient la Terre pendant que l’eau monte vers la Lune : c’est la différence des attractions qui explique les deux marées hautes, de part et d’autre de la Terre. Le Soleil produit le même effet, deux fois plus faible. Enfin, la gravitation universelle ne s’applique pas qu’au système solaire, mais à l’Univers tout entier.
+
+Elle n’explique pas, en revanche, l’<Terme id="avance-perihelie">excès d’avance du périhélie</Terme> de Mercure.
+
+Pour expliquer ce dernier point, il est nécessaire de faire appel à la théorie de la relativité générale, pour laquelle :
+
+- il n’y a pas de temps absolu ;
+- la notion de <Terme id="referentiel-galileen">référentiel galiléen</Terme> n’est plus pertinente ;
+- il n’y a plus de forces à distance, mais un champ de gravité qui se propage à la vitesse de la lumière.
+
+### En savoir plus : l’excès d’avance du périhélie de Mercure
+
+<span class="tag plus">En savoir plus</span>
+
+<Perihelie>
+Périhélie : point où Mercure est au plus près du Soleil. L’angle θ est l’angle entre une direction fixe et la direction du périhélie. Schéma redessiné d’après l’original (ASM / Jean-Eudes Arlot et Gilles Bessou).
+</Perihelie>
+
+Le système Soleil-Mercure n’est pas isolé dans l’espace : il subit des perturbations gravitationnelles qui font varier l’angle θ donnant la position du <Terme id="perihelie">périhélie</Terme> de Mercure. Ainsi θ varie et le périhélie semble « avancer » au cours du temps. La mécanique newtonienne permet de calculer cette avance, due surtout à Vénus, à la Terre et à Jupiter : 531,6″ (secondes d’arc) par siècle. Mais les observations ont montré que le périhélie avance plus vite que prévu : 574,1″ par siècle. <Personne id="leverrier">Le Verrier</Personne>, qui avait mis en évidence cet excès en 1859, a cherché une planète inconnue, plus proche du Soleil, dont les perturbations l’expliqueraient : on l’appela Vulcain, mais on ne la trouva jamais. Il faudra attendre <Personne id="einstein">Einstein</Personne> et la théorie de la relativité générale pour expliquer les 43″ par siècle manquantes.
+
+<SimulateurPerihelie />
+
+### La constante de la gravitation
+
+Dans la formule de Newton ci-dessus, on remarque l’existence d’une constante $G$. À quoi correspond-elle ? Quelle est sa valeur ? En fait, la mesure des distances et des périodes dans le système solaire ne nous fournit que le produit $GM$ de la constante $G$ par la masse du corps central. On connaît donc $G \times$ (masse solaire) en mesurant les positions des planètes, $G \times$ (masse terrestre) en mesurant le mouvement de la Lune, $G \times$ (masse de Jupiter) en mesurant les positions des satellites de Jupiter, etc.
+
+Pour séparer $G$ des masses, il faut mesurer l’attraction entre deux objets de masses connues. C’est ce que réalise <Personne id="cavendish">Henry Cavendish</Personne> (1731-1810) en 1798, dans une expérience désormais célèbre : à l’aide d’un pendule de torsion, il mesure l’attraction de deux grosses boules de plomb d’environ 158 kg chacune sur deux petites billes de 730 g. Il en déduit la densité moyenne de la Terre, 5,45 fois celle de l’eau (la valeur actuelle est 5,51) : on a dit qu’il avait « pesé la Terre ». La valeur de $G$ se déduit directement de cette mesure. Aujourd’hui :
+
+$$
+G = 6{,}674\,30 \times 10^{-11}\ \mathrm{m^3\,kg^{-1}\,s^{-2}}
+$$
+
+avec une incertitude relative de 2 × 10⁻⁵, ce qui en fait l’une des constantes fondamentales les moins bien connues.
+
+Une question se pose aussi : la constante de la gravitation est-elle vraiment constante, ou se modifie-t-elle au cours du temps ? Il a été impossible de mesurer une variation de cette constante, mais cette variation, si elle existe, ne peut être que faible. En effet, si cette constante avait varié de 10 % au cours du dernier milliard d’années, les conditions de rayonnement du Soleil auraient été telles que la vie aurait été impossible sur Terre à cette époque. La variation de cette constante ne peut donc être que beaucoup plus faible que cela.
+
+### Exercice : la constante de gravitation
+
+La mesure de $G$ nous permet de connaître la masse des corps du système solaire, et de résoudre des problèmes tels que celui-ci :
+
+> Quelle serait la durée de révolution d’une bille de masse négligeable autour d’une masse d’un kilogramme, à un mètre de distance, dans l’espace ?
+
+<Repli titre="Indice">
+Appliquez la troisième loi de Kepler sous la forme que lui a donnée Newton : $T = 2\pi\sqrt{r^3/(GM)}$ pour une orbite circulaire de rayon $r$ autour d’une masse $M$.
+</Repli>
+
+<Repli>
+Avec $r = 1\ \mathrm{m}$ et $M = 1\ \mathrm{kg}$ :
+
+$$
+T = 2\pi\sqrt{\frac{r^3}{G\,M}} = \frac{2\pi}{\sqrt{6{,}674 \times 10^{-11}}}\ \mathrm{s} \approx 7{,}69 \times 10^{5}\ \mathrm{s}
+$$
+
+soit environ **8,9 jours** (8 jours 21 heures 38 minutes). La bille se déplacerait à $v = \sqrt{GM/r} \approx 8{,}2 \times 10^{-6}\ \mathrm{m/s}$, soit 8 micromètres par seconde : la gravitation est une force extrêmement faible, qui ne devient importante qu’avec des masses astronomiques.
+</Repli>
+
+### Les principes de la relativité
+
+Après avoir vu la gravitation universelle au sens de Newton, venons-en au principe de relativité. Ce principe n’est pas récent. Dès les débuts de la mécanique, la question s’est posée : les lois de la physique que l’on met au jour restent-elles les mêmes dans n’importe quel référentiel ? Y a-t-il un référentiel absolu ? C’est à cette question fondamentale que les théories de la relativité vont tenter de répondre.
+
+En 1905, Einstein (1879-1955) publie sa théorie de la relativité restreinte. Il achève celle de la relativité générale en novembre 1915 et la publie en 1916.
+
+### La relativité galiléenne
+
+Avant même la découverte de la gravitation universelle par Newton, Galilée énonce le principe de l’inertie : tout corps abandonné à lui-même, et ne subissant aucune force extérieure, est animé d’un mouvement rectiligne uniforme. On appelle « référentiels galiléens » des systèmes de référence en mouvement de translation rectiligne uniforme les uns par rapport aux autres. Pour passer d’un référentiel $R$ à un référentiel $R'$ animé d’une vitesse $v$ parallèle à l’axe des abscisses, le changement de variables est de la forme :
+
+$$
+\begin{cases}
+x' = x - v\,t \\
+y' = y \\
+z' = z \\
+t' = t
+\end{cases}
+$$
+
+Dans cette transformation, dite « galiléenne », les lois de la mécanique et de la physique sont supposées invariantes. Les vitesses s’additionnent. Afin de respecter le principe d’inertie, Newton sera amené à introduire un temps absolu et un espace absolu universels.
+
+### Les limites de la relativité galiléenne
+
+Ce système simple va vivre pendant plus d’un siècle, et la mécanique céleste va décrire merveilleusement la dynamique du système solaire, jusqu’à ce que deux grains de sable se glissent dans la machine.
+
+L’un sera l’inexplicable excès de l’avance du périhélie de Mercure : la mécanique classique sera impuissante devant ce problème.
+
+L’autre viendra de l’électromagnétisme. En 1865, <Personne id="maxwell">James Clerk Maxwell</Personne> (1831-1879), physicien écossais, établit les équations générales des champs électromagnétiques, dites « équations de Maxwell », qu’il rassemble en 1873 dans son *Traité d’électricité et de magnétisme*. On constate alors que ces équations ne sont pas invariantes par la transformation de Galilée. Effectivement, la composition des vitesses ne fonctionne pas avec la vitesse de la lumière : celle-ci ne dépend pas de la vitesse de la source (cela se remarquerait lors de l’observation des étoiles doubles) et ne peut pas être composée avec une autre vitesse.
+
+Serait-ce dû à l’existence d’un « éther » dans lequel la lumière se propagerait par vibration ? On chercha alors à déceler un mouvement par rapport à l’éther : on devait pouvoir mesurer la vitesse d’un mobile par les modifications des lois physiques entraînées par son déplacement. Ce fut la célèbre expérience d’<Personne id="michelson">Albert Michelson</Personne> (1881), reprise avec Edward Morley en 1887 : elle consiste à comparer la vitesse de la lumière dans deux directions perpendiculaires. Cette expérience fut refaite en divers lieux, à six mois d’intervalle (la vitesse de la Terre change alors de sens), pendant des dizaines d’années, et jamais on ne trouva de changement dans la vitesse de la lumière. Le mouvement de la Terre était indétectable avec cette méthode.
+
+Les équations de Maxwell étaient-elles fausses ? En fait non, c’était la transformation galiléenne qui n’était pas correcte. <Personne id="poincare">Henri Poincaré</Personne> montra en 1905 que les équations de Maxwell sont invariantes si on leur applique une transformation particulière, établie par <Personne id="lorentz">Hendrik Lorentz</Personne> en 1904, et à laquelle il donna le nom de « transformation de Lorentz ».
+
+## La relativité d’Einstein
+
+### La relativité restreinte
+
+Einstein va réussir à étendre le principe de relativité de la mécanique à toute la physique, à partir de deux postulats :
+
+- tous les référentiels galiléens sont équivalents pour la formulation des lois physiques ;
+- la vitesse de la lumière dans le vide, $c$, est la même dans tous les référentiels galiléens, et elle est indépendante du mouvement de la source.
+
+Ces deux postulats sont bien sûr incompatibles avec la transformation galiléenne, qui suppose qu’il existe un temps absolu et que la mesure d’une longueur est indépendante du mouvement du système de référence. Einstein va montrer les erreurs de ces suppositions. En particulier, il montre la relativité de la notion de simultanéité, qui n’a de signification que dans un référentiel galiléen déterminé, ce qui entraîne la relativité de la notion de longueur. Longueur et temps sont liés. La transformation galiléenne doit, comme prévu, être remplacée par la <Terme id="transformation-lorentz">transformation de Lorentz</Terme> :
+
+$$
+\begin{cases}
+x' = \dfrac{x - v\,t}{\sqrt{1 - v^2/c^2}} \\[3mm]
+y' = y \\
+z' = z \\
+t' = \dfrac{t - \dfrac{v}{c^2}\,x}{\sqrt{1 - v^2/c^2}}
+\end{cases}
+$$
+
+pour deux repères ayant leurs axes parallèles et en déplacement relatif selon l’axe $x$. Le facteur $\gamma = 1/\sqrt{1 - v^2/c^2}$, toujours supérieur ou égal à 1, est appelé facteur de Lorentz.
+
+La loi de composition des vitesses n’est plus celle du système galiléen : un objet animé de la vitesse $w$ dans un référentiel qui se déplace lui-même à la vitesse $u$ (dans la même direction) n’a pas la vitesse $u + w$, mais
+
+$$
+\frac{u + w}{1 + u\,w/c^2}
+$$
+
+qui reste toujours inférieure à $c$.
+
+Cette transformation entraîne la contraction des longueurs et la dilatation des durées pour les corps en mouvement : une règle en mouvement paraît raccourcie d’un facteur $\gamma$, et une horloge en mouvement retarde du même facteur. On remarquera que, pour des vitesses relatives petites devant $c$ ($v/c$ petit), la transformation de Lorentz se réduit à la transformation de Galilée.
+
+<SimulateurLorentz />
+
+### En savoir plus : la dynamique relativiste
+
+<span class="tag plus">En savoir plus</span>
+
+Les lois de la dynamique newtonienne sont aussi à modifier : elles doivent être invariantes par la transformation de Lorentz.
+
+La quantité de mouvement $p = m\,v$ devient :
+
+$$
+p = \frac{m_0\,v}{\sqrt{1 - v^2/c^2}}
+$$
+
+Dans la mécanique newtonienne, la notion de masse a deux sens : sa détection par son poids (masse grave, ou gravifique) et sa détection par sa résistance au mouvement (<Terme id="masse-inerte-grave">masse inerte</Terme>). Ces masses sont proportionnelles et l’on choisit les unités de façon qu’elles soient égales. En identifiant l’expression ci-dessus avec $p = m(v)\,v$, on en déduit que :
+
+$$
+m(v) = \frac{m_0}{\sqrt{1 - v^2/c^2}}
+$$
+
+où $m_0$ est la masse au repos. La relativité d’Einstein introduit donc la notion de masse au repos et, dans cette présentation, une augmentation de la masse avec la vitesse.
+
+Quant à l’énergie, elle devient :
+
+$$
+E = \frac{m_0\,c^2}{\sqrt{1 - v^2/c^2}} = m\,c^2
+$$
+
+soit, en développant pour $v$ petit devant $c$ :
+
+$$
+E = m\,c^2 \approx m_0\,c^2 + \frac{1}{2}\,m_0\,v^2 + \frac{3}{8}\,m_0\,\frac{v^4}{c^2} + \dots
+$$
+
+La théorie d’Einstein introduit un terme nouveau, $m_0\,c^2$, qui correspond à une « énergie interne » s’ajoutant à l’énergie cinétique $\frac{1}{2}\,m_0\,v^2$ : il y a ainsi équivalence entre masse et énergie. Tous ces faits nouveaux ont été vérifiés par la physique des particules, qui permet d’atteindre de très grandes vitesses. Aux basses vitesses, on retrouve les lois de la dynamique newtonienne.
+
+<Encadre type="plus" titre="Masse au repos ou masse relativiste ?">
+Aujourd’hui, les physiciens préfèrent réserver le mot « masse » à la masse au repos $m_0$, qui ne dépend pas de la vitesse et que l’on note simplement $m$. Ce sont alors la quantité de mouvement $p = \gamma\,m\,v$ et l’énergie $E = \gamma\,m\,c^2$ qui croissent avec la vitesse, sans limite quand $v$ approche $c$. Les deux présentations donnent les mêmes résultats.
+</Encadre>
+
+### La relativité générale
+
+La relativité restreinte n’a cependant pas résolu tous les problèmes. Elle s’est montrée incapable d’incorporer la gravitation de manière satisfaisante, et certaines expériences semblent toujours prouver qu’il existe un référentiel absolu. Par exemple, l’expérience du pendule de <Personne id="foucault">Foucault</Personne> semble indiquer que l’on peut mesurer le mouvement de la Terre par rapport à un référentiel absolu. Où donc se trouve la contradiction ?
+
+Einstein va pour cela étendre la relativité restreinte à la gravitation, en énonçant le <Terme id="principe-equivalence">principe d’équivalence</Terme>. L’identité entre la masse gravifique et la masse inerte devient un postulat de base de la théorie. Ainsi, il n’est pas possible, localement, de distinguer une force créée par une accélération d’une force créée par la gravitation. Cette identité a conduit Einstein à penser qu’un laboratoire en chute libre dans un champ gravitationnel constitue en quelque sorte l’extension naturelle du concept de système de référence inertiel de l’ancienne mécanique. On est ainsi amené à postuler que « tous les systèmes de référence en chute libre sont équivalents pour l’expression des lois physiques non gravitationnelles, quels que soient leur état de mouvement et leur localisation ». Cet énoncé constitue ce que l’on appelle aujourd’hui le principe d’équivalence d’Einstein.
+
+Il faut souligner à ce propos que ce principe n’édicte rien sur la description des phénomènes gravitationnels eux-mêmes. Ainsi, il ne postule pas que deux laboratoires en chute libre situés en des endroits différents trouveront la même valeur pour la constante de la gravitation $G$ (étant admis qu’ils sont munis d’horloges et de mètres de même fabrication). Autrement dit, le principe d’équivalence d’Einstein ne rejette pas a priori que la « vraie théorie relativiste de la gravitation » puisse prédire que $G$ varie avec le temps et le lieu. Ce principe permet donc des généralisations de la relativité générale, dont la vérification fait l’objet de nombreuses recherches actuelles.
+
+L’idée qu’en présence d’un champ gravitationnel, ce sont les référentiels en chute libre qui doivent remplacer les référentiels inertiels en amène très naturellement une autre : les référentiels en chute libre ne peuvent être que locaux, car un vrai champ de gravitation (celui de la Terre, par exemple) n’est pas uniforme. En effet, aucun mouvement d’ensemble du système de référence ne peut supprimer partout un champ non uniforme comme celui de la Terre. D’où l’idée que le principe d’équivalence d’Einstein, qui est purement local, n’interdit pas à la géométrie de l’espace-temps de changer d’un point à un autre. Au contraire, un tel changement de géométrie permet de résoudre le problème de la gravitation avec une extrême élégance conceptuelle.
+
+Le principe d’inertie galiléen nous dit qu’en l’absence de tout champ de force, un point matériel a un mouvement rectiligne uniforme dans tout référentiel galiléen. Or, une droite est une <Terme id="geodesique">géodésique</Terme> de l’espace euclidien. Il est dès lors naturel de considérer que le mouvement d’une particule en chute libre dans un champ gravitationnel suit une géodésique d’une métrique plus complexe que la métrique euclidienne. En fait, Einstein a introduit une généralisation, dite « pseudo-riemannienne », de la métrique spatio-temporelle de la relativité restreinte.
+
+Voici une analogie qui permet de comprendre pourquoi une métrique non euclidienne peut rendre compte simplement d’une force de gravitation.
+
+<GeodesiquesPlan>
+*Plan euclidien P* : deux corps A et B, de vitesses initiales égales v<sub>A</sub> = v<sub>B</sub>, suivent des géodésiques de P (des droites) et restent à distance constante : il n’y a pas de gravitation dans cet univers, A et B ne « s’attirent » pas. Schéma redessiné d’après l’original (CNRS / Jean-Eudes Arlot).
+</GeodesiquesPlan>
+
+<GeodesiquesSphere>
+*Sphère S* : deux corps A et B, de vitesses initiales égales v<sub>A</sub> = v<sub>B</sub> sur l’équateur, suivent des géodésiques de S (des grands cercles) : ils se rapprochent et se rejoignent au pôle N. Il y a de la gravitation dans cet univers : A et B « s’attirent ». On peut donc décrire la gravitation comme une manifestation de la courbure d’une métrique. Schéma redessiné d’après l’original (CNRS / Jean-Eudes Arlot).
+</GeodesiquesSphere>
+
+<SimulateurGeodesiques />
+
+### Les preuves expérimentales de la relativité générale
+
+La théorie de la relativité générale a permis d’expliquer plusieurs phénomènes importants :
+
+- l’excès d’avance du périhélie de Mercure (43″ par siècle) se trouve parfaitement modélisé dans le cadre de la relativité générale ;
+- la courbure des rayons lumineux passant près d’une masse : elle a été détectée en observant les étoiles proches du Soleil pendant l’éclipse totale de 1919 (expéditions dirigées par Arthur Eddington) ; au bord du Soleil, la déviation atteint 1,75″, deux fois la valeur que donnerait la mécanique newtonienne ;
+- les mirages gravitationnels (effet de <Terme id="lentille-gravitationnelle">lentille</Terme> d’une masse importante se trouvant sur le trajet de rayons lumineux) ont été observés (voir ci-dessous) ;
+- l’expansion de l’Univers, mise en évidence par Georges Lemaître (1927) et par <Personne id="hubble">Edwin Hubble</Personne> (1929) grâce au décalage spectral vers le rouge des galaxies. Ce n’est pas à proprement parler une vérification de la théorie, mais elle s’y interprète naturellement : les modèles d’univers en expansion de Friedmann et de Lemaître sont des solutions des équations de la relativité générale.
+
+<LentilleSchema>
+Principe d’un mirage gravitationnel : la masse de l’amas courbe la trajectoire de la lumière. L’observateur reçoit la lumière de la galaxie lointaine par plusieurs chemins, et la voit dans des directions où elle ne se trouve pas.
+</LentilleSchema>
+
+<figure>
+  <Image src={abell2218} alt="Amas de galaxies Abell 2218 photographié par le télescope spatial Hubble : des dizaines de galaxies jaunâtres entourées de fins arcs lumineux, images déformées de galaxies plus lointaines" widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 720px" />
+  <figcaption>Cette image de l’amas de galaxies Abell 2218, prise par le télescope spatial Hubble en 1999, montre un exemple spectaculaire de lentille gravitationnelle. Les arcs visibles sur l’image sont des mirages créés par le champ gravitationnel de l’amas. L’amas est si massif et si compact que les rayons lumineux qui le traversent sont déviés et, comme à travers une lentille, forment de nouvelles images. Ce processus déforme l’image d’objets situés beaucoup plus loin que l’amas de galaxies. Crédit : NASA, ESA, A. Fruchter et l’équipe ERO (STScI, ST-ECF), domaine public, via <a href="https://commons.wikimedia.org/wiki/File:The_galaxy_cluster_Abell_2218_(heic0113c).jpg">Wikimedia Commons</a>.</figcaption>
+</figure>
+
+<SimulateurLentille />
+
+### Testez-vous
+
+<Quiz questions={[
+  { question: "Le Verrier n’a pas réussi à expliquer le mouvement de Mercure parce que :", choix: ["ses observations étaient erronées", "la relativité restreinte n’était pas connue", "la relativité générale n’était pas connue"], reponse: 2, explication: "L’écart entre la théorie et les observations dépassait de loin l’erreur des observations, et la relativité restreinte ne suffit pas à l’expliquer. C’est la relativité générale qui montre que la masse du Soleil déforme l’espace-temps et modifie le mouvement de Mercure par rapport à un mouvement newtonien simple." },
+  { question: "Une bille tourne autour d’une masse de 1 kg, à 1 m de distance. Sa période de révolution est d’environ :", choix: ["1 heure", "9 jours", "1 an"], reponse: 1, explication: "T = 2π √(r³/GM) ≈ 7,7 × 10⁵ s, soit environ 8,9 jours : la gravitation est une force très faible." },
+  { question: "D’après la relativité restreinte, une horloge en mouvement par rapport à vous :", choix: ["avance", "retarde", "marque le même temps que la vôtre"], reponse: 1, explication: "C’est la dilatation des durées : une heure de l’horloge en mouvement dure γ heures pour vous. L’effet n’est sensible qu’à des vitesses proches de celle de la lumière." },
+  { question: "Un vaisseau file à 0,6 c et tire vers l’avant un projectile à 0,7 c par rapport à lui. Par rapport à la Terre, le projectile va à :", choix: ["1,3 c", "environ 0,92 c", "exactement c"], reponse: 1, explication: "La composition relativiste donne (0,6 + 0,7) / (1 + 0,6 × 0,7) = 1,3 / 1,42 ≈ 0,915 c : on ne dépasse jamais la vitesse de la lumière." },
+  { question: "Le principe d’équivalence d’Einstein affirme que :", choix: ["on ne peut pas distinguer localement un champ de gravitation d’une accélération", "la gravitation se propage instantanément", "la constante G a la même valeur partout et toujours"], reponse: 0, explication: "Il repose sur l’égalité de la masse inerte et de la masse grave. Il ne dit rien de la constance de G, et la relativité générale fait au contraire se propager la gravitation à la vitesse de la lumière." },
+  { question: "Quels phénomènes la relativité générale explique-t-elle, alors que la gravitation de Newton n’y suffit pas ?", choix: ["l’excès d’avance du périhélie de Mercure", "la marée haute du côté opposé à la Lune", "la valeur de la déviation de la lumière des étoiles par le Soleil", "les mirages gravitationnels"], reponse: [0, 2, 3], explication: "Les deux marées hautes quotidiennes s’expliquent très bien par la mécanique de Newton : c’est la différence des attractions de la Lune sur les deux faces de la Terre." },
+]} />

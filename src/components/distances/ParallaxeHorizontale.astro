@@ -1,0 +1,21 @@
+---
+/** Parallaxe horizontale : angle sous lequel on voit le rayon terrestre depuis l’astre (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, etoile, type P2 } from '../../lib/projection';
+import { terre, arcAngle, direction } from '../../lib/dessin';
+const O: P2 = [110, 300], r = 62, E: P2 = [560, 50];
+const d = Math.hypot(E[0] - O[0], E[1] - O[1]), th = Math.atan2(O[1] - E[1], E[0] - O[0]), k = Math.acos(r / d);
+const tg = (s: number): P2 => [O[0] + r * Math.cos(th + s * k), O[1] - r * Math.sin(th + s * k)];
+const A = tg(1), B = tg(-1);
+let s = terre(O, r);
+s += trait2D([O[0] - 8, O[1] + r + 40], [O[0] + 8, O[1] - r - 40], { epaisseur: 1.6 });
+s += trait2D(E, A, { couleur: 'var(--orbit)', epaisseur: 1.8 }) + trait2D(E, B, { couleur: 'var(--orbit)', epaisseur: 1.8 });
+s += trait2D(E, O, { tirets: '6 4', epaisseur: 1.2 }) + trait2D(O, A, { epaisseur: 1.2 }) + trait2D(O, B, { epaisseur: 1.2 });
+const dE = direction(E, O);
+s += arcAngle(E, direction(E, A), dE, 150, 'var(--ko)', 1.6) + arcAngle(E, dE, direction(E, B), 175, 'var(--ko)', 1.6);
+s += texte2D([E[0] - 148, E[1] + 62], 'p', { italique: true, couleur: 'var(--ko)', taille: 17 }) + texte2D([E[0] - 150, E[1] + 112], 'p', { italique: true, couleur: 'var(--ko)', taille: 17 });
+s += etoile(E, 10) + point2D(A, 4) + point2D(B, 4) + point2D(O, 3.5);
+s += texte2D(E, 'astre', { dx: -14, dy: -12, ancre: 'end', taille: 14 }) + texte2D(A, 'A', { dx: -18, dy: -6, taille: 16 }) + texte2D(B, 'B', { dx: 4, dy: 20, taille: 16 }) + texte2D(O, 'O', { dx: -18, dy: 18, taille: 15 });
+s += texte2D([20, 440], 'Vu de l’astre, le rayon terrestre OA est sous-tendu par l’angle p : la parallaxe horizontale.', { taille: 13, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Parallaxe horizontale : depuis l’astre, on voit le rayon de la Terre sous l’angle p ; un observateur en A ou en B voit l’astre à l’horizon" largeur={600} hauteur={460} svg={s}><slot /></Figure>

@@ -1,0 +1,29 @@
+---
+/**
+ * Éphémérides pour les observations physiques : aspect de Saturne et de ses anneaux vus de la Terre, axe du pôle Nord
+ * et angle de position NP par rapport au nord céleste. Schéma (redessiné d’après IMCCE), valeurs illustratives.
+ */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+const C: P2 = [300, 158], R = 58, B = 24 * (Math.PI / 180), P = -6; // ouverture des anneaux, angle de position (degrés)
+const rot = (p: P2): P2 => { const a = (P * Math.PI) / 180; return [C[0] + p[0] * Math.cos(a) - p[1] * Math.sin(a), C[1] + p[0] * Math.sin(a) + p[1] * Math.cos(a)]; };
+/** Demi-anneau de rayon k·R : moitié avant (sin t > 0, en bas) ou arrière. */
+const demi = (k: number, avant: boolean): P2[] => Array.from({ length: 61 }, (_, i) => { const t = (avant ? 0 : Math.PI) + (Math.PI * i) / 60; return rot([k * R * Math.cos(t), k * R * Math.sin(B) * Math.sin(t)]); });
+const anneau = (avant: boolean) => {
+  const ext = demi(2.27, avant), int = demi(1.52, avant).reverse();
+  return `<path d="${chemin([...ext, ...int], true)}" fill="var(--brass)" fill-opacity=".45" stroke="var(--ink)" stroke-width=".8"/>`
+    + `<path d="${chemin(demi(2.0, avant))}" fill="none" stroke="var(--bg)" stroke-width="2.5"/>`; // division de Cassini
+};
+let s = anneau(false);
+s += `<ellipse cx="${C[0]}" cy="${C[1]}" rx="${R}" ry="${R * 0.9}" transform="rotate(${P} ${C[0]} ${C[1]})" fill="var(--sun)" fill-opacity=".85" stroke="var(--ink)" stroke-width="1"/>`;
+for (const y of [-0.35, 0.1, 0.45]) s += `<path d="${chemin(Array.from({ length: 31 }, (_, i) => { const x = -1 + i / 15; return rot([x * R * Math.sqrt(1 - y * y) * 0.98, y * R * 0.9 + 6 * Math.sin(B) * (1 - x * x)]); }))}" fill="none" stroke="var(--brass)" stroke-width="1.2" opacity=".7"/>`;
+s += anneau(true);
+// Axe de rotation (pôle Nord), nord céleste, angle NP.
+const N = rot([0, -R * 1.75]);
+s += trait2D(C, N, { couleur: 'var(--ko)', epaisseur: 1.8, fleche: 'fin' }) + texte2D(N, 'pôle Nord de Saturne', { dx: 8, dy: 2, taille: 13, couleur: 'var(--ko)' });
+s += trait2D(C, [C[0], C[1] - R * 2.2], { couleur: 'var(--ink-soft)', epaisseur: 1.2, tirets: '5 4', fleche: 'fin' }) + texte2D([C[0], C[1] - R * 2.2], 'nord céleste', { dx: -8, dy: 4, ancre: 'end', taille: 13, couleur: 'var(--ink-soft)' });
+s += arcAngle(C, 90, 90 - P, R * 1.3, 'var(--brass)', 1.6) + texte2D([C[0] - 12, C[1] - R * 1.38], 'NP', { ancre: 'end', taille: 13, couleur: 'var(--brass)', gras: true });
+s += texte2D([20, 286], 'Anneaux vus avec une ouverture égale à la latitude saturnicentrique de la Terre', { taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Aspect de Saturne et de ses anneaux vus de la Terre : direction du pôle Nord de la planète et angle de position NP par rapport au nord céleste" largeur={600} hauteur={300} svg={s}><slot /></Figure>

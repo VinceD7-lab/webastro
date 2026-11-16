@@ -1,0 +1,37 @@
+---
+/**
+ * Jour sidéral et jour solaire : après un tour complet de 360° (retour d’une étoile au méridien), la Terre a avancé sur son orbite
+ * et le Soleil n’est pas encore revenu au méridien. Redessiné d’après ASM / J.-E. Arlot et G. Bessou ; angle très exagéré.
+ */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+const RAD = Math.PI / 180, S: P2 = [545, 165], R = 380, r = 26;
+const pos = (a: number): P2 => [S[0] + R * Math.cos(a * RAD), S[1] - R * Math.sin(a * RAD)];
+const E1 = pos(174), E2 = pos(186);
+/** Angle d’écran (degrés, y vers le bas) de a vers b. */
+const ang = (a: P2, b: P2) => Math.atan2(b[1] - a[1], b[0] - a[0]) / RAD;
+const aEtoile = ang(E1, S), aSoleil2 = ang(E2, S);
+const bout = (c: P2, a: number, l: number): P2 => [c[0] + l * Math.cos(a * RAD), c[1] + l * Math.sin(a * RAD)];
+let s = `<path d="${chemin(Array.from({ length: 41 }, (_, i) => pos(171 + (18 * i) / 40)))}" fill="none" stroke="var(--ink-soft)" stroke-width="1.2" stroke-dasharray="5 5"/>`;
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="28" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>` + texte2D(S, 'Soleil', { dy: 50, ancre: 'middle', taille: 14 });
+for (const [E, n] of [[E1, '1'], [E2, '2']] as [P2, string][]) {
+  s += `<circle cx="${E[0].toFixed(1)}" cy="${E[1].toFixed(1)}" r="${r}" fill="var(--orbit)" fill-opacity=".28" stroke="var(--ink)" stroke-width="1.4"/>`;
+  // Direction de l’étoile (parallèle pour les deux positions) et observateur pointant vers elle.
+  s += trait2D(bout(E, aEtoile, r + 2), bout(E, aEtoile, 330), { couleur: 'var(--ink-soft)', epaisseur: 1.3, tirets: '7 5' });
+  const p = bout(E, aEtoile, r), q = bout(E, aEtoile, r + 17);
+  s += trait2D(p, q, { couleur: 'var(--ko)', epaisseur: 3 }) + `<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="4.5" fill="var(--ko)"/>`;
+  s += texte2D(E, n, { dx: -4, dy: 6, ancre: 'middle', taille: 15, gras: true });
+}
+// Direction du Soleil depuis la position 2, et angle δ avec la direction de l’étoile.
+s += trait2D(bout(E2, aSoleil2, r + 2), S, { couleur: 'var(--sun)', epaisseur: 1.6 });
+s += arcAngle(E2, -aEtoile, -aSoleil2, 92, 'var(--brass)', 1.6);
+s += texte2D(bout(E2, (aEtoile + aSoleil2) / 2, 106), 'δ', { dy: 5, taille: 17, italique: true, couleur: 'var(--brass)' });
+s += texte2D([22, 54], '① Début : le Soleil est au méridien de l’observateur (midi).', { taille: 14 });
+s += texte2D([22, 276], '② Après un tour complet de 360° (jour sidéral, 23 h 56 min 4 s),', { taille: 14 });
+s += texte2D([22, 295], 'la même étoile est au méridien, mais pas encore le Soleil.', { taille: 14 });
+s += texte2D([22, 322], 'Il faut tourner encore de δ ≈ 1° (3 min 56 s) : jour solaire de 24 h.', { taille: 14, couleur: 'var(--brass)' });
+s += texte2D([330, 118], 'direction d’une étoile lointaine', { taille: 13, couleur: 'var(--ink-soft)' });
+s += texte2D([592, 344], 'Angle δ et distances très exagérés', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Jour sidéral et jour solaire : après un tour complet de la Terre sur elle-même, une étoile lointaine est de nouveau au méridien mais le Soleil, dont la direction a changé de δ, y est en retard" largeur={600} hauteur={352} svg={s}><slot /></Figure>

@@ -1,0 +1,87 @@
+---
+/**
+ * Volet latéral des personnalités : une fiche par entrée de personnalites.json, rendue au build dans un <template>.
+ * Un clic sur un nom (composant Personne) ouvre le volet ; un clic en dehors, Échap ou « × » le ferme.
+ */
+import personnalites from '../data/personnalites.json';
+import { url } from '../lib/url';
+type Fiche = { nom: string; naissance: number | null; mort: number | null; description: string; resume: string[]; wikipedia: string; article: string; portrait?: { fichier: string; auteur: string; licence: string; source: string } };
+const fiches = Object.entries(personnalites as Record<string, Fiche>);
+const dates = (f: Fiche) => (f.naissance ? `${f.naissance}–${f.mort ?? ''}` : '');
+---
+<aside id="volet-personne" class="volet" role="dialog" aria-modal="false" aria-labelledby="volet-titre" hidden data-pagefind-ignore>
+  <button type="button" class="volet-fermer" aria-label="Fermer la fiche">×</button>
+  <div class="volet-contenu"></div>
+</aside>
+
+{fiches.map(([id, f]) => (
+  <template data-fiche={id}>
+    {f.portrait && <img class="volet-portrait" src={url('/' + f.portrait.fichier)} alt={`Portrait de ${f.nom}`} loading="lazy" decoding="async" />}
+    <h2 id="volet-titre" tabindex="-1">{f.nom}</h2>
+    {dates(f) && <p class="volet-dates">{dates(f)}</p>}
+    {f.description && <p class="volet-desc">{f.description.charAt(0).toUpperCase() + f.description.slice(1)}</p>}
+    {f.resume.map((p) => <p>{p}</p>)}
+    <p class="volet-lien"><a href={f.wikipedia} target="_blank" rel="noopener">Lire l’article sur Wikipédia ↗</a></p>
+    <p class="volet-credits">
+      Texte : extrait de l’article Wikipédia « <a href={f.wikipedia} target="_blank" rel="noopener">{f.article}</a> », licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+      {f.portrait && <>Portrait : {f.portrait.auteur}, <a href={f.portrait.source} target="_blank" rel="noopener">Wikimedia Commons</a> ({f.portrait.licence.toLowerCase() === 'public domain' ? 'domaine public' : f.portrait.licence}).</>}
+    </p>
+  </template>
+))}
+
+<style is:global>
+  .personne{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;border-bottom:1.5px solid var(--brass);line-height:inherit}
+  .personne:hover,.personne[aria-expanded="true"]{color:var(--brass)}
+  .volet{position:fixed;top:0;right:0;z-index:60;height:100vh;height:100dvh;width:min(380px,92vw);overflow-y:auto;overscroll-behavior:contain;
+    background:var(--surface);color:var(--ink);border-left:1px solid var(--rule);box-shadow:-12px 0 32px rgba(0,0,0,.18);
+    padding:1.4rem 1.4rem 2rem;transform:translateX(0);transition:transform .25s ease, visibility .25s}
+  .volet[hidden]{display:block;visibility:hidden;transform:translateX(105%)}
+  .volet-fermer{position:absolute;top:.6rem;right:.7rem;width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer}
+  .volet-fermer:hover{border-color:var(--brass)}
+  .volet-portrait{display:block;max-height:180px;max-width:100%;width:auto;border-radius:8px;margin:0 0 1rem;border:1px solid var(--rule)}
+  .volet h2{font-family:var(--display);font-size:1.6rem;line-height:1.15;margin:0 2.4rem .2rem 0;outline:none}
+  .volet-dates{color:var(--brass);font-variant-numeric:tabular-nums;margin:0 0 .5rem;font-weight:600}
+  .volet-desc{color:var(--ink-soft);font-style:italic;margin:0 0 1rem}
+  .volet-contenu p{font-size:.95rem;line-height:1.55;margin:0 0 .8rem}
+  .volet-lien a{font-weight:600}
+  .volet .volet-credits{font-size:.78rem;color:var(--ink-soft);border-top:1px solid var(--rule);padding-top:.7rem;margin-top:1.2rem}
+  @media (prefers-reduced-motion: reduce){.volet{transition:none}}
+  @media print{.volet{display:none !important}}
+</style>
+
+<script>
+  const volet = document.getElementById('volet-personne') as HTMLElement | null;
+  if (volet) {
+    const contenu = volet.querySelector<HTMLElement>('.volet-contenu')!;
+    let source: HTMLElement | null = null;
+
+    function ouvrir(bouton: HTMLElement) {
+      const id = bouton.dataset.personne!;
+      const tpl = document.querySelector<HTMLTemplateElement>(`template[data-fiche="${id}"]`);
+      if (!tpl) return;
+      contenu.replaceChildren(tpl.content.cloneNode(true));
+      source?.setAttribute('aria-expanded', 'false');
+      source = bouton; bouton.setAttribute('aria-expanded', 'true');
+      volet.hidden = false; volet.scrollTop = 0;
+      contenu.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+    }
+    function fermer(rendreFocus = false) {
+      if (volet.hidden) return;
+      volet.hidden = true;
+      source?.setAttribute('aria-expanded', 'false');
+      if (rendreFocus) source?.focus();
+    }
+
+    document.querySelectorAll<HTMLElement>('.personne').forEach((b) => {
+      b.setAttribute('aria-expanded', 'false');
+      b.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (!volet.hidden && source === b) fermer(); else ouvrir(b);
+      });
+    });
+    volet.querySelector('.volet-fermer')!.addEventListener('click', () => fermer(true));
+    // Un clic en dehors du volet le ferme ; les clics à l’intérieur (liens, texte) ne le ferment pas.
+    document.addEventListener('click', (ev) => { if (!volet.contains(ev.target as Node)) fermer(); });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') fermer(true); });
+  }
+</script>

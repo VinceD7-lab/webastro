@@ -1,0 +1,13 @@
+---
+/** Cadre commun des schémas du chapitre « repères » : le SVG est calculé par le composant appelant. */
+interface Props { titre: string; largeur: number; hauteur: number; svg: string }
+const { titre, largeur, hauteur, svg } = Astro.props;
+const id = 'fig-' + Math.random().toString(36).slice(2, 8);
+---
+<figure>
+  <svg viewBox={`0 0 ${largeur} ${hauteur}`} role="img" aria-labelledby={id}>
+    <title id={id}>{titre}</title>
+    <g font-family="Literata Variable, Georgia, serif" stroke-linejoin="round" set:html={svg} />
+  </svg>
+  <figcaption><slot /></figcaption>
+</figure>

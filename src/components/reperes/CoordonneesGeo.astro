@@ -1,0 +1,28 @@
+---
+/** Latitudes géographique φ et géocentrique φ′ sur une coupe de l’ellipsoïde terrestre (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, chemin, point2D, type P2 } from '../../lib/projection';
+const O: P2 = [250, 215], a = 210, b = 145, phi = 42, R = Math.PI / 180;
+const u = Math.atan((b / a) * Math.tan(phi * R));
+const A: P2 = [O[0] + a * Math.cos(u), O[1] - b * Math.sin(u)];
+const n: P2 = [Math.cos(phi * R), -Math.sin(phi * R)], t: P2 = [Math.sin(phi * R), Math.cos(phi * R)];
+const k = (A[1] - O[1]) / n[1], I: P2 = [A[0] - k * n[0], O[1]]; // pied de la normale sur l’axe équatorial
+const phiP = Math.atan2(O[1] - A[1], A[0] - O[0]) / R;
+const secteur = (c: P2, a0: number, a1: number, r: number, coul: string) => { const p: P2[] = [c]; for (let i = 0; i <= 30; i++) { const x = (a0 + ((a1 - a0) * i) / 30) * R; p.push([c[0] + r * Math.cos(x), c[1] - r * Math.sin(x)]); } return `<path d="${chemin(p, true)}" fill="${coul}" fill-opacity=".45" stroke="${coul}" stroke-width="1"/>`; };
+let s = `<ellipse cx="${O[0]}" cy="${O[1]}" rx="${a}" ry="${b}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+s += trait2D([O[0] - a, O[1]], [O[0] + a, O[1]], { epaisseur: 1 }) + trait2D([O[0], O[1] - b - 10], [O[0], O[1] + b], { epaisseur: 1 });
+s += secteur(O, 0, phiP, 42, 'var(--ok)') + secteur(I, 0, phi, 52, 'var(--sun)');
+s += trait2D(O, A, { epaisseur: 1.4 }) + trait2D(I, [A[0] + 75 * n[0], A[1] + 75 * n[1]], { epaisseur: 1.4, fleche: 'fin' });
+s += trait2D([A[0] - 110 * t[0], A[1] - 110 * t[1]], [A[0] + 95 * t[0], A[1] + 95 * t[1]], { epaisseur: 1 });
+s += point2D(O, 4) + point2D(A, 4.5);
+s += texte2D(O, 'O', { dx: 6, dy: 22, italique: true, taille: 17 }) + texte2D(A, 'A', { dx: -5, dy: -14, taille: 17 });
+s += texte2D([(O[0] + A[0]) / 2, (O[1] + A[1]) / 2], 'ρ', { dx: -6, dy: -10, italique: true, taille: 18 });
+s += texte2D(O, 'φ′', { dx: 46, dy: -10, italique: true, taille: 16 }) + texte2D(I, 'φ', { dx: 56, dy: -16, italique: true, taille: 17 });
+s += texte2D([A[0] + 75 * n[0], A[1] + 75 * n[1]], 'zénith du lieu', { dx: -6, dy: -12, ancre: 'middle' });
+s += texte2D([A[0] - 108 * t[0] + 8 * n[0], A[1] - 108 * t[1] + 8 * n[1]], 'plan horizontal', { taille: 13, rotation: 90 - phi });
+s += texte2D([O[0], O[1] - b - 14], 'pôle terrestre', { ancre: 'middle' });
+s += texte2D([O[0] - a / 2, O[1]], 'a : rayon équatorial', { ancre: 'middle', dy: -8, taille: 14 });
+s += texte2D([O[0] - 10, O[1] - b / 2], 'b : rayon polaire', { ancre: 'middle', taille: 14, rotation: -90 });
+s += texte2D([O[0] + 40, O[1] + 90], 'coupe de l’ellipsoïde terrestre', { taille: 14, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Coupe de l’ellipsoïde terrestre : la latitude géographique φ est l’angle de la normale au lieu A avec l’équateur, la latitude géocentrique φ′ celui de la direction OA" largeur={600} hauteur={390} svg={s}><slot /></Figure>

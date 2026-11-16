@@ -1,0 +1,26 @@
+---
+/** Orbites de satellites à 300 km, 35 786 km et 100 000 km d’altitude, à l’échelle (redessiné d’après CNRS / J.-E. Arlot, périodes recalculées). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { terre } from '../../lib/dessin';
+import { periode, vitesseCirculaire, fmtDuree, RAYON_TERRE } from '../../lib/mecanique';
+const C: P2 = [300, 335], k = 280 / (RAYON_TERRE + 100_000);
+const nb = (x: number, d = 0) => x.toLocaleString('fr-FR', { maximumFractionDigits: d, minimumFractionDigits: d });
+let s = '';
+const orbites: [number, string][] = [[300, '300 km'], [35_786, '35 786 km (géostationnaire)'], [100_000, '100 000 km']];
+orbites.forEach(([h, nom], i) => {
+  const r = (RAYON_TERRE + h) * k, pts: P2[] = [];
+  for (let a = 0; a <= 180; a += 2) pts.push([C[0] + r * Math.cos((a * Math.PI) / 180), C[1] - r * Math.sin((a * Math.PI) / 180)]);
+  s += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="1.6"/>`;
+  // Flèche de vitesse tangentielle, longueur proportionnelle à la vitesse.
+  const v = vitesseCirculaire(RAYON_TERRE + h), a = (118 * Math.PI) / 180, p: P2 = [C[0] + r * Math.cos(a), C[1] - r * Math.sin(a)];
+  const l = v * 9, q: P2 = [p[0] - l * Math.sin(a), p[1] - l * Math.cos(a)];
+  if (i > 0) s += trait2D(p, q, { couleur: 'var(--ko)', epaisseur: 2.2, fleche: 'fin' });
+  if (i > 0) s += texte2D([C[0], C[1] - r], `${nom} : ${fmtDuree(periode(RAYON_TERRE + h))}, ${nb(v, 1)} km/s`, { dy: -8, ancre: 'middle', taille: 13.5 });
+});
+s += terre(C, RAYON_TERRE * k);
+s += trait2D([C[0] + 19, C[1] - 6], [C[0] + 124, C[1] - 16], { couleur: 'var(--ink-soft)', epaisseur: 0.8 });
+s += texte2D([C[0] + 128, C[1] - 12], `300 km : ${fmtDuree(periode(RAYON_TERRE + 300))}, ${nb(vitesseCirculaire(RAYON_TERRE + 300), 1)} km/s`, { taille: 13.5 });
+s += texte2D([14, 20], 'Terre et orbites à l’échelle ; flèches rouges : vitesse', { taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Trois orbites circulaires à l’échelle : plus un satellite est loin, plus il est lent et plus sa période est longue" largeur={600} hauteur={360} svg={s}><slot /></Figure>

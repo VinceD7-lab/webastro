@@ -1,0 +1,33 @@
+---
+/** Trajectoires d’un objet lancé horizontalement à 2 000 km d’altitude (pour la lisibilité), selon sa vitesse (redessiné d’après CNRS / J.-E. Arlot et ASM / G. Bessou, valeurs recalculées). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { terre } from '../../lib/dessin';
+import { orbiteLancement, RAYON_TERRE, vitesseCirculaire } from '../../lib/mecanique';
+const C: P2 = [215, 128], k = 52 / RAYON_TERRE, r0 = RAYON_TERRE + 2000;
+const vc = vitesseCirculaire(r0);
+const pos = (r: number, th: number): P2 => [C[0] + r * k * Math.sin(th), C[1] - r * k * Math.cos(th)];
+const nb = (v: number) => v.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+// [nom, vitesse, type, couleur, angle de l’étiquette sur la trajectoire, décalage du texte]
+const cas: [string, number, string, string, number, P2, 'start' | 'end'][] = [
+  ['T0', 5.5, 'retombe', 'var(--ko)', 0.75, [12, 16], 'start'],
+  ['T1', vc, 'cercle', 'var(--ok)', 4.6, [-10, 4], 'end'],
+  ['T2', 8.5, 'ellipse', 'var(--orbit)', 3.75, [14, 4], 'start'],
+  ['T3', 11, 'hyperbole', 'var(--brass)', 1.85, [-10, 22], 'end'],
+];
+let s = `<circle cx="${C[0]}" cy="${C[1]}" r="${(r0 * k).toFixed(1)}" fill="var(--orbit)" fill-opacity=".12"/>` + terre(C, RAYON_TERRE * k);
+for (const [n, v, t, c, aEt, d, ancre] of cas) {
+  const o = orbiteLancement(r0, v), fin = o.impact ?? (o.ae < 1 ? 2 * Math.PI : 2.2);
+  const pts: P2[] = [];
+  for (let j = 0; j <= 400; j++) { const th = (fin * j) / 400, p = pos(o.r(th), th); pts.push(p); if (p[0] > 620 || p[1] > 400) break; }
+  s += `<path d="${chemin(pts)}" fill="none" stroke="${c}" stroke-width="2.4"${n === 'T0' ? '' : ' stroke-dasharray="8 4"'}/>`;
+  if (o.impact !== null) { const p = pts[pts.length - 1]; s += `<path d="M${p[0] - 5},${p[1] - 5} L${p[0] + 5},${p[1] + 5} M${p[0] + 5},${p[1] - 5} L${p[0] - 5},${p[1] + 5}" stroke="${c}" stroke-width="2.2"/>`; }
+  const e = pos(o.r(aEt), aEt);
+  s += texte2D(e, `${n} : ${nb(v)} km/s, ${t}`, { dx: d[0], dy: d[1], ancre, taille: 13.5, couleur: 'var(--ink)' });
+}
+const L = pos(r0, 0);
+s += trait2D(L, [L[0] + 60, L[1]], { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+s += texte2D([L[0] - 8, L[1] - 4], 'vitesse initiale horizontale', { ancre: 'end', taille: 13.5, couleur: 'var(--ko)' });
+s += texte2D([594, 392], 'Terre et trajectoires à l’échelle ; départ à 2 000 km d’altitude', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Selon sa vitesse de lancement horizontale à 2 000 km d’altitude, un objet retombe (T0), tourne en cercle (T1), décrit une ellipse (T2) ou s’échappe sur une hyperbole (T3)" largeur={600} hauteur={400} svg={s}><slot /></Figure>

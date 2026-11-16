@@ -1,0 +1,24 @@
+---
+/** Un observateur sous la voûte étoilée (redessiné d’après ASM, G. Bessou). */
+import Figure from './Figure.astro';
+let graine = 7;
+const alea = () => (graine = (graine * 16807) % 2147483647) / 2147483647;
+const etoiles: string[] = [];
+for (let i = 0; i < 230; i++) {
+  const x = alea() * 600, y = alea() * 300 * alea() ** 0.3, r = 0.4 + 1.5 * alea() ** 4;
+  etoiles.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#fff" opacity="${(0.45 + 0.55 * alea()).toFixed(2)}"/>`);
+}
+const svg = `
+<defs><linearGradient id="voute-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05081c"/><stop offset=".55" stop-color="#0d1650"/><stop offset="1" stop-color="#2531a8"/></linearGradient></defs>
+<rect width="600" height="340" rx="8" fill="url(#voute-ciel)"/>
+${etoiles.join('')}
+<path d="M0,300 C60,288 110,296 160,292 C230,286 260,298 330,296 C400,294 450,284 520,290 C560,293 585,288 600,290 L600,340 L0,340 Z" fill="#03040c"/>
+<g fill="#03040c">
+  <circle cx="356" cy="236" r="11"/>
+  <path d="M340,250 C344,244 368,244 372,252 L380,298 L334,298 Z"/>
+  <path d="M352,246 L318,226 L322,219 L358,240 Z"/>
+  <rect x="300" y="214" width="46" height="9" rx="3" transform="rotate(-28 323 218)"/>
+  <path d="M338,240 L330,298 M346,240 L352,298" stroke="#03040c" stroke-width="3"/>
+</g>`;
+---
+<Figure titre="Silhouette d’un observateur qui pointe une lunette vers un ciel nocturne constellé d’étoiles" largeur={600} hauteur={340} svg={svg}><slot /></Figure>

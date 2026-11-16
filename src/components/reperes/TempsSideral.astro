@@ -1,0 +1,25 @@
+---
+/** Le temps sidéral de Greenwich vu depuis le pôle Nord (schéma simplifié d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, chemin, pointe, type P2 } from '../../lib/projection';
+const O: P2 = [300, 285], R = 205, RAD = Math.PI / 180;
+const pt = (a: number, r: number): P2 => [O[0] + r * Math.cos(a * RAD), O[1] - r * Math.sin(a * RAD)];
+const arc = (a0: number, a1: number, r: number) => { const p: P2[] = []; for (let i = 0; i <= 60; i++) p.push(pt(a0 + ((a1 - a0) * i) / 60, r)); return p; };
+let s = `<circle cx="${O[0]}" cy="${O[1]}" r="${R}" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="1.6"/>`;
+for (const lat of [15, 30, 45, 60, 75]) s += `<circle cx="${O[0]}" cy="${O[1]}" r="${(R * Math.cos(lat * RAD)).toFixed(1)}" fill="none" stroke="var(--rule)" stroke-width="1"/>`;
+for (let l = 0; l < 360; l += 15) s += trait2D(O, pt(l, R), { couleur: 'var(--rule)', epaisseur: 1 });
+const aG = 270, Ts = 40, aGamma = aG - Ts; // Greenwich vers le bas ; le temps sidéral se compte vers l’ouest (sens horaire vu du nord)
+s += trait2D(O, pt(aG, R + 40), { couleur: 'var(--ok)', epaisseur: 3 });
+s += trait2D(O, pt(aGamma, R + 60), { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+const a1 = arc(aG - 2, aGamma + 4, R + 30);
+s += `<path d="${chemin(a1)}" fill="none" stroke="var(--orbit)" stroke-width="2.4"/>` + pointe(a1[a1.length - 3], a1[a1.length - 1], 'var(--orbit)', 12);
+const a2 = arc(70, 125, R + 22);
+s += `<path d="${chemin(a2)}" fill="none" stroke="var(--ko)" stroke-width="2.4"/>` + pointe(a2[a2.length - 3], a2[a2.length - 1], 'var(--ko)', 12);
+s += texte2D(pt(97, R + 40), 'sens de rotation de la Terre', { ancre: 'middle', couleur: 'var(--ko)', taille: 14 });
+s += texte2D(pt(aGamma, R + 60), '♈ équinoxe de printemps', { dx: 10, dy: 24, ancre: 'middle', couleur: 'var(--ko)', taille: 14 });
+s += texte2D(pt(aG - Ts / 2 + 3, R + 46), 'T', { ancre: 'middle', italique: true, taille: 22, couleur: 'var(--orbit)', dy: 8 });
+s += texte2D(pt(aG, R + 40), 'méridien de Greenwich', { dx: 12, dy: -4, couleur: 'var(--ok)', taille: 14 });
+s += texte2D(O, 'pôle Nord', { dx: 8, dy: -8, taille: 13 });
+s += `<circle cx="${O[0]}" cy="${O[1]}" r="3.5" fill="var(--ink)"/>`;
+---
+<Figure titre="La Terre vue depuis le pôle Nord : le temps sidéral de Greenwich T est l’angle, compté vers l’ouest, entre le méridien de Greenwich et la direction de l’équinoxe de printemps" largeur={600} hauteur={570} svg={s}><slot /></Figure>

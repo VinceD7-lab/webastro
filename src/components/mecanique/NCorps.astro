@@ -1,0 +1,20 @@
+---
+/** Problème des N corps : chacun des corps i attire le corps j (redessiné d’après CNRS, J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, ind, type P2 } from '../../lib/projection';
+const J: P2 = [330, 165];
+const corps: [P2, number][] = [[[70, 60], 9], [[250, 40], 6], [[470, 30], 11], [[90, 290], 8], [[300, 310], 5], [[540, 260], 7], [[200, 165], 10]];
+let s = '';
+for (const [P] of corps) s += trait2D(J, P, { couleur: 'var(--rule)', epaisseur: 1, tirets: '4 4' });
+// Force exercée par i sur j : dirigée vers i, proportionnelle à mᵢ / d² (longueur des flèches ramenée entre 28 et 95 px).
+const intensite = corps.map(([P, m]) => m / ((P[0] - J[0]) ** 2 + (P[1] - J[1]) ** 2)), imax = Math.max(...intensite);
+for (const [k, [P]] of corps.entries()) {
+  const dx = P[0] - J[0], dy = P[1] - J[1], d = Math.hypot(dx, dy), l = 28 + 67 * Math.sqrt(intensite[k] / imax);
+  s += trait2D(J, [J[0] + (dx / d) * l, J[1] + (dy / d) * l], { couleur: 'var(--ko)', epaisseur: 2, fleche: 'fin' });
+}
+for (const [P, m] of corps) s += point2D(P, m * 0.9 + 3, 'var(--orbit)');
+s += corps.map(([P], k) => texte2D(P, `m${ind(String(k + 1))}`, { dx: 12, dy: -10, taille: 15, brut: true })).join('');
+s += point2D(J, 9, 'var(--ink)') + texte2D(J, `m${ind('j')}`, { dx: 10, dy: 24, taille: 16, gras: true, brut: true });
+s += texte2D([598, 336], 'flèches : forces exercées sur le corps j', { ancre: 'end', taille: 13, couleur: 'var(--ko)' });
+---
+<Figure titre="Problème des N corps : le corps j est attiré par chacun des autres corps, d’autant plus fort qu’il est massif et proche" largeur={600} hauteur={345} svg={s}><slot /></Figure>

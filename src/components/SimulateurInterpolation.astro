@@ -1,0 +1,105 @@
+---
+/**
+ * Interpolation dans une table d’éphémérides : déclinaison de la Lune tabulée à pas constant (modèle simplifié),
+ * tableau des différences, comparaison de l’interpolation linéaire et de la formule de Bessel avec la valeur calculée.
+ */
+---
+<div class="sim" data-interpolation data-pagefind-ignore>
+  <svg viewBox="0 0 600 250" role="img" aria-label="Courbe de la déclinaison de la Lune, valeurs tabulées et interpolation linéaire entre deux valeurs">
+    <g font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Pas de la table</span>
+      <select data-pas><option value="3">3 heures</option><option value="6">6 heures</option><option value="12" selected>12 heures</option><option value="24">24 heures</option></select>
+    </label>
+    <label><span>Début de la table</span> <input data-jour type="range" min="0" max="27.5" step="0.5" value="9" /> <output data-jour-out></output></label>
+    <label><span>Facteur d’interpolation n</span> <input data-n type="range" min="0" max="1" step="0.01" value="0.37" /> <output data-n-out></output></label>
+  </div>
+  <div class="table-wrap">
+    <table data-table aria-label="Valeurs tabulées et différences successives">
+      <thead><tr><th>Instant</th><th>δ (degrés)</th><th>Δ¹</th><th>Δ²</th><th>Δ³</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-lin>–</b><span>interpolation linéaire</span></div>
+    <div><b data-bes>–</b><span>formule de Bessel</span></div>
+    <div><b data-vrai>–</b><span>valeur calculée par le modèle</span></div>
+  </div>
+  <p class="note" data-critere></p>
+  <p class="note">Les différences sont en unités de la dernière décimale de la table (0,0001°, soit 0,36″). La Lune est calculée par un modèle simplifié (précision d’environ 0,3°) : il suffit pour juger de la méthode, pas pour pointer un télescope.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 220px;flex-wrap:wrap}
+  .controls output{min-width:6em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:110px;accent-color:var(--brass)}
+  .table-wrap{overflow-x:auto;margin-top:.9rem}
+  table{font-size:.9rem;margin:0}
+  td,th{padding:.3rem .6rem}
+  table :global(tr.encadre td){color:var(--brass);font-weight:600}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { luneSimplifiee, interpoler } from '../lib/ephemerides';
+  import { jourJulien } from '../lib/reperes';
+  import { chemin, texte2D, ind, type P2 } from '../lib/projection';
+  import { nbFr as nb } from '../lib/relativite';
+
+  const ORIGINE = jourJulien(new Date(Date.UTC(2024, 0, 1))); // 1er janvier 2024, 0 h UT
+  const U = 1e-4; // unité de la dernière décimale (degré)
+  const arrondi = (x: number) => Math.round(x / U) * U;
+  const dateTxt = (jd: number) => {
+    const d = new Date((jd - 2_440_587.5) * 86_400_000);
+    return `${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', timeZone: 'UTC' })} ${String(d.getUTCHours()).padStart(2, '0')} h`;
+  };
+  const sec = (deg: number) => `${deg >= 0 ? '+' : '−'}${nb(Math.abs(deg) * 3600, 1)}″`;
+
+  document.querySelectorAll<HTMLElement>('[data-interpolation]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const pas = q<HTMLSelectElement>('[data-pas]'), jour = q<HTMLInputElement>('[data-jour]'), n = q<HTMLInputElement>('[data-n]');
+
+    function maj() {
+      const h = +pas.value / 24, t0 = ORIGINE + +jour.value, nn = +n.value;
+      // Table arrondie à 0,0001° comme une éphéméride imprimée : t0 … t3, l’instant cherché entre t1 et t2.
+      const tab = [0, 1, 2, 3].map((k) => arrondi(luneSimplifiee(t0 + k * h).delta));
+      const d1 = tab.slice(1).map((v, i) => v - tab[i]), d2 = d1.slice(1).map((v, i) => v - d1[i]), d3 = d2[1] - d2[0];
+      const u = (x: number) => nb(Math.round(x / U), 0).replace('-', '−');
+      const lignes = tab.map((v, k) => `<tr${k === 1 || k === 2 ? ' class="encadre"' : ''}><td>${dateTxt(t0 + k * h)}</td><td>${nb(v, 4).replace('-', '−')}</td><td>${k < 3 ? u(d1[k]) : ''}</td><td>${k < 2 ? u(d2[k]) : ''}</td><td>${k === 0 ? u(d3) : ''}</td></tr>`);
+      q('[data-table] tbody').innerHTML = lignes.join('');
+      const r = interpoler(tab[0], tab[1], tab[2], tab[3], nn), vrai = luneSimplifiee(t0 + (1 + nn) * h).delta;
+      q('[data-lin]').textContent = `${nb(r.lineaire, 4).replace('-', '−')}° (${sec(r.lineaire - vrai)})`;
+      q('[data-bes]').textContent = `${nb(r.bessel, 4).replace('-', '−')}° (${sec(r.bessel - vrai)})`;
+      q('[data-vrai]').textContent = `${nb(vrai, 4).replace('-', '−')}°`;
+      q('[data-jour-out]').textContent = dateTxt(t0);
+      q('[data-n-out]').textContent = `${nb(nn, 2)} (${dateTxt(t0 + (1 + nn) * h)})`;
+      const maxD2 = Math.max(Math.abs(d2[0]), Math.abs(d2[1])) / U;
+      q('[data-critere]').textContent = maxD2 < 4
+        ? `Les différences secondes (${nb(maxD2, 0)} unités au plus) sont inférieures à 4 unités : l’interpolation linéaire suffit.`
+        : `Les différences secondes atteignent ${nb(maxD2, 0)} unités, bien plus que 4 : l’interpolation linéaire ne suffit pas, il faut la formule de Bessel (entre parenthèses, l’écart à la valeur calculée).`;
+      // Graphe : la courbe du modèle sur [t0, t3], les valeurs tabulées et le segment linéaire.
+      const X0 = 60, W = 500, Yh = 30, Hh = 180;
+      const pts: number[] = Array.from({ length: 121 }, (_, i) => luneSimplifiee(t0 + (3 * h * i) / 120).delta);
+      const lo = Math.min(...pts), hi = Math.max(...pts), marge = (hi - lo) * 0.15 || 0.1;
+      const gx = (k: number) => X0 + (k / 3) * W, gy = (v: number) => Yh + Hh - ((v - lo + marge) / (hi - lo + 2 * marge)) * Hh;
+      let s = `<path d="${chemin(pts.map((v, i) => [gx((3 * i) / 120), gy(v)] as P2))}" fill="none" stroke="var(--ink-soft)" stroke-width="1.6"/>`;
+      s += `<path d="${chemin([[gx(1), gy(tab[1])], [gx(2), gy(tab[2])]])}" fill="none" stroke="var(--ko)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+      tab.forEach((v, k) => { s += `<circle cx="${gx(k)}" cy="${gy(v).toFixed(1)}" r="5" fill="var(--orbit)" stroke="var(--surface)" stroke-width="1.5"/>` + texte2D([gx(k), Yh + Hh + 20], `t${ind(String(k))}`, { ancre: 'middle', taille: 12, couleur: 'var(--ink-soft)', brut: true }); });
+      const xi = gx(1 + nn);
+      s += `<line x1="${xi}" x2="${xi}" y1="${Yh}" y2="${Yh + Hh}" stroke="var(--brass)" stroke-width="1" stroke-dasharray="3 3"/>`;
+      s += `<circle cx="${xi.toFixed(1)}" cy="${gy(r.lineaire).toFixed(1)}" r="4.5" fill="var(--ko)"/><circle cx="${xi.toFixed(1)}" cy="${gy(vrai).toFixed(1)}" r="4.5" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+      s += texte2D([X0, 18], 'déclinaison de la Lune (modèle) ; ● valeurs tabulées ; ○ valeur calculée ; tirets : interpolation linéaire', { taille: 11.5, couleur: 'var(--ink-soft)' });
+      q('svg g').innerHTML = s;
+    }
+    for (const el of [pas, jour, n]) el.addEventListener('input', maj);
+    maj();
+  });
+</script>

@@ -1,0 +1,135 @@
+---
+/**
+ * Simulation « coordonnées équatoriales et horizontales » : un astre (α, δ) sur la sphère locale
+ * d’un lieu (φ, L) à une date donnée (TU). Affiche le temps sidéral local, l’angle horaire H,
+ * la hauteur h et l’azimut a (compté depuis le sud vers l’ouest).
+ * Reçoit l’événement « reperes:astre » envoyé par le simulateur du Soleil.
+ */
+interface Props { alpha?: number; delta?: number; phi?: number; lon?: number }
+const { alpha = 6.75, delta = -16.72, phi = 48.84, lon = 2.34 } = Astro.props;
+---
+<div class="sim" data-sphere data-pagefind-ignore data-alpha={alpha} data-delta={delta} data-phi={phi} data-lon={lon}>
+  <svg viewBox="0 0 600 480" role="img" aria-label="Sphère locale : horizon, équateur céleste, méridien, trajectoire diurne de l’astre et position du point vernal">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>α <small>ascension droite</small></span> <input data-alpha type="range" min="0" max="24" step="any" /> <output data-alpha-out></output></label>
+    <label><span>δ <small>déclinaison</small></span> <input data-delta type="range" min="-90" max="90" step="any" /> <output data-delta-out></output></label>
+    <label><span>φ <small>latitude</small></span> <input data-phi type="range" min="-90" max="90" step="any" /> <output data-phi-out></output></label>
+    <label><span>L <small>longitude</small></span> <input data-lon type="range" min="-180" max="180" step="any" /> <output data-lon-out></output></label>
+    <label class="date"><span>Date et heure (TU)</span> <input data-date type="datetime-local" step="60" /></label>
+    <div class="presets" role="group" aria-label="Temps">
+      <button class="tool" data-maintenant type="button">Maintenant</button>
+      <button class="tool" data-play type="button" aria-pressed="false">Faire tourner la Terre</button>
+    </div>
+    <div class="presets" role="group" aria-label="Lieux">
+      <button class="tool" type="button" data-lieu="48.84,2.34">Paris</button>
+      <button class="tool" type="button" data-lieu="-33.93,18.42">Le Cap</button>
+      <button class="tool" type="button" data-lieu="35.69,139.69">Tokyo</button>
+      <button class="tool" type="button" data-lieu="0,0">Équateur</button>
+      <button class="tool" type="button" data-lieu="90,0">Pôle Nord</button>
+    </div>
+    <div class="presets" role="group" aria-label="Astres">
+      <button class="tool" type="button" data-astre="6.7525,-16.716">Sirius</button>
+      <button class="tool" type="button" data-astre="11.062,61.75">Dubhe</button>
+      <button class="tool" type="button" data-astre="2.53,89.26">Polaire</button>
+      <button class="tool" type="button" data-astre="18.615,38.78">Véga</button>
+      <button class="tool" type="button" data-soleil>Soleil à cette date</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-tsl>–</b><span>temps sidéral local</span></div>
+    <div><b data-angle-horaire>–</b><span>angle horaire H</span></div>
+    <div><b data-hauteur>–</b><span>hauteur h</span></div>
+    <div><b data-a>–</b><span>azimut a (depuis le sud)</span></div>
+  </div>
+  <p class="etat small" data-etat></p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 220px}
+  .controls label.date{flex-basis:100%;flex-wrap:wrap}
+  .controls output{min-width:7.5em;font-variant-numeric:tabular-nums}
+  .controls small{color:var(--ink-soft);font-size:.8rem}
+  input[type=range]{flex:1;accent-color:var(--brass)}
+  input[type=datetime-local]{font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.3rem .5rem}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .etat{margin:.6rem 0 0}
+</style>
+
+<script>
+  import { Vue, comb, mul, unit, slerp, type V3 } from '../lib/projection';
+  import { RAD, jourJulien, tempsSideralLocal, angleHoraire, eqVersHoriz, soleil, fmtHMS, fmtDMS, visibilite } from '../lib/reperes';
+
+  const nb = (x: number, d = 1) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const versChamp = (t: number) => new Date(t).toISOString().slice(0, 16);
+  const depuisChamp = (s: string) => { const m = s.match(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : Date.now(); };
+  const hm = (h: number) => fmtHMS(h).replace(/ \d\d s$/, '');
+
+  document.querySelectorAll<HTMLElement>('[data-sphere]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const champs = { alpha: q<HTMLInputElement>('input[data-alpha]'), delta: q<HTMLInputElement>('input[data-delta]'), phi: q<HTMLInputElement>('input[data-phi]'), lon: q<HTMLInputElement>('input[data-lon]') };
+    const date = q<HTMLInputElement>('[data-date]'), dessin = q<SVGGElement>('[data-dessin]');
+    champs.alpha.value = root.dataset.alpha!; champs.delta.value = root.dataset.delta!; champs.phi.value = root.dataset.phi!; champs.lon.value = root.dataset.lon!;
+    let t = Date.now(); date.value = versChamp(t);
+    const v = new Vue(300, 232, 178, -10, 12);
+
+    function maj() {
+      const al = parseFloat(champs.alpha.value), de = parseFloat(champs.delta.value), ph = parseFloat(champs.phi.value), lo = parseFloat(champs.lon.value);
+      const jd = jourJulien(new Date(t)), tsl = tempsSideralLocal(jd, lo), H = angleHoraire(tsl, al * 15), hz = eqVersHoriz(H, de, ph);
+      // Repère du dessin : X vers l’ouest (vers le lecteur), Y vers le sud, Z vers le zénith.
+      const f = ph * RAD, W: V3 = [1, 0, 0], Z: V3 = [0, 0, 1], N: V3 = [0, -1, 0], S: V3 = [0, 1, 0];
+      const P: V3 = [0, -Math.cos(f), Math.sin(f)], Q: V3 = [0, Math.sin(f), Math.cos(f)];
+      const surEq = (h: number) => comb([Math.cos(h * RAD), Q], [Math.sin(h * RAD), W]);
+      const pied = surEq(H), astre = comb([Math.cos(de * RAD), pied], [Math.sin(de * RAD), P]);
+      const gamma = surEq(tsl), horiz = Math.hypot(astre[0], astre[1]) > 1e-6 ? unit([astre[0], astre[1], 0]) : S;
+      const visible = hz.h >= 0;
+      let s = v.contour({ remplir: 'var(--surface)' });
+      s += v.polygone(v.pointsCercle(Z, 0), 'var(--sun)', 0.16) + v.cercle(Z, 0, { epaisseur: 1.3 });
+      s += v.cercle(P, 0, { epaisseur: 1.1, couleur: 'var(--ink-soft)' });
+      if (Math.abs(de) < 89.5) s += v.cercle(P, Math.sin(de * RAD), { epaisseur: 1.4, couleur: 'var(--orbit)' });
+      s += v.arc(P, Z, { couleur: 'var(--ko)', epaisseur: 2, arriere: 'plein' }) + v.arc(Z, mul(P, -1), { couleur: 'var(--ko)', epaisseur: 2, arriere: 'plein' });
+      s += v.arc(P, [0, 0, -1], { couleur: 'var(--ink-soft)', epaisseur: 1.4, arriere: 'plein' }) + v.arc([0, 0, -1], mul(P, -1), { couleur: 'var(--ink-soft)', epaisseur: 1.4, arriere: 'plein' });
+      s += v.ligne(mul(P, 1.12), mul(P, -1.12), { tirets: '5 4', epaisseur: 0.9 });
+      if (Math.abs(H % 360) > 0.5) s += v.arc(Q, pied, { couleur: 'var(--ko)', epaisseur: 2.2, fleche: 'fin' }, 1, H > 180);
+      s += v.arc(S, horiz, { couleur: 'var(--orbit)', epaisseur: 2.2, fleche: 'fin' }, 1, hz.a > 180);
+      s += v.arc(horiz, astre, { couleur: 'var(--brass)', epaisseur: 2.2 });
+      s += v.point(Z, 3.5) + v.point(P, 3.5, 'var(--ko)') + v.point(gamma, 4, 'var(--ink)');
+      s += v.texte(Z, 'Z', { dy: -10, ancre: 'middle' }) + v.texte(P, 'P', { dx: 8, dy: P[1] < 0 ? -6 : 16 });
+      s += v.texte(N, 'N', { dx: -10, dy: 5, ancre: 'end' }) + v.texte(S, 'S', { dx: 10, dy: 5 }) + v.texte(W, 'O', { dy: 22, ancre: 'middle' }) + v.texte([-1, 0, 0], 'E', { dy: -8, ancre: 'middle', couleur: 'var(--ink-soft)' });
+      s += v.texte(gamma, 'γ', { dx: 8, dy: -6, taille: 17 });
+      s += v.texte(slerp(Q, pied, 0.5, H > 180), 'H', { dx: 6, dy: -6, italique: true, couleur: 'var(--ko)' });
+      s += v.etoile(astre, visible ? 9 : 7, visible ? 'var(--sun)' : 'var(--rule)');
+      s += `<text x="300" y="472" font-size="14" text-anchor="middle"><tspan fill="var(--ko)">— méridien supérieur, angle horaire H</tspan><tspan fill="var(--orbit)" dx="14">— trajectoire diurne, azimut a</tspan><tspan fill="var(--brass)" dx="14">— hauteur h</tspan></text>`;
+      dessin.innerHTML = s;
+      const fx = (x: number) => (x >= 0 ? '+' : '') + nb(x, 1).replace('-', '−');
+      q('[data-alpha-out]').textContent = hm(al); q('[data-delta-out]').textContent = fmtDMS(de, 0, true).replace(/ \d\d″$/, '');
+      q('[data-phi-out]').textContent = fx(ph) + '°'; q('[data-lon-out]').textContent = fx(lo) + '°' + (lo >= 0 ? ' E' : ' O');
+      q('[data-tsl]').textContent = fmtHMS(tsl / 15); q('[data-angle-horaire]').textContent = hm(H / 15);
+      q('[data-hauteur]').textContent = fmtDMS(hz.h, 0, true).replace(/ \d\d″$/, ''); q('[data-a]').textContent = fmtDMS(hz.a).replace(/ \d\d″$/, '');
+      const vis = visibilite(ph, de);
+      q('[data-etat]').textContent = (visible ? 'L’astre est au-dessus de l’horizon. ' : 'L’astre est sous l’horizon. ')
+        + (vis === 'circumpolaire' ? 'En ce lieu, il est circumpolaire : il ne se couche jamais.' : vis === 'invisible' ? 'En ce lieu, il ne se lève jamais.' : 'En ce lieu, il se lève et se couche chaque jour.');
+    }
+
+    let enCours = false, dernier = 0;
+    const bouton = q<HTMLButtonElement>('[data-play]');
+    function boucle(ts: number) { if (!enCours) return; if (dernier) { t += (ts - dernier) * 1800; date.value = versChamp(t); maj(); } dernier = ts; requestAnimationFrame(boucle); }
+    const jouer = (x: boolean) => { enCours = x; dernier = 0; bouton.textContent = x ? 'Pause' : 'Faire tourner la Terre'; bouton.setAttribute('aria-pressed', String(x)); if (x) requestAnimationFrame(boucle); };
+    bouton.addEventListener('click', () => jouer(!enCours));
+    Object.values(champs).forEach((c) => c.addEventListener('input', maj));
+    date.addEventListener('input', () => { t = depuisChamp(date.value); maj(); });
+    q('[data-maintenant]').addEventListener('click', () => { t = Date.now(); date.value = versChamp(t); maj(); });
+    root.querySelectorAll<HTMLButtonElement>('[data-lieu]').forEach((b) => b.addEventListener('click', () => { const [a, l] = b.dataset.lieu!.split(','); champs.phi.value = a; champs.lon.value = l; maj(); }));
+    root.querySelectorAll<HTMLButtonElement>('[data-astre]').forEach((b) => b.addEventListener('click', () => { const [a, d] = b.dataset.astre!.split(','); champs.alpha.value = a; champs.delta.value = d; maj(); }));
+    q('[data-soleil]').addEventListener('click', () => { const so = soleil(jourJulien(new Date(t))); champs.alpha.value = String(so.alpha / 15); champs.delta.value = String(so.delta); maj(); });
+    document.addEventListener('reperes:astre', (e) => { const d = (e as CustomEvent<{ alpha: number; delta: number; date?: number }>).detail; champs.alpha.value = String(d.alpha / 15); champs.delta.value = String(d.delta); if (d.date !== undefined) { t = d.date; date.value = versChamp(t); } maj(); });
+    maj();
+  });
+</script>

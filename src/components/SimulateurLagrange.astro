@@ -1,0 +1,95 @@
+---
+/**
+ * Points de Lagrange selon le rapport des masses μ des deux corps (problème restreint des trois corps).
+ * Lignes d’égal potentiel dans le repère qui tourne avec les deux corps ; stabilité de L4 et L5 (critère de Routh).
+ */
+---
+<div class="sim" data-lagrange data-pagefind-ignore>
+  <svg viewBox="0 0 600 400" role="img" aria-label="Lignes d’égal potentiel et points de Lagrange autour de deux corps en orbite">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Rapport des masses μ</span> <input data-mu type="range" min="-6" max="-1" step="any" /> <output data-mu-out></output></label>
+    <div class="presets" role="group" aria-label="Exemples de couples">
+      <button class="tool" type="button" data-pre="3.003e-6,149597871">Soleil–Terre</button>
+      <button class="tool" type="button" data-pre="9.537e-4,778500000">Soleil–Jupiter</button>
+      <button class="tool" type="button" data-pre="0.01215,384400">Terre–Lune</button>
+      <button class="tool" type="button" data-pre="0.0385,0">Limite de Routh</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-l1>–</b><span>distance de L1 au petit corps</span></div>
+    <div><b data-l2>–</b><span>distance de L2 au petit corps</span></div>
+    <div><b data-stab>–</b><span>L4 et L5</span></div>
+  </div>
+  <p class="note">μ = masse du petit corps / masse totale. Distances en fraction de la distance entre les deux corps. Les lignes sont des courbes d’égal potentiel dans le repère qui tourne avec les deux corps.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:7em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+  .ok{color:var(--ok)} .ko{color:var(--ko)}
+</style>
+
+<script>
+  import { lagrange, omega, isolignes } from '../lib/mecanique';
+  import { texte2D, point2D } from '../lib/projection';
+
+  const C = [300, 200], K = 175, X0 = -1.65, X1 = 1.65, Y0 = -1.12, Y1 = 1.12;
+  const ecran = (x: number, y: number): [number, number] => [C[0] + x * K, C[1] - y * K];
+  const nb = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const fmtMu = (mu: number) => (mu >= 0.001 ? nb(mu, mu < 0.01 ? 4 : 3) : `${nb(mu / 10 ** Math.floor(Math.log10(mu)), 1)} × 10${String(Math.floor(Math.log10(mu))).replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c])}`);
+  const fmtKm = (km: number) => (km >= 1e6 ? `${nb(km / 1e6, 2)} million${km >= 2e6 ? 's' : ''} de km` : `${nb(Math.round(km / 100) * 100, 0)} km`);
+
+  document.querySelectorAll<HTMLElement>('[data-lagrange]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const curseur = q<HTMLInputElement>('[data-mu]');
+    let distance = 384_400;
+    curseur.value = String(Math.log10(0.01215));
+
+    function maj() {
+      const mu = 10 ** parseFloat(curseur.value), L = lagrange(mu);
+      const niv = (p: [number, number]) => omega(p[0], p[1], mu);
+      const f = (x: number, y: number) => omega(x, y, mu);
+      const oL1 = niv(L.L1), oL2 = niv(L.L2), oL3 = niv(L.L3), oL4 = niv(L.L4);
+      const niveaux: [number, string, number][] = [
+        [oL1 + 0.35, 'var(--rule)', 1], [oL1 + 0.12, 'var(--rule)', 1],
+        [oL1, 'var(--ko)', 1.6], [oL2, 'var(--brass)', 1.4], [oL3, 'var(--orbit)', 1.4], [oL4 + 0.35 * (oL3 - oL4), 'var(--ok)', 1.2],
+      ];
+      let s = `<circle cx="${ecran(-mu, 0)[0]}" cy="${C[1]}" r="${(K * (1 - mu)).toFixed(1)}" fill="none" stroke="var(--ink-soft)" stroke-width=".8" stroke-dasharray="2 5"/>`;
+      for (const [v, c, w] of niveaux) {
+        if (!(v > 0)) continue;
+        const segs = isolignes(f, v, X0, X1, Y0, Y1, 170);
+        s += `<path d="${segs.map(([a, b]) => { const p = ecran(...a), r = ecran(...b); return `M${p[0].toFixed(1)},${p[1].toFixed(1)}L${r[0].toFixed(1)},${r[1].toFixed(1)}`; }).join('')}" fill="none" stroke="${c}" stroke-width="${w}"/>`;
+      }
+      const S = ecran(-mu, 0), P = ecran(1 - mu, 0);
+      s += `<circle cx="${S[0]}" cy="${S[1]}" r="12" fill="var(--sun)" stroke="var(--ink)"/>`;
+      s += `<circle cx="${P[0].toFixed(1)}" cy="${P[1]}" r="${(3 + 30 * Math.cbrt(mu)).toFixed(1)}" fill="var(--orbit)" stroke="var(--ink)"/>`;
+      const pts: [string, [number, number], boolean, number, number][] = [
+        ['L1', L.L1, false, -8, -10], ['L2', L.L2, false, 8, -10], ['L3', L.L3, false, -8, -10], ['L4', L.L4, L.stable45, 10, -8], ['L5', L.L5, L.stable45, 10, 18],
+      ];
+      for (const [n, p, st, dx, dy] of pts) { const e = ecran(...p); s += point2D(e, 5.5, st ? 'var(--ok)' : 'var(--ko)') + texte2D(e, n, { dx, dy, ancre: dx < 0 ? 'end' : 'start', taille: 14, gras: true, couleur: st ? 'var(--ok)' : 'var(--ko)' }); }
+      s += texte2D([14, 22], 'repère tournant avec les deux corps', { taille: 12, couleur: 'var(--ink-soft)' });
+      q('[data-dessin]').innerHTML = s;
+      q('[data-mu-out]').textContent = fmtMu(mu);
+      const d1 = 1 - mu - L.L1[0], d2 = L.L2[0] - (1 - mu);
+      q('[data-l1]').textContent = nb(d1, d1 < 0.1 ? 4 : 3) + (distance ? ` (${fmtKm(d1 * distance)})` : '');
+      q('[data-l2]').textContent = nb(d2, d2 < 0.1 ? 4 : 3) + (distance ? ` (${fmtKm(d2 * distance)})` : '');
+      const st = q('[data-stab]');
+      st.textContent = L.stable45 ? 'stables' : 'instables (μ > 1/26)';
+      st.className = L.stable45 ? 'ok' : 'ko';
+    }
+    curseur.addEventListener('input', () => { distance = 0; maj(); });
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((b) => b.addEventListener('click', () => { const [mu, d] = b.dataset.pre!.split(',').map(Number); curseur.value = String(Math.log10(mu)); distance = d; maj(); }));
+    maj();
+  });
+</script>

@@ -1,0 +1,206 @@
+---
+title: Les calendriers
+slug: calendriers
+numero: 7
+resume: Chronologie, ères, réforme grégorienne et calendriers du monde, avec un convertisseur de dates.
+source: https://media4.obspm.fr/public/ressources_lu/pages_calendriers/introduction-calendriers.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import Frise from '../../components/Frise.astro';
+import Chiffres from '../../components/Chiffres.astro';
+import TableauDurees from '../../components/TableauDurees.astro';
+import EcartJulienGregorien from '../../components/EcartJulienGregorien.astro';
+import TesteurBissextile from '../../components/TesteurBissextile.astro';
+import ConvertisseurDates from '../../components/ConvertisseurDates.astro';
+import TableMois from '../../components/TableMois.astro';
+import VendredisTreize from '../../components/VendredisTreize.astro';
+
+## Introduction
+
+Pour repérer un instant, il faut une échelle de temps, mais aussi une façon de numéroter les jours. Le jour est l’unité naturelle : on voit facilement qu’un jour succède à un autre, beaucoup moins qu’une année s’achève. Situer n’importe quelle date sans ambiguïté, c’est le problème de la chronologie.
+
+La solution la plus simple consiste à choisir un jour d’origine, puis à compter les jours suivants, et les jours antérieurs avec des nombres négatifs. C’est le principe de la [période julienne](#en-savoir-plus-la-période-julienne). Par tradition et par commodité, les sociétés ont pourtant regroupé les jours en mois et en années, selon des règles qui varient d’une civilisation à l’autre : ce sont les calendriers.
+
+## Numéroter les années
+
+Il n’y a pas d’année zéro chez les historiens : l’année qui précède l’an 1 est notée « 1 av. J.-C. ». Elle est <Terme id="bissextile">bissextile</Terme>, tout comme 5, 9, 13 av. J.-C. : la règle de divisibilité par 4 ne fonctionne donc plus avant notre ère.
+
+Depuis Jacques Cassini (1740), les astronomes utilisent une notation algébrique : l’an 1 av. J.-C. devient l’année 0, l’an 2 av. J.-C. l’année −1, et ainsi de suite.
+
+| Notation des historiens | Notation des astronomes | Bissextile (julien) |
+| --- | --- | --- |
+| 2 apr. J.-C. | 2 | non |
+| 1 apr. J.-C. | 1 | non |
+| **1 av. J.-C.** | **0** | **oui** |
+| 2 av. J.-C. | −1 | non |
+| 4 av. J.-C. | −3 | non |
+| **5 av. J.-C.** | **−4** | **oui** |
+
+C’est cette notation qu’emploient les calculs d’éphémérides. Elle a deux avantages : les années 0, −4, −8… restent divisibles par 4, et l’intervalle entre deux années se calcule par une simple soustraction. Du 1<sup>er</sup> janvier −44 au 1<sup>er</sup> janvier 1991, il s’est écoulé 1991 − (−44) = 2035 ans.
+
+<Encadre type="retenir" titre="Siècles et millénaires">
+Comme il n’y a pas d’an zéro, le premier siècle va du 1<sup>er</sup> janvier de l’an 1 au 31 décembre de l’an 100. Le XX<sup>e</sup> siècle s’est donc achevé le 31 décembre 2000, et le XXI<sup>e</sup> siècle comme le troisième millénaire ont commencé le 1<sup>er</sup> janvier 2001.
+</Encadre>
+
+## Lunaire, solaire, luni-solaire
+
+Les calendriers reposent sur deux cycles astronomiques. Le mois approche la <Terme id="lunaison">lunaison</Terme>, intervalle entre deux nouvelles lunes. L’année approche l’<Terme id="annee-tropique">année tropique</Terme>, intervalle entre deux passages du Soleil à l’équinoxe de printemps, qui règle le retour des saisons.
+
+<Chiffres valeurs={[
+  { valeur: "29,530589", legende: "jours dans une lunaison" },
+  { valeur: "365,242190", legende: "jours dans une année tropique" },
+  { valeur: "12,37", legende: "lunaisons par année : le rapport n’est pas entier" },
+]} />
+
+Comme les deux durées ne sont pas multiples l’une de l’autre, il faut choisir. Un calendrier **lunaire** suit la Lune (calendrier musulman), un calendrier **solaire** suit les saisons (calendriers julien, grégorien, copte), un calendrier **luni-solaire** tente de suivre les deux en ajoutant de temps en temps un mois supplémentaire (calendrier israélite).
+
+Le tableau compare la durée moyenne visée par chaque calendrier à la valeur astronomique. La dernière colonne indique le temps nécessaire pour accumuler un jour d’écart.
+
+<TableauDurees />
+
+## Les ères
+
+Chaque calendrier a besoin d’une origine à partir de laquelle compter les années, ou parfois les jours ou des groupes d’années comme les olympiades grecques. Cette origine définit une <Terme id="ere">ère</Terme>. Les dates ci-dessous sont exprimées dans le calendrier julien, sauf mention contraire.
+
+<Frise evenements={[
+  { date: "1<sup>er</sup> janv. −4712, midi", titre: "Période julienne", texte: "Origine du décompte continu des jours." },
+  { date: "7 oct. −3760", titre: "Ère judaïque", texte: "Origine du calendrier israélite." },
+  { date: "été −775", titre: "Olympiades", texte: "Ère hellénistique, comptée par périodes de quatre ans à partir du solstice d’été de 776 av. J.-C." },
+  { date: "1<sup>er</sup> janv. −44", titre: "Réforme julienne", texte: "Entrée en vigueur du calendrier de Jules César (45 av. J.-C., an 709 de Rome)." },
+  { date: "an 1", titre: "Ère chrétienne", texte: "Proposée par le moine Denys le Petit au VI<sup>e</sup> siècle, elle ne devient courante qu’à l’époque carolingienne." },
+  { date: "29 août 284", titre: "Ère de Dioclétien", texte: "Origine du calendrier copte, toujours utilisé en Égypte." },
+  { date: "16 juil. 622", titre: "Hégire", texte: "Origine du calendrier musulman." },
+  { date: "15 oct. 1582 (grégorien)", titre: "Réforme grégorienne", texte: "Le calendrier grégorien remplace le julien." },
+  { date: "22 sept. 1792 (grégorien)", titre: "Ère des Français", texte: "Calendrier républicain, abandonné le 1<sup>er</sup> janvier 1806." },
+  { date: "22 mars 1957 (grégorien)", titre: "Calendrier national indien", texte: "Années comptées dans l’ère Saka, qui débute en 78 apr. J.-C." },
+]} />
+
+D’autres ères ont des origines plus incertaines : l’ère samvat en Inde, l’ère bouddhique au Cambodge et au Laos, ou encore les cycles de 60 ans liés aux règnes des empereurs en Chine et au Vietnam.
+
+## En savoir plus : la période julienne
+
+<span class="tag plus">Niveau licence</span>
+
+Proposée par Scaliger en 1583, la période julienne numérote les jours sans interruption depuis le lundi 1<sup>er</sup> janvier −4712 à midi. Son nom vient du prénom du père de Scaliger, Julien, et non de Jules César.
+
+<Encadre type="def" titre="Définitions">
+La **date julienne** est la durée écoulée depuis l’origine, en jours et fraction de jour. Le <Terme id="jour-julien">jour julien</Terme> en est la partie entière. Le jour julien 2 451 911 a commencé le 1<sup>er</sup> janvier 2001 à midi.
+</Encadre>
+
+Ce décompte continu permet de mesurer un intervalle sans se soucier des changements de calendrier. Le 1<sup>er</sup> janvier 1001 à 0 h (julien) correspond à la date julienne 2 086 673,5 et le 1<sup>er</sup> janvier 2001 à 0 h (grégorien) à 2 451 910,5. Entre les deux :
+
+$$
+2\,451\,910{,}5 - 2\,086\,673{,}5 = 365\,237 \text{ jours}
+$$
+
+## Calendriers julien et grégorien
+
+### Le calendrier julien
+
+Issu de la réforme du calendrier romain par Jules César, il est solaire. L’année commune compte 365 jours répartis en 12 mois (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31). Une année sur quatre, celle dont le millésime est divisible par 4, est bissextile : février y a 29 jours.
+
+L’année julienne moyenne dure donc 365,25 jours, un peu trop par rapport à l’année tropique. Les saisons dérivent d’environ 3 jours tous les 400 ans. Ce calendrier, en usage en Europe jusqu’au XVI<sup>e</sup> siècle, sert encore à fixer les fêtes orthodoxes.
+
+### Le calendrier grégorien
+
+En 1582, le retard accumulé atteint 10 jours. Le pape Grégoire XIII décide que le lendemain du jeudi 4 octobre 1582 sera le vendredi 15 octobre : la date saute de dix jours, mais la semaine continue normalement. La seule différence avec le calendrier julien porte ensuite sur les années bissextiles.
+
+<Encadre type="retenir" titre="Règle grégorienne">
+Une année est bissextile si son millésime est divisible par 4, *sauf* s’il est divisible par 100 sans l’être par 400. 1700, 1800 et 1900 sont communes, 2000 est bissextile. L’année moyenne dure 365,2425 jours.
+</Encadre>
+
+<TesteurBissextile />
+
+L’adoption a été progressive : dès 1582 en Italie, en Espagne et au Portugal ; en France en décembre 1582, où le lundi 20 suivit le dimanche 9 ; en Grande-Bretagne seulement en 1752, où le 14 septembre suivit le 2. Le calendrier grégorien est aujourd’hui utilisé dans le monde entier.
+
+<EcartJulienGregorien>
+Avance du calendrier grégorien sur le julien au 1<sup>er</sup> mars de chaque année. L’écart augmente d’un jour à chaque année séculaire non bissextile : il vaut 13 jours depuis 1900 et passera à 14 jours en 2100.
+</EcartJulienGregorien>
+
+## Convertisseur de dates
+
+Saisissez une date pour la retrouver dans les autres calendriers du chapitre. Les années se notent à la manière des astronomes : 0 pour 1 av. J.-C., −1 pour 2 av. J.-C.
+
+<ConvertisseurDates />
+
+<p class="small">Les calendriers musulman et israélite sont donnés sous leur forme arithmétique. En pratique, le début des mois musulmans est souvent fixé par l’observation du premier croissant, et peut différer d’un jour selon les pays.</p>
+
+## En savoir plus : d’autres calendriers
+
+<span class="tag plus">Niveau licence</span>
+
+<Repli titre="Le calendrier copte (solaire)">
+Douze mois de 30 jours, suivis de 5 jours <Terme id="epagomenes">épagomènes</Terme>, ou 6 une année sur quatre (celle dont le millésime augmenté de 1 est divisible par 4). L’année moyenne vaut 365,25 jours, comme dans le calendrier julien. L’an 1 commence le 29 août 284, et chaque année débute le 29 ou le 30 août julien.
+
+Mois : Tout, Bâbah, Hâtour, Keihak, Toubah, Amchîr, Barmahât, Barmoudah, Bachnas, Bou’nah, Abib, Masarî.
+</Repli>
+
+<Repli titre="Le calendrier musulman (lunaire)">
+Adopté sous sa forme actuelle vers 632, il compte 12 mois alternant 30 et 29 jours. Sur un cycle de 30 ans, 19 années communes ont 354 jours et 11 années abondantes 355 jours (années 2, 5, 7, 10, 13, 16, 18, 21, 24, 26 et 29 du cycle). Le mois moyen dure 29,530556 jours, très près de la lunaison, mais l’année recule de 10 à 12 jours par rapport aux saisons. Le cycle en cours a commencé le 1<sup>er</sup> Mouharram 1411, soit le mardi 24 juillet 1990.
+
+<TableMois calendrier="musulman" />
+</Repli>
+
+<Repli titre="Le calendrier israélite (luni-solaire)">
+Fixé au IV<sup>e</sup> siècle, il suit la Lune avec des mois de 29 ou 30 jours (29,530594 jours en moyenne) et les saisons grâce à un cycle de 19 ans comprenant 12 années de 12 mois et 7 années <Terme id="embolismique">embolismiques</Terme> de 13 mois (années 3, 6, 8, 11, 14, 17 et 19 du cycle). Le mois supplémentaire, Véadar (29 jours), s’intercale entre Adar et Nissan. Une année commune dure 353, 354 ou 355 jours, une année embolismique 383, 384 ou 385 jours. Le cycle en cours a commencé le 1<sup>er</sup> Tisseri 5739, le lundi 2 octobre 1978.
+
+<TableMois calendrier="israelite" />
+</Repli>
+
+<Repli titre="Le calendrier républicain (1792–1805)">
+Adopté par la Convention le 5 octobre 1793, il fait commencer chaque année à minuit le jour de l’équinoxe vrai d’automne à Paris. L’an I débute le 22 septembre 1792. L’année compte 12 mois de 30 jours, chacun divisé en trois décades, plus 5 jours complémentaires (les sansculottides) et un sixième, le jour de la Révolution, les années sextiles. Chaque jour porte le nom d’une plante, d’un animal ou d’un outil.
+
+Le texte contient une contradiction : l’année doit commencer à l’équinoxe, mais l’année sextile revient tous les quatre ans. Le conflit n’aurait été visible qu’en l’an XIX, mais il pèse dans le retour au calendrier grégorien le 1<sup>er</sup> janvier 1806 (11 nivôse an XIV).
+
+| Saison | Mois |
+| --- | --- |
+| Automne | Vendémiaire, Brumaire, Frimaire |
+| Hiver | Nivôse, Pluviôse, Ventôse |
+| Printemps | Germinal, Floréal, Prairial |
+| Été | Messidor, Thermidor, Fructidor |
+
+Jours de la décade : primidi, duodi, tridi, quartidi, quintidi, sextidi, septidi, octodi, nonidi, décadi.
+</Repli>
+
+<Repli titre="Le calendrier national indien (solaire)">
+Défini par le Comité de réforme du calendrier, il est officiel depuis le 22 mars 1957 (1<sup>er</sup> Chaitra 1879 de l’ère Saka). Les mois comptent 30 ou 31 jours et la règle bissextile est celle du calendrier grégorien.
+
+<TableMois calendrier="indien" />
+</Repli>
+
+## Le calendrier perpétuel
+
+Un calendrier perpétuel donne le jour de la semaine de n’importe quelle date. La version imprimée du cours utilise une table d’indices : on additionne les indices du siècle, des dizaines, des unités de l’année, du mois et du quantième, puis le reste de la division par 7 donne le jour. Le principe est le même que celui du convertisseur, qui passe par la date julienne : les jours de la semaine se succèdent sans interruption, quel que soit le calendrier.
+
+<VendredisTreize />
+
+### Exercices
+
+**1.** Quels mois de 1948 comptaient un vendredi 13 ?
+
+<Repli>
+Février et août. Avec la table d’indices, il faut que l’indice du mois vérifie 1 + 5 + 5 + *x* + 6 ≡ 5 (mod 7), soit *x* = 2, l’indice de février (année bissextile) et d’août.
+</Repli>
+
+**2.** Quelle était la date du troisième jeudi d’octobre 1951 ?
+
+<Repli>
+Le 18 octobre. Le 1<sup>er</sup> octobre 1951 était un lundi, donc le premier jeudi tombait le 4.
+</Repli>
+
+**3.** Au XIX<sup>e</sup> siècle, en quelles années le 29 février est-il tombé un mardi ?
+
+<Repli>
+En 1820, 1848 et 1876. Le même jour de la semaine revient tous les 28 ans tant qu’aucune année séculaire commune n’intervient.
+</Repli>
+
+## Testez-vous
+
+<Quiz questions={[
+  { question: "Laquelle de ces années est commune dans le calendrier grégorien ?", choix: ["2000", "2100", "2024"], reponse: 1 },
+  { question: "Le calendrier musulman est :", choix: ["solaire", "lunaire", "luni-solaire"], reponse: 1 },
+  { question: "Quand le XXIe siècle a-t-il commencé ?", choix: ["Le 1er janvier 2000", "Le 1er janvier 2001", "Le 31 décembre 2000"], reponse: 1 },
+]} />

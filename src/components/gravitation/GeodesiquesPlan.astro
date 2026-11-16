@@ -1,0 +1,26 @@
+---
+/** Plan euclidien : deux mobiles lancés parallèlement suivent des droites et restent à distance constante (redessiné d’après CNRS / J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, point2D, ind, type P2 } from '../../lib/projection';
+/** Coordonnées (u, v) du plan → écran, en perspective cavalière. */
+const pl = (u: number, v: number): P2 => [50 + u + 0.45 * v, 220 - 0.62 * v + 70];
+const coins = [pl(0, 0), pl(360, 0), pl(360, 300), pl(0, 300)];
+const uA = 125, uB = 225, v0 = 35, v1 = 265;
+let s = `<path d="${chemin(coins, true)}" fill="var(--sector)" stroke="var(--ink-soft)" stroke-width="1.2"/>`;
+s += texte2D(pl(330, 278), 'P', { taille: 20, italique: true, couleur: 'var(--ink-soft)' });
+for (const [u, n] of [[uA, 'A'], [uB, 'B']] as [number, string][]) {
+  s += trait2D(pl(u, v0), pl(u, v1), { couleur: 'var(--orbit)', epaisseur: 2.2, tirets: '7 5' });
+  s += trait2D(pl(u, v0), pl(u, v0 + 75), { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+  s += point2D(pl(u, v0), 5, 'var(--orbit)');
+  s += texte2D(pl(u, v0), n, { dx: -8, dy: 24, taille: 16, gras: true });
+  s += texte2D(pl(u, v0 + 60), `v${ind(n)}`, { dx: 10, dy: 0, taille: 15, italique: true, couleur: 'var(--ko)', brut: true });
+  s += point2D(pl(u, v1), 4, 'var(--orbit)');
+}
+// Distance constante entre les deux trajectoires.
+for (const v of [v0 + 110, v1 - 20]) {
+  s += trait2D(pl(uA + 6, v), pl(uB - 6, v), { couleur: 'var(--brass)', epaisseur: 1.3, fleche: 'deux' });
+  s += texte2D(pl((uA + uB) / 2, v), 'd', { dy: -7, ancre: 'middle', taille: 15, italique: true, couleur: 'var(--brass)' });
+}
+s += texte2D([590, 333], 'Les droites restent parallèles : la distance d ne change pas', { ancre: 'end', taille: 13, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Plan euclidien P : deux corps A et B lancés avec la même vitesse suivent des droites parallèles et restent à distance constante" largeur={600} hauteur={345} svg={s}><slot /></Figure>

@@ -1,0 +1,113 @@
+---
+/**
+ * Configurations des satellites galiléens de Jupiter : diagramme « en serpentin » d’un mois, à la manière de la
+ * Connaissance des Temps, et aspect vu de la Terre à l’instant choisi (théorie simplifiée de Meeus, lib/ephemerides.ts).
+ */
+---
+<div class="sim" data-jupiter data-pagefind-ignore>
+  <svg viewBox="0 0 600 120" role="img" aria-label="Jupiter et ses quatre satellites galiléens vus de la Terre à l’instant choisi" data-vue>
+    <g font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Mois</span> <input data-mois type="month" min="1900-01" max="2100-12" /></label>
+    <label><span>Jour et heure (UT)</span> <input data-t type="range" min="0" step="1" /> <output data-t-out></output></label>
+  </div>
+  <div class="readout" aria-live="polite" data-lecture></div>
+  <svg viewBox="0 0 600 460" role="img" aria-label="Diagramme en serpentin : élongation des quatre satellites de part et d’autre de Jupiter, jour par jour, pendant le mois choisi" data-serpentin>
+    <g font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <p class="note">Les élongations sont exprimées en rayons équatoriaux de Jupiter, l’ouest à droite, le nord en haut (comme à l’œil nu ou aux jumelles). Une courbe s’interrompt quand le satellite passe derrière la planète. Théorie simplifiée (précision de quelques centièmes de rayon) ; les éclipses dans l’ombre de Jupiter ne sont pas représentées.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 240px;flex-wrap:wrap}
+  .controls output{min-width:8em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  input[type=month]{font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.3rem .5rem}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.6rem;margin:.9rem 0;font-size:.9rem}
+  .readout :global(div){border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout :global(b){display:block;font-family:var(--display);font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout :global(span){color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { galileens, NOMS_GALILEENS } from '../lib/ephemerides';
+  import { jourJulien } from '../lib/reperes';
+  import { chemin, texte2D, type P2 } from '../lib/projection';
+  import { nbFr as nb } from '../lib/relativite';
+
+  const CX = 300, K = 9.6; // centre et pixels par rayon de Jupiter
+  const COUL = ['var(--orbit)', 'var(--brass)', 'var(--ko)', 'var(--ink-soft)'], CHIFFRES = ['I', 'II', 'III', 'IV'];
+  const Y0 = 34, HJ = 410; // haut et hauteur du serpentin
+
+  document.querySelectorAll<HTMLElement>('[data-jupiter]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const mois = q<HTMLInputElement>('[data-mois]'), tps = q<HTMLInputElement>('[data-t]');
+    const maintenant = new Date();
+    mois.value = `${maintenant.getUTCFullYear()}-${String(maintenant.getUTCMonth() + 1).padStart(2, '0')}`;
+    let nbJours = 31, debut = 0;
+
+    function serpentin() {
+      const [a, m] = mois.value.split('-').map(Number);
+      nbJours = new Date(Date.UTC(a, m, 0)).getUTCDate();
+      debut = jourJulien(new Date(Date.UTC(a, m - 1, 1)));
+      tps.max = String(nbJours * 24); if (+tps.value > nbJours * 24) tps.value = '0';
+      const gy = (h: number) => Y0 + (h / (nbJours * 24)) * HJ;
+      let s = `<rect x="${CX - K}" y="${Y0}" width="${2 * K}" height="${HJ}" fill="var(--sun)" fill-opacity=".35"/>`;
+      for (let j = 0; j <= nbJours; j++) {
+        s += `<line x1="${CX - 290}" x2="${CX + 290}" y1="${gy(j * 24)}" y2="${gy(j * 24)}" stroke="var(--rule)" stroke-width="${j % 5 ? 0.5 : 1}"/>`;
+        if (j < nbJours && (j % 2 === 0)) s += texte2D([14, gy(j * 24 + 12) + 4], String(j + 1), { taille: 10, couleur: 'var(--ink-soft)' });
+      }
+      // Courbes : un point par heure, interrompues quand le satellite est caché derrière Jupiter.
+      const traces: P2[][][] = [[], [], [], []];
+      for (let h = 0; h <= nbJours * 24; h++) {
+        galileens(debut + h / 24).forEach((sat, i) => {
+          const segs = traces[i], p: P2 = [CX + sat.X * K, gy(h)];
+          if (sat.cache) { if (segs.length && segs[segs.length - 1].length) segs.push([]); return; }
+          if (!segs.length) segs.push([]);
+          segs[segs.length - 1].push(p);
+        });
+      }
+      traces.forEach((segs, i) => segs.forEach((pts) => { if (pts.length > 1) s += `<path d="${chemin(pts)}" fill="none" stroke="${COUL[i]}" stroke-width="1.7"/>`; }));
+      s += texte2D([CX - 280, 22], 'Est', { taille: 12, couleur: 'var(--ink-soft)' }) + texte2D([CX + 280, 22], 'Ouest', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+      s += texte2D([CX, 22], 'Jupiter', { ancre: 'middle', taille: 12, couleur: 'var(--brass)' });
+      CHIFFRES.forEach((c, i) => { s += `<rect x="${CX - 200 + i * 105}" y="${Y0 + HJ + 8}" width="14" height="4" fill="${COUL[i]}"/>` + texte2D([CX - 182 + i * 105, Y0 + HJ + 14], `${c} ${NOMS_GALILEENS[i]}`, { taille: 11.5, couleur: COUL[i] }); });
+      s += `<line data-curseur x1="${CX - 290}" x2="${CX + 290}" stroke="var(--ko)" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+      q('[data-serpentin] g').innerHTML = s;
+      instant();
+    }
+    function instant() {
+      const h = +tps.value, jd = debut + h / 24, sats = galileens(jd);
+      const gy = Y0 + (h / (nbJours * 24)) * HJ, c = q('[data-curseur]');
+      c.setAttribute('y1', gy.toFixed(1)); c.setAttribute('y2', gy.toFixed(1));
+      const [a, m] = mois.value.split('-').map(Number), j = Math.floor(h / 24) + 1, hh = h % 24;
+      q('[data-t-out]').textContent = `${j} ${new Date(Date.UTC(a, m - 1, j)).toLocaleDateString('fr-FR', { month: 'long', timeZone: 'UTC' })}, ${hh} h`;
+      // Vue du ciel : bandes nuageuses stylisées, satellites devant ou derrière.
+      const Yc = 66;
+      let s = '';
+      const derriere = sats.map((x, i) => [x, i] as const).filter(([x]) => !x.devant), devant = sats.map((x, i) => [x, i] as const).filter(([x]) => x.devant);
+      const point = ([x, i]: readonly [ReturnType<typeof galileens>[number], number]) => {
+        if (x.cache) return '';
+        const p: P2 = [CX + x.X * K, Yc - x.Y * K];
+        return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.6" fill="${COUL[i]}" stroke="var(--surface)" stroke-width="1"/>` + texte2D(p, CHIFFRES[i], { dy: i % 2 ? 20 : -9, ancre: 'middle', taille: 11, couleur: COUL[i] });
+      };
+      s += derriere.map(point).join('');
+      s += `<ellipse cx="${CX}" cy="${Yc}" rx="${K}" ry="${K * 0.935}" fill="var(--sun)" fill-opacity=".9" stroke="var(--ink)" stroke-width=".8"/>`;
+      s += `<line x1="${CX - K}" x2="${CX + K}" y1="${Yc - 2.5}" y2="${Yc - 2.5}" stroke="var(--brass)" stroke-width="1.6"/><line x1="${CX - K + 1}" x2="${CX + K - 1}" y1="${Yc + 2.5}" y2="${Yc + 2.5}" stroke="var(--brass)" stroke-width="1.6"/>`;
+      s += devant.map(point).join('');
+      s += texte2D([14, 20], 'Est', { taille: 12, couleur: 'var(--ink-soft)' }) + texte2D([586, 20], 'Ouest', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+      s += texte2D([14, 112], 'nord en haut', { taille: 11, couleur: 'var(--ink-soft)' });
+      q('[data-vue] g').innerHTML = s;
+      q('[data-lecture]').innerHTML = sats.map((x, i) => `<div><b style="color:${COUL[i]}">${CHIFFRES[i]} ${x.nom}</b><span>${x.cache ? 'caché derrière Jupiter' : Math.abs(x.X) < 1 && x.devant ? 'passe devant Jupiter' : `${nb(Math.abs(x.X), 1)} rayon${Math.abs(x.X) >= 2 ? 's' : ''} à l’${x.X > 0 ? 'ouest' : 'est'}`}</span></div>`).join('');
+    }
+    mois.addEventListener('input', () => { if (mois.value) serpentin(); });
+    tps.addEventListener('input', instant);
+    serpentin(); // fixe d’abord le maximum du curseur
+    tps.value = String((maintenant.getUTCDate() - 1) * 24 + maintenant.getUTCHours());
+    instant();
+  });
+</script>

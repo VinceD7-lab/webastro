@@ -1,0 +1,20 @@
+---
+/** Angle apparent : la Lune et la tête d’un personnage proche vues sous le même angle (redessiné d’après ASM, J.-E. Arlot, G. Bessou, D. Taharbouche). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, type P2 } from '../../lib/projection';
+import { observateur, croissant, arcAngle, direction } from '../../lib/dessin';
+const sol = 330;
+const o = observateur([90, sol], 20, 70);
+const E = o.oeil, M: P2 = [520, 110], rM = 26;
+const p2 = observateur([330, sol], 170, 70), tete: P2 = [332, sol - 60.7];
+const tangentes = (c: P2, r: number) => { const d = Math.hypot(c[0] - E[0], c[1] - E[1]), a = Math.atan2(c[1] - E[1], c[0] - E[0]), k = Math.asin(r / d); return [a - k, a + k].map((t) => [E[0] + d * Math.cos(t), E[1] + d * Math.sin(t)] as P2); };
+let s = `<rect x="0" y="${sol}" width="600" height="40" fill="var(--surface-2)"/><line x1="0" y1="${sol}" x2="600" y2="${sol}" stroke="var(--ink-soft)"/>`;
+s += croissant(M, rM) + o.svg + p2.svg;
+for (const t of tangentes(M, rM)) s += trait2D(E, t, { epaisseur: 1.1 });
+for (const t of tangentes(tete, 7.5)) s += trait2D(E, t, { epaisseur: 1.1 });
+const [m1, m2] = tangentes(M, rM).map((t) => direction(E, t)), [t1, t2] = tangentes(tete, 7.5).map((t) => direction(E, t));
+s += arcAngle(E, Math.min(m1, m2), Math.max(m1, m2), 180, 'var(--ko)', 1.6) + texte2D([E[0] + 175, E[1] - 92], 'α₁', { taille: 16, couleur: 'var(--ko)' });
+s += arcAngle(E, Math.min(t1, t2), Math.max(t1, t2), 150, 'var(--orbit)', 1.6) + texte2D([E[0] + 150, E[1] + 20], 'α₂', { taille: 16, couleur: 'var(--orbit)' });
+s += texte2D([M[0], M[1] + 46], 'Lune', { ancre: 'middle', taille: 14 });
+---
+<Figure titre="Un observateur voit la Lune sous l’angle α₁ et la tête d’un personnage proche sous l’angle α₂ ; des angles égaux ne signifient pas des tailles égales" largeur={600} hauteur={370} svg={s}><slot /></Figure>

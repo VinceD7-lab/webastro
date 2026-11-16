@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import glossaire from '../data/glossaire.json';
+const termes = Object.entries(glossaire).sort((a, b) => a[1].titre.localeCompare(b[1].titre, 'fr'));
+---
+<BaseLayout title="Glossaire" actif="glossaire" description="Définitions des notions du cours de mécanique céleste, temps et calendriers.">
+  <section class="chapter">
+    <div class="wrap glossaire" data-pagefind-body>
+      <h1>Glossaire</h1>
+      <dl>
+        {termes.map(([id, t]) => <div><dt id={id}>{t.titre}</dt> <dd>{t.definition}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .glossaire{max-width:760px;padding-top:clamp(2.5rem,6vw,4.5rem);padding-bottom:4rem}
+  h1{font-size:clamp(2.6rem,6vw,4rem);font-weight:500;margin-bottom:2rem}
+  dt{font-family:var(--display);font-size:1.45rem;font-weight:600;padding-top:1rem;border-top:1px solid var(--rule)}
+  dd{margin:.2rem 0 1rem}
+</style>

@@ -1,0 +1,710 @@
+{
+  "galilee": {
+    "nom": "Galilée",
+    "naissance": 1564,
+    "mort": 1642,
+    "description": "physicien, philosophe et astronome italien",
+    "resume": [
+      "Galilée (en italien : Galileo Galilei), né à Pise le 15 février 1564 et mort à Arcetri près de Florence le 8 janvier 1642, est un mathématicien, géomètre, physicien et astronome italien du XVIIe siècle.",
+      "Parmi ses réalisations techniques, il a perfectionné et exploité la lunette astronomique, perfectionnement de la découverte hollandaise d'une lunette d'approche, pour procéder à des observations rapides et précoces qui ont bouleversé les fondements de l'astronomie. Cet homme de sciences s'est ainsi posé en défenseur de l'approche modélisatrice copernicienne de l'Univers, proposant d'adopter l'héliocentrisme et les mouvements satellitaires."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Galil%C3%A9e_(savant)",
+    "article": "Galilée (savant)",
+    "portrait": {
+      "fichier": "personnes/galilee.jpg",
+      "auteur": "Justus Sustermans",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei,_1636.jpg"
+    }
+  },
+  "huygens": {
+    "nom": "Christian Huygens",
+    "naissance": 1629,
+    "mort": 1695,
+    "description": "mathématicien, physicien et astronome néerlandais",
+    "resume": [
+      "Christiaan Huygens, Christianus Hugenius en latin et Christian Huygens en français, né le 14 avril 1629 à La Haye (dans les Provinces-Unies), où il est mort le 8 juillet 1695, est un mathématicien, astronome et physicien néerlandais.",
+      "Il est considéré comme un alter ego de Galilée, notamment pour sa découverte de Titan qu'il décrit dans Le Système de Saturne (1659) où il fait une première description exhaustive du Système solaire à six planètes et à six lunes, avec une précision alors inégalée. Pour la première fois, il est possible d'avoir une idée de la dimension du système, de l'éloignement des étoiles et de la position exacte de la Terre en son sein, ainsi que de sa dimension exacte, nettement plus grande que Mars ou Mercure, à peine plus grande que Vénus, mais nettement plus petite que Jupiter et Saturne."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Christian_Huygens",
+    "article": "Christian Huygens",
+    "portrait": {
+      "fichier": "personnes/huygens.jpg",
+      "auteur": "Caspar Netscher",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Caspar_Netscher_-_Christiaan_Huygens,_the_astronomer,_1671.jpg"
+    }
+  },
+  "descartes": {
+    "nom": "René Descartes",
+    "naissance": 1596,
+    "mort": 1650,
+    "description": "philosophe et mathématicien français",
+    "resume": [
+      "René Descartes est un mathématicien, physicien et philosophe français, né le 31 mars 1596 à La Haye-en-Touraine, commune de l'Indre-et-Loire qui porte aujourd'hui son nom, et mort le 11 février 1650 à Stockholm.",
+      "Il est considéré comme l’un des fondateurs de la philosophie moderne. Il reste célèbre pour avoir exprimé dans son Discours de la méthode le cogito — « Je pense, donc je suis » — fondant ainsi le système des sciences sur le sujet connaissant face au monde qu'il se représente. En physique, il a apporté une contribution à l’optique et est considéré comme l'un des fondateurs du mécanisme. En mathématiques, il est à l’origine de la géométrie analytique. Certaines de ses théories ont par la suite été contestées (théorie de l’animal-machine) ou abandonnées (théorie des tourbillons ou des esprits animaux)."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Ren%C3%A9_Descartes",
+    "article": "René Descartes",
+    "portrait": {
+      "fichier": "personnes/descartes.jpg",
+      "auteur": "After Frans Hals",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg"
+    }
+  },
+  "clairaut": {
+    "nom": "Alexis Clairaut",
+    "naissance": 1713,
+    "mort": 1765,
+    "description": "mathématicien, astronome et géophysicien français",
+    "resume": [
+      "Alexis Claude Clairaut, né le 13 mai 1713 à Paris où il est mort le 17 mai 1765, est un mathématicien français.",
+      "Il est le second d’une fratrie de 21 enfants. Son père, Jean-Baptiste Clairaut (1680-1766), enseignait les mathématiques. Il est instruit par lui en cette matière, apprenant à lire dans les Éléments d'Euclide. Il se montre d’une précocité telle qu’à l’âge de douze ans, il écrit un mémoire sur quatre courbes géométriques. À treize ans, il lit devant l’Académie des sciences un compte rendu des propriétés de quatre courbes qu’il avait découvertes. À seize ans seulement, il finit un traité intitulé « Recherches sur les courbes à double courbure » qui, lors de sa publication en 1731, entraîne son admission à l’Académie des sciences alors qu’il n’avait pas l’âge légal."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Alexis_Claude_Clairaut",
+    "article": "Alexis Claude Clairaut",
+    "portrait": {
+      "fichier": "personnes/clairaut.jpg",
+      "auteur": "Louis-Jacques Cathelin / After Charles-Nicolas Cochin",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Alexis_Clairault.jpg"
+    }
+  },
+  "euler": {
+    "nom": "Leonhard Euler",
+    "naissance": 1707,
+    "mort": 1783,
+    "description": "mathématicien, physicien, ingénieur et philosophe suisse",
+    "resume": [
+      "Leonhard Euler, né le 15 avril 1707 à Bâle (Suisse) et mort le 7 septembre 1783 (18 septembre dans le calendrier grégorien) à Saint-Pétersbourg (Empire russe), est un mathématicien et physicien suisse, qui passa la plus grande partie de sa vie dans l'Empire russe et en Allemagne. Il était notamment membre de l'Académie royale des sciences de Prusse à Berlin.",
+      "Euler fit d'importantes découvertes dans des domaines aussi variés que le calcul infinitésimal et la théorie des graphes. Il introduisit également une grande partie de la terminologie et de la notation des mathématiques modernes, en particulier pour l'analyse mathématique, comme la notion de fonction mathématique. Il est aussi connu pour ses travaux en mécanique, en dynamique des fluides, en optique et en astronomie ou en géométrie du triangle."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Leonhard_Euler",
+    "article": "Leonhard Euler",
+    "portrait": {
+      "fichier": "personnes/euler.jpg",
+      "auteur": "Jakob Emanuel Handmann",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Leonhard_Euler_2.jpg"
+    }
+  },
+  "dalembert": {
+    "nom": "Jean le Rond d’Alembert",
+    "naissance": 1717,
+    "mort": 1783,
+    "description": "mathématicien et philosophe français",
+    "resume": [
+      "Jean Le Rond d'Alembert, connu sous le nom D'Alembert, et dont le nom est parfois écrit « Jean le Rond D'Alembert » ou « Dalembert », voire « Dalambert », est un mathématicien, physicien, philosophe et encyclopédiste français, né le 16 novembre 1717 à Paris où il est mort le 29 octobre 1783.",
+      "Il est célèbre pour avoir été l'inventeur d'un principe de l'équilibre que Condorcet explique dans son Éloge de d'Alembert. Il a ainsi fixé une liaison entre les lois du mouvement. Par son théorème fondamental de l'algèbre parfois nommé « théorème de d'Alembert », il perçoit la présence de n racines dans toute équation algébrique de degré n. En 1744, il est l'inventeur de cette nouvelle branche des mathématiques, le calcul aux dérivées partielles, qui introduit des fonctions arbitraires."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Jean_Le_Rond_d'Alembert",
+    "article": "Jean Le Rond d'Alembert",
+    "portrait": {
+      "fichier": "personnes/dalembert.jpg",
+      "auteur": "After Maurice Quentin de La Tour",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Jean_Le_Rond_d%27Alembert,_by_French_school.jpg"
+    }
+  },
+  "newton": {
+    "nom": "Isaac Newton",
+    "naissance": 1642,
+    "mort": 1727,
+    "description": "philosophe, mathématicien, physicien, alchimiste, astronome et théologien anglais",
+    "resume": [
+      "Isaac Newton (25 décembre 1642 J – 20 mars 1727 J, ou 4 janvier 1643 G – 31 mars 1727 G) est un mathématicien, physicien, philosophe, alchimiste, astronome et théologien anglais, puis britannique. Figure emblématique des sciences, il est surtout reconnu pour avoir fondé la mécanique classique, pour sa théorie de la gravitation universelle et la création, en concurrence avec Gottfried Wilhelm Leibniz, du calcul infinitésimal.",
+      "En optique, il a développé une théorie de la couleur fondée sur l'observation selon laquelle un prisme décompose la lumière blanche en un spectre visible. Il a aussi inventé le télescope à réflexion composé d'un miroir primaire concave appelé télescope de Newton."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Isaac_Newton",
+    "article": "Isaac Newton",
+    "portrait": {
+      "fichier": "personnes/newton.jpg",
+      "auteur": "Godfrey Kneller",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:GodfreyKneller-IsaacNewton-1689.jpg"
+    }
+  },
+  "laplace": {
+    "nom": "Pierre-Simon de Laplace",
+    "naissance": 1749,
+    "mort": 1827,
+    "description": "mathématicien et astronome français",
+    "resume": [
+      "Pierre-Simon de Laplace ou Pierre-Simon Laplace, comte Laplace, puis 1er marquis de Laplace, né le 23 mars 1749 à Beaumont-en-Auge et mort le 5 mars 1827 à Paris, est un mathématicien, astronome, physicien et homme politique français.",
+      "Laplace a apporté des contributions fondamentales dans différents champs des mathématiques, de l'astronomie et de la théorie des probabilités. Il a été l'un des scientifiques les plus influents de son temps, notamment par son affirmation du déterminisme. Il a contribué de façon décisive à l'émergence de l'astronomie mathématique, reprenant et étendant le travail de ses prédécesseurs dans son Traité de Mécanique céleste (1799-1825). Cet ouvrage majeur, en cinq volumes, a transformé l'approche géométrique de la mécanique développée par Newton en une approche fondée sur l'analyse mathématique."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Pierre-Simon_de_Laplace",
+    "article": "Pierre-Simon de Laplace",
+    "portrait": {
+      "fichier": "personnes/laplace.jpg",
+      "auteur": "Jean-Baptiste Paulin Guérin",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Pierre-Simon,_marquis_de_Laplace_(1745-1827)_-_Gu%C3%A9rin.jpg"
+    }
+  },
+  "lagrange": {
+    "nom": "Joseph-Louis Lagrange",
+    "naissance": 1736,
+    "mort": 1813,
+    "description": "astronome et mathématicien français d'origine sarde",
+    "resume": [
+      "Joseph-Louis Lagrange (en italien Giuseppe Luigi Lagrangia ou Giuseppe Ludovico De la Grange Tournier ou Luigi De La Grange, ou encore Luigi Lagrange), né à Turin le 25 janvier 1736 et mort à Paris le 10 avril 1813, est un mathématicien, mécanicien et astronome sarde-piémontais, naturalisé français.",
+      "Professeur de mathématiques à l’Académie royale de Turin dès l’âge de dix-neuf ans, il y pose, en échangeant avec Leonhard Euler, les méthodes qui contribueront à fonder le calcul des variations. En 1766, à l’invitation de Frédéric II de Prusse, il succède à Euler à la direction de la section de mathématiques de l’Académie royale des sciences de Prusse à Berlin, où il poursuit ses travaux pendant une vingtaine d’années. En 1787, il s’installe à Paris et devient membre de l’Académie royale des sciences."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Joseph-Louis_Lagrange",
+    "article": "Joseph-Louis Lagrange",
+    "portrait": {
+      "fichier": "personnes/lagrange.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%9B%D0%B0%D0%B3%D1%80%D0%B0%D0%BD%D0%B6.jpg"
+    }
+  },
+  "kepler": {
+    "nom": "Johannes Kepler",
+    "naissance": 1571,
+    "mort": 1630,
+    "description": "astronome allemand",
+    "resume": [
+      "Johannes Kepler (ou Keppler), né le 27 décembre 1571 à Weil der Stadt et mort le 15 novembre 1630 à Ratisbonne, est un astronome allemand célèbre pour avoir étudié l'hypothèse héliocentrique de Nicolas Copernic, affirmant que la Terre tourne autour du Soleil, et surtout pour avoir découvert que les planètes ne tournent pas autour du Soleil en suivant des trajectoires circulaires parfaites, mais elliptiques.",
+      "Kepler découvre les relations mathématiques (dites lois de Kepler) qui régissent les mouvements des planètes sur leur orbite. Ces relations sont ensuite exploitées par Isaac Newton pour élaborer la théorie de la gravitation universelle."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Johannes_Kepler",
+    "article": "Johannes Kepler",
+    "portrait": {
+      "fichier": "personnes/kepler.jpg",
+      "auteur": "August Köhler",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:JKepler.jpg"
+    }
+  },
+  "leverrier": {
+    "nom": "Urbain Le Verrier",
+    "naissance": 1811,
+    "mort": 1877,
+    "description": "astronome, mathématicien et homme politique français",
+    "resume": [
+      "Urbain Le Verrier, né à Saint-Lô le 11 mars 1811 et mort à Paris le 23 septembre 1877, est un astronome, mathématicien français spécialisé en mécanique céleste et fondateur de la météorologie française. Il est célèbre comme découvreur de la planète Neptune par le calcul le 23 septembre 1846.",
+      "Urbain Jean Joseph Le Verrier est né dans une famille bourgeoise modeste, de Louis-Baptiste Le Verrier, « surnuméraire dans l'administration des domaines » et de Marie-Jeanne-Joséphine-Pauline de Baudre. Après huit ans d'études au collège communal de sa ville natale Saint-Lô, il entre au collège royal de Caen où il étudiera les mathématiques de 1827 à 1830. Son père qui croit en son avenir dans les sciences l'inscrit à l'Institution Mayer dirigée par le mathématicien Choquet et vend sa maison pour subvenir aux frais de cette école préparatoire."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Urbain_Le_Verrier",
+    "article": "Urbain Le Verrier",
+    "portrait": {
+      "fichier": "personnes/leverrier.jpg",
+      "auteur": "User Magnus Manske on en.wikipedia",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Urbain_Le_Verrier.jpg"
+    }
+  },
+  "adams": {
+    "nom": "John Couch Adams",
+    "naissance": 1819,
+    "mort": 1892,
+    "description": "mathématicien et astronome britannique",
+    "resume": [
+      "John Couch Adams (5 juin 1819 – 21 janvier 1892), est un mathématicien et astronome britannique né à Laneast dans les Cornouailles et mort à Cambridge.",
+      "Rival de Le Verrier en astronomie, il est à l'origine de plusieurs méthodes de calcul approché.",
+      "La plus célèbre avancée d'Adams est la prédiction de l'existence et de la position de la planète Neptune, en se basant uniquement sur les mathématiques. Il effectue ses calculs pour expliquer les divergences constatées entre l'orbite réelle d'Uranus, connue depuis peu, et celle prédite par les lois du mouvement de Kepler et de Newton. Ces travaux lui valent la médaille Copley en 1848.",
+      "En parallèle, mais indépendamment, les mêmes calculs sont effectués avec davantage de précision par le Français Urbain Le Verrier."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/John_Couch_Adams",
+    "article": "John Couch Adams",
+    "portrait": {
+      "fichier": "personnes/adams.jpg",
+      "auteur": "Unknown (Mondadori Publishers)",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:John_Couch_Adams_1870s.jpg"
+    }
+  },
+  "galle": {
+    "nom": "Johann Gottfried Galle",
+    "naissance": 1812,
+    "mort": 1910,
+    "description": "astronome allemand",
+    "resume": [
+      "Johann Gottfried Galle (Radis, 9 juin 1812 – Potsdam, 10 juillet 1910), est un astronome allemand à l’observatoire de Berlin.",
+      "Le 23 septembre 1846, avec l’assistance de l’étudiant Heinrich Louis d'Arrest, il est la première personne à observer Neptune, en sachant exactement ce qu’il voyait. Il se fonda pour cela sur les calculs qui lui avaient été transmis par Urbain Le Verrier pour savoir où pointer son télescope.",
+      "Il commence à travailler comme assistant de Johann Franz Encke en 1835 juste après la mise en service de l’observatoire de Berlin. En 1851, il déménage à Breslau pour devenir professeur d’astronomie et directeur de l’observatoire local (de).",
+      "Tout au long de sa carrière il étudie les comètes, et en 1894 (avec l’aide de son fils Andreas Galle (de)) il publie une liste de 414 comètes."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Johann_Gottfried_Galle",
+    "article": "Johann Gottfried Galle",
+    "portrait": {
+      "fichier": "personnes/galle.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Johann-Gottfried-Galle.jpg"
+    }
+  },
+  "tombaugh": {
+    "nom": "Clyde Tombaugh",
+    "naissance": 1906,
+    "mort": 1997,
+    "description": "astronome américain",
+    "resume": [
+      "Clyde William Tombaugh, né le 4 février 1906 à Streator dans l'Illinois et mort le 17 janvier 1997 à Las Cruces au Nouveau-Mexique, est un astronome américain.",
+      "Il est notamment connu pour avoir découvert la planète naine Pluton en 1930.",
+      "Clyde Tombaugh se passionne très tôt pour l'astronomie grâce à son père, agriculteur, et à son oncle, qui lui apprennent à regarder les étoiles. Avec ses premiers instruments astronomiques, qu'il fabrique à partir de pièces de voitures et de machines agricoles, il observe pendant des heures le ciel, notamment les planètes. En 1928, il décide d'envoyer des croquis de Jupiter et Mars réalisés à l'aide de son télescope-maison de 22 cm, à l'observatoire Lowell près de Flagstaff dans l'Arizona, simplement pour recueillir quelques commentaires d'experts."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Clyde_William_Tombaugh",
+    "article": "Clyde William Tombaugh",
+    "portrait": {
+      "fichier": "personnes/tombaugh.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Clyde_W._Tombaugh.jpeg"
+    }
+  },
+  "lowell": {
+    "nom": "Percival Lowell",
+    "naissance": 1855,
+    "mort": 1916,
+    "description": "astronome américain",
+    "resume": [
+      "Percival Lawrence Lowell (né le 13 mars 1855 à Boston (Massachusetts) et mort le 13 novembre 1916 à Flagstaff (Arizona)) est un homme d'affaires, mathématicien, auteur, astronome amateur américain.",
+      "Il est connu pour avoir soutenu la présence de canaux d'eau sur Mars et fondé l'observatoire qui porte son nom à Flagstaff en Arizona. Il est également à l'origine de l'effort qui a mené, quatorze ans après sa mort, à la découverte de Pluton première planète naine du Système solaire externe, par Clyde Tombaugh."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Percival_Lowell",
+    "article": "Percival Lowell",
+    "portrait": {
+      "fichier": "personnes/lowell.jpg",
+      "auteur": "James E. Purdy / Adam Cuerden",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Percival_Lowell_by_James_E._Purdy.jpg"
+    }
+  },
+  "newcomb": {
+    "nom": "Simon Newcomb",
+    "naissance": 1835,
+    "mort": 1909,
+    "description": "astronome américain",
+    "resume": [
+      "Simon Newcomb, né le 12 mars 1835 à Wallace (Nouvelle-Écosse, Canada) et mort le 11 juillet 1909 à Washington DC, est un astronome, mathématicien, économiste et statisticien américain d'origine canadienne, éditeur de l'American Journal of Mathematics (1885-1900) et auteur d'un roman de science-fiction.",
+      "Fils d'Emily Prince et de John Burton Newcomb, un enseignant itinérant, Simon Newcomb étudie les mathématiques et la physique en autodidacte, il se finance en enseignant avant de devenir calculateur au Nautical Almanac Office à Cambridge (Massachusetts) en 1857. À la même époque, il étudie à la Lawrence Scientific School de l'université Harvard et obtient son premier diplôme en 1858."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Simon_Newcomb",
+    "article": "Simon Newcomb",
+    "portrait": {
+      "fichier": "personnes/newcomb.jpg",
+      "auteur": "Harris & Ewing",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Simon_Newcomb_01.jpg"
+    }
+  },
+  "milankovitch": {
+    "nom": "Milutin Milanković",
+    "naissance": 1879,
+    "mort": 1958,
+    "description": "ingénieur, astronome, géophysicien, inventeur et climatologue serbe",
+    "resume": [
+      "Milutin Milanković (souvent francisé en Milankovitch, en serbe cyrillique : Милутин Миланковић), né le 28 mai 1879 à Dalj en Autriche-Hongrie (aujourd'hui Croatie) et mort le 12 décembre 1958 à Belgrade en Yougoslavie (aujourd'hui Serbie) est un ingénieur, astronome, géophysicien, inventeur et climatologue serbe.",
+      "Le prix décerné depuis 1933 par la société géophysique d’Europe dans le domaine de la climatologie et de la météorologie porte le nom de Milutin Milanković. La NASA a proclamé Milanković l'un des plus importants savants dans le domaine des sciences de la Terre."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Milutin_Milankovi%C4%87",
+    "article": "Milutin Milanković",
+    "portrait": {
+      "fichier": "personnes/milankovitch.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Milutin_Milankovi%C4%87_2.jpg"
+    }
+  },
+  "colbert": {
+    "nom": "Jean-Baptiste Colbert",
+    "naissance": 1619,
+    "mort": 1683,
+    "description": "homme d'État français, ministre de Louis XIV, contrôleur général des finances",
+    "resume": [
+      "Jean-Baptiste Colbert, baron de Seignelay et de Sceaux, dit le Grand Colbert, né le 29 août 1619 à Reims et mort le 6 septembre 1683 à Paris, est un homme d'État français.",
+      "À partir de 1665, il est l'un des principaux ministres de Louis XIV, en tant que contrôleur général des finances (1665-1683), secrétaire d'État de la Maison du roi et secrétaire d'État de la Marine (1669-1683).",
+      "Entré au service du roi à la mort de son protecteur Mazarin, il incite Louis XIV à disgracier son rival Nicolas Fouquet. Inspirateur et promoteur d'une politique économique interventionniste et mercantiliste, ultérieurement appelée « colbertisme », il favorise le développement du commerce et de l'industrie en France par la création de fabriques, l'institution de monopoles royaux et le soutien de l'imprimerie."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Jean-Baptiste_Colbert",
+    "article": "Jean-Baptiste Colbert",
+    "portrait": {
+      "fichier": "personnes/colbert.jpg",
+      "auteur": "Philippe de Champaigne",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Colbert1666.jpg"
+    }
+  },
+  "einstein": {
+    "nom": "Albert Einstein",
+    "naissance": 1879,
+    "mort": 1955,
+    "description": "physicien helvético-américain d'origine allemande, auteur des théories de la relativité restreinte et de la relativité générale",
+    "resume": [
+      "Albert Einstein (prononcé en allemand), né le 14 mars 1879 à Ulm (Wurtemberg, Empire allemand) et mort le 18 avril 1955 à Princeton (New Jersey), est un physicien théoricien helvético-américain d'origine allemande.",
+      "Il publie sa théorie de la relativité restreinte en 1905 et sa théorie de la gravitation, dite relativité générale, en 1915. Il a aussi largement contribué au développement de la mécanique quantique et de la cosmologie, et a reçu le prix Nobel de physique de 1921 pour son explication de l’effet photoélectrique. Il est notamment connu du grand public comme l'auteur de l’équation E = mc2, qui établit une équivalence entre la masse et l’énergie d’un système.",
+      "La renommée d'Einstein, considéré comme l'un des plus grands scientifiques de l'histoire, dépasse largement le milieu scientifique."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Albert_Einstein",
+    "article": "Albert Einstein",
+    "portrait": {
+      "fichier": "personnes/einstein.jpg",
+      "auteur": "Oren Jack Turner",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head_cleaned.jpg"
+    }
+  },
+  "cavendish": {
+    "nom": "Henry Cavendish",
+    "naissance": 1731,
+    "mort": 1810,
+    "description": "physicien et chimiste britannique",
+    "resume": [
+      "Henry Cavendish, né le 10 octobre 1731 à Nice (alors dans le comté de Nice du royaume de Sardaigne) et mort le 24 février 1810 à Londres, est un physicien et chimiste britannique, à la fois important théoricien et expérimentateur ingénieux. Il est notamment célèbre pour ses mesures très précises de la constante de gravitation.",
+      "Second fils de Lord Charles Cavendish, fils du duc de Devonshire, et de Lady Anne Grey, fille du duc de Kent, Henry Cavendish est un homme très timide et d'une sensibilité maladive, qui lui inspire l'horreur de la société et du mariage.",
+      "Il sort en 1753 du Peterhouse College de Cambridge sans aucun diplôme. Il y eut pourtant des maîtres très capables, dont John Lawson."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Henry_Cavendish",
+    "article": "Henry Cavendish",
+    "portrait": {
+      "fichier": "personnes/cavendish.jpg",
+      "auteur": "George Wilson",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Cavendish_Henry_signature.jpg"
+    }
+  },
+  "maxwell": {
+    "nom": "James Clerk Maxwell",
+    "naissance": 1831,
+    "mort": 1879,
+    "description": "physicien et mathématicien écossais",
+    "resume": [
+      "James Clerk Maxwell, né le 13 juin 1831 à Édimbourg et mort le 5 novembre 1879 à Cambridge, est un physicien et mathématicien écossais. Il est principalement connu pour avoir unifié en un seul ensemble d'équations, les équations de Maxwell, l'électricité, le magnétisme et l'induction, en incluant une importante modification du théorème d'Ampère. Ce fut à l'époque le modèle le plus unifié de l'électromagnétisme. Il est également célèbre pour avoir interprété, dans un article scientifique, la lumière comme étant un phénomène électromagnétique en s'appuyant sur les travaux de Michael Faraday. Il a notamment démontré que les champs électriques et magnétiques se propagent dans l'espace sous la forme d'une onde et à la vitesse de la lumière.",
+      "Ces deux découvertes permirent d'importants travaux ultérieurs notamment en relativité restreinte et en mécanique quantique."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/James_Clerk_Maxwell",
+    "article": "James Clerk Maxwell",
+    "portrait": {
+      "fichier": "personnes/maxwell.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:James-Clerk-Maxwell-1831-1879.jpg"
+    }
+  },
+  "michelson": {
+    "nom": "Albert A. Michelson",
+    "naissance": 1852,
+    "mort": 1931,
+    "description": "physicien américain",
+    "resume": [
+      "Albert Abraham Michelson, né le 19 décembre 1852 à Strelno en Prusse dans la province de Posnanie et mort le 9 mai 1931 à Pasadena, en Californie, est un physicien américain. Il a reçu le prix Nobel de physique de 1907 « pour ses instruments optiques de précision et les études spectroscopiques et métrologiques qu'il a menées grâce à ces appareils », devenant ainsi le premier récipiendaire américain du prix de physique. Il reçut par ailleurs la médaille Copley la même année."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Albert_A._Michelson",
+    "article": "Albert A. Michelson",
+    "portrait": {
+      "fichier": "personnes/michelson.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Albert_Abraham_Michelson2.jpg"
+    }
+  },
+  "poincare": {
+    "nom": "Henri Poincaré",
+    "naissance": 1854,
+    "mort": 1912,
+    "description": "mathématicien, physicien, philosophe et ingénieur français",
+    "resume": [
+      "Henri Poincaré, né le 29 avril 1854 à Nancy et mort le 17 juillet 1912 à Paris, est un mathématicien, physicien, ingénieur et philosophe des sciences français, souvent considéré comme l'un des derniers esprits universels, tant ses contributions couvrent de nombreux domaines scientifiques.",
+      "Issu d'une famille bourgeoise et intellectuelle, son père, Léon Poincaré, est professeur de médecine à la faculté de Nancy, et son cousin Raymond Poincaré deviendra président de la République française. Dès son plus jeune âge, Henri montre une précocité intellectuelle remarquable, notamment en mathématiques, domaine dans lequel il excelle rapidement. Il poursuit des études brillantes à l'École polytechnique puis à l'École des Mines, où il se forme comme ingénieur tout en cultivant sa passion pour les mathématiques."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Henri_Poincar%C3%A9",
+    "article": "Henri Poincaré",
+    "portrait": {
+      "fichier": "personnes/poincare.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Poincar%C3%A9-2.jpg"
+    }
+  },
+  "lorentz": {
+    "nom": "Hendrik Lorentz",
+    "naissance": 1853,
+    "mort": 1928,
+    "description": "physicien néerlandais",
+    "resume": [
+      "Hendrik Antoon Lorentz, né le 18 juillet 1853 à Arnhem (Pays-Bas) et mort le 4 février 1928 à Haarlem (Pays-Bas), est un physicien néerlandais qui s'est illustré par ses travaux théoriques sur la nature de la lumière et la constitution de la matière. Il est co-lauréat avec Pieter Zeeman du prix Nobel de physique de 1902.",
+      "La majorité de ses travaux portèrent sur l'électromagnétisme. Il a laissé son nom aux transformations de Lorentz qui sont à la base de la théorie de la relativité restreinte."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Hendrik_Lorentz",
+    "article": "Hendrik Lorentz",
+    "portrait": {
+      "fichier": "personnes/lorentz.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:H_A_Lorentz_(Nobel).jpg"
+    }
+  },
+  "foucault": {
+    "nom": "Léon Foucault",
+    "naissance": 1819,
+    "mort": 1868,
+    "description": "physicien et astronome français",
+    "resume": [
+      "Jean Bernard Léon Foucault, né le 18 septembre 1819 à Paris et mort le 11 février 1868 dans la même ville, est un physicien et astronome français.",
+      "Connu principalement pour son expérience démontrant la rotation de la Terre autour de son axe (pendule de Foucault), il détermine aussi la vitesse de la lumière et invente le gyroscope.",
+      "Fils d'un éditeur, Léon Foucault fait ses premières années d'études en grande partie à la maison (à Paris et à Nantes) et au collège Stanislas à Paris. Il entame ensuite des études de médecine, qu'il abandonne pour se tourner vers la physique. Il s'intéresse tout d'abord aux expériences de Louis Daguerre sur la photographie. Pendant trois ans, il assiste Alfred Donné pour ses conférences sur l'anatomie microscopique."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/L%C3%A9on_Foucault",
+    "article": "Léon Foucault",
+    "portrait": {
+      "fichier": "personnes/foucault.jpg",
+      "auteur": "Bertall & Cie. Fizped",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Foucault_portre_crop.jpg"
+    }
+  },
+  "hubble": {
+    "nom": "Edwin Hubble",
+    "naissance": 1889,
+    "mort": 1953,
+    "description": "astronome américain",
+    "resume": [
+      "Edwin Hubble (20 novembre 1889-28 septembre 1953) est un astronome américain. Il a permis d'améliorer la compréhension de la nature de l'Univers en démontrant l'existence d'autres galaxies en dehors de notre Voie lactée. En observant un décalage vers le rouge du spectre de plusieurs galaxies, il a montré que celles-ci s'éloignaient les unes des autres à une vitesse proportionnelle à leur distance.",
+      "Cette relation, connue sous le nom de « loi de Hubble-Lemaître », avait néanmoins été prédite précédemment par Georges Lemaître, un prêtre et astronome belge qui avait publié son travail dans un journal bien moins visible. Cette situation a entraîné une controverse sur la paternité de la loi. Les conditions de la parution en anglais de la version des travaux de Lemaître de 1927 ont été depuis clarifiées."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Edwin_Hubble",
+    "article": "Edwin Hubble",
+    "portrait": {
+      "fichier": "personnes/hubble.jpg",
+      "auteur": "Johan Hagemeyer",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Studio_portrait_photograph_of_Edwin_Powell_Hubble_(cropped).JPG"
+    }
+  },
+  "kant": {
+    "nom": "Emmanuel Kant",
+    "naissance": 1724,
+    "mort": 1804,
+    "description": "philosophe allemand",
+    "resume": [
+      "Emmanuel Kant (en allemand : Immanuel Kant /ʔɪˈmaːnu̯eːl kant/), né le 22 avril 1724 à Königsberg en Prusse (aujourd'hui appelée Kaliningrad en Russie), et mort le 12 février 1804 dans cette même ville, est un philosophe prussien, fondateur du criticisme et de l’idéalisme transcendantal.",
+      "Grand penseur de l'Aufklärung (Lumières allemandes), Kant a exercé une influence considérable sur l'idéalisme allemand, la philosophie analytique, la phénoménologie, la philosophie moderne, et la pensée critique en général. Son œuvre, considérable et diverse dans ses intérêts, mais centrée autour des trois Critiques – à savoir la Critique de la raison pure, la Critique de la raison pratique et la Critique de la faculté de juger – fait ainsi l'objet d'appropriations et d'interprétations successives et divergentes."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Emmanuel_Kant",
+    "article": "Emmanuel Kant",
+    "portrait": {
+      "fichier": "personnes/kant.jpg",
+      "auteur": "Johann Gottlieb Becker (1720-1782)",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_1.jpg"
+    }
+  },
+  "lalande": {
+    "nom": "Jérôme Lalande",
+    "naissance": 1732,
+    "mort": 1807,
+    "description": "astronome français",
+    "resume": [
+      "Joseph Jérôme Lefrançois de Lalande (également connu comme Jérôme Lalande, et orthographié « De La Lande », parfois « Le Français de la Lande »), né à Bourg-en-Bresse le 11 juillet 1732 et mort à Paris (Seine) le 4 avril 1807, est un astronome français.",
+      "Il est le fils de Pierre Le François, bourgeois de Bourg-en-Bresse, et de Marie Anne Gabrielle Monchinet.",
+      "Les parents de Joseph Jérôme Lefrançois de Lalande l’envoient étudier au collège jésuite de la Trinité à Lyon, où il se passionne pour l'astronomie auprès du père Laurent Béraud, puis à Paris pour y étudier le droit. Il loge dans la capitale à l’Hôtel de Cluny, où Joseph-Nicolas Delisle (1688-1768) a installé un observatoire. Lalande devient alors un élève zélé et favori de Delisle ainsi que de Pierre Charles Le Monnier (1715-1799).",
+      "Après la fin de ses études, il retourne à Bourg-en-Bresse pour exercer le métier d’avocat."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Joseph_J%C3%A9r%C3%B4me_Lefran%C3%A7ois_de_Lalande",
+    "article": "Joseph Jérôme Lefrançois de Lalande",
+    "portrait": {
+      "fichier": "personnes/lalande.jpg",
+      "auteur": "Jean-Honoré Fragonard",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:J%C3%A9r%C3%B4me_de_La_Lande.jpg"
+    }
+  },
+  "essen": {
+    "nom": "Louis Essen",
+    "naissance": 1908,
+    "mort": 1997,
+    "description": "physicien anglais",
+    "resume": [
+      "Louis Essen (6 septembre 1908 – 24 août 1997) est un physicien anglais dont les principales contributions concernent la mesure précise du temps et la détermination de la vitesse de la lumière. Il critique la théorie de la relativité d’Albert Einstein, particulièrement à propos de la dilatation du temps.",
+      "Né à Nottingham, Essen passa sa licence à l’Université de Nottingham, et sa maîtrise de physique à l’Université de Londres en 1928. Il est embauché par le National Physical Laboratory (NPL) l'année suivante, dans le département de D. W. Dye, et chargé d'examiner les possibilités des diapasons et autres oscillateurs à cristal de quartz pour la mesure précise du temps. Ses travaux aboutissent au développement de l'horloge à quartz en 1938, qui devient bientôt l’étalon de temps dans les observatoires du monde entier."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Louis_Essen",
+    "article": "Louis Essen"
+  },
+  "cohentannoudji": {
+    "nom": "Claude Cohen-Tannoudji",
+    "naissance": 1933,
+    "mort": 2026,
+    "description": "physicien français",
+    "resume": [
+      "Claude Cohen-Tannoudji [kɔɛn tanudʒi] est un physicien français né le 1er avril 1933 à Constantine (département de Constantine, Algérie française) et mort le 22 octobre 2026 à Paris.",
+      "Le prix Nobel de physique 1997 lui est décerné, ainsi qu'à Steven Chu et William D. Phillips, pour leurs recherches sur le refroidissement et le confinement d'atomes par laser."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Claude_Cohen-Tannoudji",
+    "article": "Claude Cohen-Tannoudji",
+    "portrait": {
+      "fichier": "personnes/cohentannoudji.jpg",
+      "auteur": "Amir Bernat",
+      "licence": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Claude_Cohen-Tannoudji_(cropped).JPG"
+    }
+  },
+  "planck": {
+    "nom": "Max Planck",
+    "naissance": 1858,
+    "mort": 1947,
+    "description": "physicien allemand",
+    "resume": [
+      "Max Planck, né Max Karl Ernst Ludwig Planck le 23 avril 1858 à Kiel dans le duché de Holstein et mort le 4 octobre 1947 à Göttingen en Allemagne occupée, est un physicien allemand.",
+      "Max Planck est l'un des fondateurs de la mécanique quantique. De ses travaux, est conceptualisée l'ère de Planck, période de l'histoire de l'Univers au cours de laquelle les quatre interactions fondamentales sont unifiées.",
+      "Il est lauréat du prix Nobel de physique de 1918 pour ses travaux en théorie des quanta. Il reçoit la médaille Lorentz en 1927, et le prix Goethe en 1945."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Max_Planck",
+    "article": "Max Planck",
+    "portrait": {
+      "fichier": "personnes/planck.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "CC BY-SA 3.0 de",
+      "source": "https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-R0116-504,_Max_Planck.jpg"
+    }
+  },
+  "alphonse": {
+    "nom": "Alphonse X de Castille",
+    "naissance": 1221,
+    "mort": 1284,
+    "description": "roi de Castille et León (1252-1284) et roi des Romains",
+    "resume": [
+      "Alphonse X de Castille, surnommé « le Sage » ou « le Savant », dit « Alphonse le Sage » ou « Alphonse le Savant » (en espagnol : Alfonso el Sabio), né le 23 novembre 1221 à Tolède et mort le 4 avril 1284 à Séville, est un chroniqueur et un prince de la maison d'Ivrée, fils de Ferdinand III de Castille et de Béatrice de Souabe. Il fut roi de Castille de 1252 jusqu'à sa mort et, élu roi des Romains, également antiroi de Germanie de 1257 à 1273. Il est particulièrement connu pour sa « littérature », un ensemble de productions culturelles et scientifiques variées produites à sa demande par différents savants de son temps. Également compositeur important de la période médiévale, il a participé aux Cantigas de Santa Maria rédigés en galicien."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Alphonse_X",
+    "article": "Alphonse X",
+    "portrait": {
+      "fichier": "personnes/alphonse.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Alfonso_X_el_Sabio_en_El_libro_de_los_juegos.jpg"
+    }
+  },
+  "regiomontanus": {
+    "nom": "Regiomontanus",
+    "naissance": 1436,
+    "mort": 1476,
+    "description": "astronome, mathématicien et astrologue allemand",
+    "resume": [
+      "Johannes Müller von Königsberg (Unfinden, près de Königsberg (Bavière) le 6 juin 1436 – Rome le 6 juillet 1476), plus connu sous son nom latin Regiomontanus, est un astronome, mathématicien et astrologue allemand. Ses traités (notamment De triangulis omnimodis, 1464) et ses commentaires sur l'Almageste de Ptolémée, sont à l'origine de la renaissance de la trigonométrie en Europe. L'astrologie lui doit un système de domification qui porte son nom. On l'a connu également sous d'autres noms, suivant les langues : Montereggio, Montroyal. Il a été vigoureusement critiqué par Jérôme Cardan (1501-1576) pour son plagiat à l'encontre du mathématicien et astronome maghrébin Jabir Ibn Aflah, dont il avait repris des pages entières sans jamais en signaler l'origine."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Regiomontanus",
+    "article": "Regiomontanus",
+    "portrait": {
+      "fichier": "personnes/regiomontanus.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Johannes_Regiomontanus2.jpg"
+    }
+  },
+  "reinhold": {
+    "nom": "Erasmus Reinhold",
+    "naissance": 1511,
+    "mort": 1553,
+    "description": "astronome et mathématicien allemand",
+    "resume": [
+      "Erasmus Reinhold (22 octobre 1511 – 19 février 1553) est un astronome et mathématicien allemand. Il nait et meurt à Saalfeld.",
+      "Il suit des cours à l'université de Wittemberg. En 1536, il est nommé par Philippe Melanchthon professeur de mathématiques avancées (c'est-à-dire essentiellement d'astronomie, qui, à l'époque, était considérée comme faisant partie des mathématiques). La même année, son jeune collègue Georg Joachim Rheticus (qui publiera en 1540 le premier traité sur le système héliocentrique de Copernic), et également étudiant de Wittemberg, est nommé professeur de mathématiques pour les premières années. Plus tard, Reinhold sera également doyen puis recteur de l'université.",
+      "Reinhold référence un nombre important d'étoiles. Ses publications en astronomie comprennent un commentaire sur les Theoricae novae planetarum (« Théoriques nouvelles des planètes ») de Georg von Purbach."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Erasmus_Reinhold",
+    "article": "Erasmus Reinhold",
+    "portrait": {
+      "fichier": "personnes/reinhold.png",
+      "auteur": "Erasmus Reinhold",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Prutenic_Tables.png"
+    }
+  },
+  "copernic": {
+    "nom": "Nicolas Copernic",
+    "naissance": 1473,
+    "mort": 1543,
+    "description": "astronome polonais, également chanoine, médecin et mathématicien",
+    "resume": [
+      "Nicolas Copernic (en polonais : Mikołaj Kopernik, /miˈkɔwaj kɔˈpɛrɲik/ ; en allemand : Nikolaus Kopernikus ; en latin : Nicolaus Copernicus Torinensis, ou Thorunensis ou Torunensis) est un astronome polonais, également chanoine, médecin et mathématicien, né le 19 février 1473 à Thorn (Toruń) en Prusse royale (royaume de Pologne), et mort le 24 mai 1543 à Frauenburg (Prusse royale, royaume de Pologne ; aujourd'hui Frombork).",
+      "Il est célèbre pour avoir développé et défendu la théorie de l'héliocentrisme, selon laquelle la Terre tourne autour du Soleil, supposé au centre de l'Univers, contre l'opinion alors admise que la Terre était centrale et immobile. Les conséquences de cette théorie, ayant causé de profonds changements des points de vue scientifique, philosophique et religieux, sont désignées comme la révolution copernicienne."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Nicolas_Copernic",
+    "article": "Nicolas Copernic",
+    "portrait": {
+      "fichier": "personnes/copernic.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Nikolaus_Kopernikus.jpg"
+    }
+  },
+  "marius": {
+    "nom": "Simon Marius",
+    "naissance": 1573,
+    "mort": 1624,
+    "description": "astronome allemand",
+    "resume": [
+      "Simon Marius, en allemand Simon Mayr (10 janvier 1573 à Gunzenhausen - 26 décembre 1624 à Ansbach), est un astronome allemand, auquel on doit le nom des quatre principaux satellites de Jupiter, dites lunes galiléennes.",
+      "Après des études à l'académie luthérienne de Heilbronn, où il s'intéresse au chant, à la météorologie et à l'astronomie, il est nommé en 1601 mathématicien du margrave d'Ansbach. Il se rend alors à Prague, où il rencontre Tycho Brahe et David Fabricius, puis à Padoue, où il étudie la médecine. De retour en Ansbach, il publie la première traduction en allemand des six premiers livres d'Euclide. En 1607, il est impliqué dans une affaire de plagiat par Balthasar Capra : celui-ci publie un ouvrage de Galilée, le \"Traité du Compas\", sous son propre nom. B. Capra sera expulsé de l'Université."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Simon_Marius",
+    "article": "Simon Marius",
+    "portrait": {
+      "fichier": "personnes/marius.jpg",
+      "auteur": "Artist unidentified",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Simon_Marius.jpg"
+    }
+  },
+  "tycho": {
+    "nom": "Tycho Brahe",
+    "naissance": 1546,
+    "mort": 1601,
+    "description": "astronome, alchimiste, cartographe et imprimeur danois",
+    "resume": [
+      "Tycho Brahe (), né Tyge Ottesen Brahe (14 décembre 1546 – 24 octobre 1601), est un astronome danois, issu d'une grande famille associée de longue date aux affaires du royaume. Sa région natale, la Scanie, fait désormais partie de la Suède.",
+      "Tycho Brahe marque une rupture dans l'histoire de l'astronomie et plus généralement dans l'histoire des sciences. À une époque où prévaut encore le respect de la tradition et des anciens, il donne la priorité à l'observation, avec le souci constant de valider ses hypothèses au regard de celles-ci. Il prend grand soin de la fabrication et de la mise au point de ses instruments, qui lui permettent de recueillir un nombre considérable de données. Bien qu'effectuées à l'œil nu, ces mesures sont, à leur meilleur, au moins dix fois plus précises que celles de ses prédécesseurs en Europe."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Tycho_Brahe",
+    "article": "Tycho Brahe",
+    "portrait": {
+      "fichier": "personnes/tycho.jpg",
+      "auteur": "auteur inconnu",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Portr%C3%A4tt_av_Tycho_Brahe_-_Skoklosters_slott_-_90153.tif"
+    }
+  },
+  "tchebychev": {
+    "nom": "Pafnouti Tchebychev",
+    "naissance": 1821,
+    "mort": 1894,
+    "description": "mathématicien russe",
+    "resume": [
+      "Pafnouti Lvovitch Tchebychev (en russe : Пафнутий Львович Чебышёв), né le 4 mai 1821 (16 mai dans le calendrier grégorien) à Okatovo, près de Borovsk, et décédé le 26 novembre 1894 (8 décembre dans le calendrier grégorien) à Saint-Pétersbourg, est un mathématicien russe. Son nom a tout d'abord été transcrit en français Tchebychef et la forme Tchebycheff est aussi utilisée en français. Il est aussi transcrit Tschebyschef ou Tschebyscheff (formes allemandes), Chebyshov ou Chebyshev (formes anglo-saxonnes), ainsi que Čebyšëv.",
+      "Il est connu pour ses travaux dans les domaines des probabilités, des statistiques, et de la théorie des nombres.",
+      "Tchebychev appartient à l'école mathématique russe fondée sous Catherine la Grande par Daniel Bernoulli et Euler. En est aussi issu son contemporain Lobatchevski, inventeur de la première géométrie non euclidienne."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Pafnouti_Tchebychev",
+    "article": "Pafnouti Tchebychev",
+    "portrait": {
+      "fichier": "personnes/tchebychev.jpg",
+      "auteur": "Atelier Nadar. Photographe",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:M._Tchebycheef_-_btv1b53181332k_(cropped).jpg"
+    }
+  },
+  "bessel": {
+    "nom": "Friedrich Wilhelm Bessel",
+    "naissance": 1784,
+    "mort": 1846,
+    "description": "astronome, mathématicien et physicien allemand",
+    "resume": [
+      "Friedrich Wilhelm Bessel, né le 22 juillet 1784 à Minden et mort le 17 mars 1846 à Königsberg, est un astronome, mathématicien, géodésien et physicien allemand, connu principalement pour avoir effectué en 1838 les premières mesures précises de la distance d'une étoile et pour être le fondateur de l'école allemande d'astronomie d'observation.",
+      "Friedrich Wilhelm Bessel naît le 22 juillet 1784 à Minden. Il a deux frères et six sœurs. Son père est fonctionnaire de justice. À 14 ans, il quitte le lycée (gymnasium) de Minden pour commencer un apprentissage commercial de sept ans à Brême. Pendant son temps libre, il s’occupe d’astronomie et de mathématiques en autodidacte.",
+      "Au printemps 1804, il écrit un traité sur l’orbite de la comète de Halley, sur la base d’observations inédites de Harriot et Torporley effectuées en 1607."
+    ],
+    "wikipedia": "https://fr.wikipedia.org/wiki/Friedrich_Wilhelm_Bessel",
+    "article": "Friedrich Wilhelm Bessel",
+    "portrait": {
+      "fichier": "personnes/bessel.jpg",
+      "auteur": "Johann Eduard Wolff",
+      "licence": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Friedrich_Wilhelm_Bessel.jpeg"
+    }
+  }
+}

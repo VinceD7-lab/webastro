@@ -1,0 +1,24 @@
+---
+/** Coupe méridienne : une étoile au zénith a une déclinaison égale à la latitude (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, chemin, etoile, type P2 } from '../../lib/projection';
+const O: P2 = [300, 290], phi = 40, L = 200;
+const dir = (a: number, r = L): P2 => [O[0] + r * Math.cos((a * Math.PI) / 180), O[1] - r * Math.sin((a * Math.PI) / 180)];
+const arcAngle = (a0: number, a1: number, r: number, c: string) => { const pts: P2[] = []; for (let i = 0; i <= 30; i++) pts.push(dir(a0 + ((a1 - a0) * i) / 30, r)); return `<path d="${chemin(pts)}" fill="none" stroke="${c}" stroke-width="1.2"/>`; };
+const hEt = 76;
+let s = '';
+s += trait2D(dir(180, 260), dir(0, 260), { epaisseur: 1.4 });
+s += trait2D(O, dir(90, 240), { fleche: 'fin' }) + texte2D(dir(90, 240), 'Zénith', { dy: -8, ancre: 'middle' });
+s += trait2D(O, dir(180 - phi), { couleur: 'var(--ko)', epaisseur: 2.2, fleche: 'fin' }) + texte2D(dir(180 - phi), 'Pôle Nord céleste', { dy: -10, ancre: 'middle', couleur: 'var(--ko)' });
+s += trait2D(O, dir(90 - phi, 230), { couleur: 'var(--ko)', epaisseur: 2.2, fleche: 'fin' }) + texte2D(dir(90 - phi, 230), 'Équateur céleste', { dx: 10, dy: 8, couleur: 'var(--ko)' });
+s += trait2D(O, dir(hEt, 210), { couleur: 'var(--orbit)', epaisseur: 2.2 }) + etoile(dir(hEt, 218), 9);
+s += arcAngle(180 - phi, 180, 70, 'var(--ink)') + texte2D(dir(180 - phi / 2, 84), 'φ', { ancre: 'middle', dy: 6, italique: true, taille: 18 });
+s += arcAngle(0, hEt, 52, 'var(--orbit)') + texte2D(dir(hEt / 2, 66), 'h', { ancre: 'middle', dy: 6, italique: true, taille: 18, couleur: 'var(--orbit)' });
+s += arcAngle(90 - phi, hEt, 125, 'var(--brass)') + texte2D(dir((90 - phi + hEt) / 2, 140), 'δ', { ancre: 'middle', dy: 6, italique: true, taille: 18, couleur: 'var(--brass)' });
+s += arcAngle(90 - phi, 90, 34, 'var(--ink)') + texte2D(dir(90 - phi / 2 + 6, 22), 'φ', { ancre: 'middle', dy: 6, italique: true, taille: 13 });
+s += `<rect x="${O[0] - 6}" y="${O[1] - 6}" width="12" height="12" fill="var(--ink)" transform="rotate(${-(90 - phi) + 90} ${O[0]} ${O[1]})"/>`;
+s += texte2D(dir(180, 255), 'Horizon nord', { dy: 22 }) + texte2D(dir(0, 255), 'Horizon sud', { dy: 22, ancre: 'end' });
+s += texte2D([24, 342], 'φ : latitude du lieu   h : hauteur sur l’horizon   δ : déclinaison de l’étoile', { taille: 13, couleur: 'var(--ink-soft)' });
+s += texte2D([560, 260], 'si h = 90°, alors δ = φ', { ancre: 'end', taille: 14 });
+---
+<Figure titre="Coupe méridienne : le pôle céleste est à une hauteur φ au-dessus de l’horizon nord et l’équateur céleste lui est perpendiculaire ; une étoile au zénith a une déclinaison égale à φ" largeur={600} hauteur={355} svg={s}><slot /></Figure>

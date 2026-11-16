@@ -1,0 +1,22 @@
+---
+/** Exercice : distance d’un bâtiment C à une route nord-sud, par deux visées depuis A et B (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, chemin, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+import { triangulation } from '../../lib/distances';
+const u = 120, t = triangulation(1, 30, 45);
+const A: P2 = [380, 440], B: P2 = [380, 440 - u], H: P2 = [380, 440 - u - t.BH * u], C: P2 = [380 - t.CH * u, H[1]];
+let s = trait2D(A, [380, H[1] - 50], { fleche: 'fin', epaisseur: 1.6 }) + texte2D([380, H[1] - 58], 'Sud', { ancre: 'middle', taille: 15 });
+s += trait2D(C, H, { tirets: '6 4', epaisseur: 1.2 });
+s += trait2D(C, A, { epaisseur: 1.6 }) + trait2D(C, B, { epaisseur: 1.6 });
+s += arcAngle(A, 90, 120, 60, 'var(--orbit)', 1.8) + texte2D([A[0] - 30, A[1] - 66], '30°', { taille: 15, couleur: 'var(--orbit)' });
+s += arcAngle(B, 90, 135, 42, 'var(--orbit)', 1.8) + arcAngle(B, 90, 135, 48, 'var(--orbit)', 1.8) + texte2D([B[0] - 40, B[1] - 54], '45°', { taille: 15, couleur: 'var(--orbit)' });
+const acc = (y0: number, y1: number) => { const x = 392, m = (y0 + y1) / 2; return `<path d="${chemin([[x, y0], [x + 10, y0 + 8], [x + 10, m - 8], [x + 20, m], [x + 10, m + 8], [x + 10, y1 - 8], [x, y1]])}" fill="none" stroke="var(--orbit)" stroke-width="1.8"/>`; };
+s += acc(B[1], A[1]) + texte2D([418, (A[1] + B[1]) / 2 + 5], '1 km', { taille: 15, couleur: 'var(--orbit)' });
+s += [A, B, H, C].map((p) => point2D(p, 4)).join('');
+s += texte2D(A, 'A', { dx: 12, dy: 8, taille: 17 }) + texte2D(B, 'B', { dx: -24, dy: 6, taille: 17 }) + texte2D(H, 'H', { dx: 12, dy: 6, taille: 17 }) + texte2D(C, 'C', { dx: -20, dy: -8, taille: 17 });
+s += texte2D([(B[0] + C[0]) / 2, (B[1] + C[1]) / 2], 'a', { dx: 8, dy: -8, italique: true, couleur: 'var(--ko)', taille: 16 });
+s += texte2D([(A[0] + C[0]) / 2, (A[1] + C[1]) / 2], 'b', { dx: -18, dy: 0, italique: true, couleur: 'var(--ko)', taille: 16 });
+s += texte2D([C[0], C[1] + 30], 'bâtiment', { taille: 13, couleur: 'var(--ink-soft)' }) + texte2D([A[0] + 20, A[1] - 120], 'route', { taille: 13, couleur: 'var(--ink-soft)', rotation: -90 });
+---
+<Figure titre="Exercice de triangulation : sur une route nord-sud, le bâtiment C est vu à 30° de la direction du sud depuis A, puis à 45° depuis B, un kilomètre plus loin ; H est le pied de la perpendiculaire" largeur={600} hauteur={470} svg={s}><slot /></Figure>

@@ -1,0 +1,94 @@
+---
+/**
+ * Échelles de temps : à une date donnée, écart entre le temps universel coordonné (UTC, celui des horloges),
+ * le temps atomique international (TAI) et le temps terrestre (TT). Table des secondes intercalaires de la source (depuis 1983).
+ */
+---
+<div class="sim" data-echelles data-pagefind-ignore>
+  <svg viewBox="0 0 600 250" role="img" aria-label="Écart TAI moins UTC de 1983 à 2017 : une marche d’escalier, une marche par seconde intercalaire">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <g data-dyn font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Date</span> <input data-date type="date" min="1983-07-01" value="2017-01-01" aria-describedby="echelles-note" /></label>
+    <label><span>Année</span> <input data-annee type="range" min="1983" max="2030" step="1" value="2017" /> <output data-annee-out></output></label>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-tai>–</b><span>TAI − UTC</span></div>
+    <div><b data-tt>–</b><span>TT − UTC</span></div>
+    <div><b data-h1>–</b><span>quand l’horloge UTC marque 12 h 00 min 00 s, le TAI marque…</span></div>
+    <div><b data-h2>–</b><span>… et le temps terrestre TT marque</span></div>
+  </div>
+  <p class="note" id="echelles-note" data-note></p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 220px;flex-wrap:wrap}
+  .controls output{min-width:3.5em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { TAI_MOINS_UTC, taiMoinsUtc, TT_MOINS_TAI } from '../lib/temps';
+  import { chemin, texte2D, type P2 } from '../lib/projection';
+  import { nbFr as nb } from '../lib/relativite';
+
+  const G0: P2 = [52, 205], GW = 510, GH = 160, Y0 = 1983, Y1 = 2030, S0 = 20, S1 = 40;
+  const gx = (a: number) => G0[0] + ((a - Y0) / (Y1 - Y0)) * GW, gy = (s: number) => G0[1] - ((s - S0) / (S1 - S0)) * GH;
+  const anneeDec = (d: string) => { const [a, m, j] = d.split('-').map(Number); return a + (m - 1) / 12 + (j - 1) / 365; };
+  /** 12 h 00 min 00 s + s secondes, au millième de seconde. */
+  const hms = (s: number) => {
+    const ms = Math.round(s * 1000), h = 12 + Math.floor(ms / 3_600_000), m = Math.floor((ms % 3_600_000) / 60_000), sec = Math.floor((ms % 60_000) / 1000), mi = ms % 1000;
+    return `${h} h ${String(m).padStart(2, '0')} min ${String(sec).padStart(2, '0')}${mi ? ',' + String(mi).padStart(3, '0') : ''} s`;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-echelles]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const date = q<HTMLInputElement>('[data-date]'), an = q<HTMLInputElement>('[data-annee]');
+
+    let f = '';
+    for (let s = S0; s <= S1; s += 5) f += `<line x1="${G0[0]}" x2="${G0[0] + GW}" y1="${gy(s)}" y2="${gy(s)}" stroke="var(--rule)" stroke-width=".9"/>` + texte2D([G0[0] - 7, gy(s) + 4], `${s} s`, { ancre: 'end', taille: 11.5, couleur: 'var(--ink-soft)' });
+    for (let a = 1985; a <= 2030; a += 5) f += `<line x1="${gx(a)}" x2="${gx(a)}" y1="${G0[1]}" y2="${G0[1] + 5}" stroke="var(--ink-soft)"/>` + texte2D([gx(a), G0[1] + 19], String(a), { ancre: 'middle', taille: 11.5, couleur: 'var(--ink-soft)' });
+    // Escalier TAI − UTC : une marche par seconde intercalaire (valeurs de la source, jusqu’en 2017).
+    const pts: P2[] = [];
+    TAI_MOINS_UTC.forEach(([d, v], i) => { const a = anneeDec(d); if (i) pts.push([gx(a), gy(TAI_MOINS_UTC[i - 1][1])]); pts.push([gx(a), gy(v)]); });
+    pts.push([gx(Y1), gy(37)]);
+    f += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="2.6"/>`;
+    f += texte2D([G0[0] + 6, 22], 'TAI − UTC, en secondes', { taille: 13 });
+    f += texte2D([gx(2017) - 6, gy(37) - 12], '37 s depuis le 1er janvier 2017', { ancre: 'end', taille: 12, couleur: 'var(--brass)' });
+    q('[data-fond]').innerHTML = f;
+
+    function maj(depuisAnnee = false) {
+      if (depuisAnnee) date.value = `${an.value}-${date.value.slice(5) || '01-01'}`;
+      const d = date.value, v = d ? taiMoinsUtc(d) : null;
+      q('[data-annee-out]').textContent = d ? d.slice(0, 4) : '–';
+      if (d) an.value = String(Math.min(2030, Math.max(1983, +d.slice(0, 4))));
+      if (v === null) {
+        for (const k of ['tai', 'tt', 'h1', 'h2']) q(`[data-${k}]`).textContent = '–';
+        q('[data-note]').textContent = 'Le tableau de la source commence au 1er juillet 1983 : choisissez une date postérieure.';
+        q('[data-dyn]').innerHTML = '';
+        return;
+      }
+      q('[data-tai]').textContent = `${v} s`;
+      q('[data-tt]').textContent = `${nb(v + TT_MOINS_TAI, 3)} s`;
+      q('[data-h1]').textContent = hms(v);
+      q('[data-h2]').textContent = hms(v + TT_MOINS_TAI);
+      const a = anneeDec(d);
+      q('[data-dyn]').innerHTML = `<line x1="${gx(a).toFixed(1)}" x2="${gx(a).toFixed(1)}" y1="${G0[1]}" y2="${gy(v).toFixed(1)}" stroke="var(--ko)" stroke-width="1" stroke-dasharray="3 3"/><circle cx="${gx(a).toFixed(1)}" cy="${gy(v).toFixed(1)}" r="5.5" fill="var(--ko)" stroke="var(--surface)" stroke-width="2"/>`;
+      q('[data-note]').textContent = d >= '2017-01-01'
+        ? 'Dernière valeur du tableau de la source : 37 s depuis le 1er janvier 2017. TT = TAI + 32,184 s. UTC est maintenu à moins de 0,9 s de UT1 (temps lié à la rotation de la Terre) par l’ajout de secondes intercalaires, toujours à la fin d’un semestre.'
+        : 'TT = TAI + 32,184 s. UTC est maintenu à moins de 0,9 s de UT1 (temps lié à la rotation de la Terre) par l’ajout de secondes intercalaires, toujours à la fin d’un semestre. Les marches du graphique sont les secondes intercalaires du tableau de la source.';
+    }
+    date.addEventListener('input', () => maj());
+    an.addEventListener('input', () => maj(true));
+    maj();
+  });
+</script>

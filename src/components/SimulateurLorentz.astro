@@ -1,0 +1,177 @@
+---
+/**
+ * Facteur de Lorentz γ selon la vitesse : dilatation des durées (une horloge en mouvement retarde),
+ * contraction des longueurs, et composition relativiste des vitesses comparée à l’addition galiléenne.
+ */
+---
+<div class="sim" data-lorentz data-pagefind-ignore>
+  <svg viewBox="0 0 600 330" role="img" aria-label="Courbe du facteur de Lorentz en fonction de v/c, deux horloges et deux règles, l’une immobile et l’autre en mouvement">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <g data-dyn font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Vitesse</span> <input data-v type="range" min="-13" max="4" step="any" aria-describedby="lorentz-note" /> <output data-v-out></output></label>
+    <button class="tool" data-pause type="button" aria-pressed="false">Pause</button>
+    <div class="presets" role="group" aria-label="Exemples de vitesses">
+      <button class="tool" type="button" data-pre="0.25">Avion</button>
+      <button class="tool" type="button" data-pre="7.66">Station spatiale</button>
+      <button class="tool" type="button" data-pre="191">Sonde Parker</button>
+      <button class="tool" type="button" data-pre="g:29">Muon cosmique</button>
+      <button class="tool" type="button" data-pre="g:7247">Proton du LHC</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-beta>–</b><span>v/c</span></div>
+    <div><b data-gamma>–</b><span>facteur de Lorentz γ</span></div>
+    <div><b data-duree>–</b><span>durée au sol pour 1 h de l’horloge en mouvement</span></div>
+    <div><b data-long>–</b><span>longueur mesurée d’une règle de 1 m en mouvement</span></div>
+  </div>
+  <p class="note" id="lorentz-note">Le curseur suit une échelle logarithmique en γ − 1, pour aller de la vitesse d’un avion à celle des protons du LHC. Les horloges et la règle sont dessinées pour la vitesse choisie : aux vitesses courantes, aucune différence n’est visible.</p>
+
+  <h4>Composer deux vitesses</h4>
+  <p class="note">Un vaisseau file à la vitesse <i>u</i> par rapport à la Terre et tire vers l’avant un projectile à la vitesse <i>w</i> par rapport à lui. Quelle est la vitesse du projectile par rapport à la Terre ?</p>
+  <div class="controls">
+    <label><span><i>u</i></span> <input data-u type="range" min="0" max="0.99" step="0.01" value="0.6" /> <output data-u-out></output></label>
+    <label><span><i>w</i></span> <input data-w type="range" min="0" max="0.99" step="0.01" value="0.7" /> <output data-w-out></output></label>
+  </div>
+  <svg viewBox="0 0 600 120" role="img" aria-label="Comparaison de la vitesse composée selon Galilée et selon Einstein, avec la vitesse de la lumière">
+    <g data-compo font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  h4{font-family:var(--display);font-size:1.25rem;margin:1.4rem 0 .3rem;padding-top:1rem;border-top:1px solid var(--rule)}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:7em;font-variant-numeric:tabular-nums}
+  .presets{display:flex;flex-wrap:wrap;gap:.4rem}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { C_KM_S, betaDepuisGammaMoins1, compositionEinstein, fmtSci, nbFr as nb } from '../lib/relativite';
+  import { chemin, texte2D, trait2D, type P2 } from '../lib/projection';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /** Graphe γ(β) : origine et échelles. */
+  const G0: P2 = [52, 292], GW = 230, GH = 250, GMAX = 8;
+  const gx = (b: number) => G0[0] + b * GW, gy = (g: number) => G0[1] - ((Math.min(g, GMAX) - 1) / (GMAX - 1)) * GH;
+  const H1: P2 = [395, 82], H2: P2 = [530, 82], RH = 46, REGLE = 190, RX = 360;
+
+  /** γ formaté, en gardant la partie utile aux faibles vitesses. */
+  const fmtGamma = (g1: number) => (g1 < 1e-4 ? `1 + ${fmtSci(g1)}` : g1 < 100 ? nb(1 + g1, g1 < 0.1 ? 5 : 3) : nb(1 + g1, 0));
+  function fmtPetit(s: number) {
+    if (s < 1e-6) return `${nb(s * 1e9, s < 1e-9 ? 4 : 2)} ns`;
+    if (s < 1e-3) return `${nb(s * 1e6, 2)} µs`;
+    if (s < 1) return `${nb(s * 1e3, 2)} ms`;
+    return `${nb(s, 2)} s`;
+  }
+  function fmtHeures(h: number) {
+    if (h < 24) return `${nb(h, h < 10 ? 3 : 2)} h`;
+    const j = h / 24;
+    return j < 365.25 ? `${nb(h, 0)} h (${nb(j, 1)} jours)` : `${nb(h, 0)} h (${nb(j / 365.25, 2)} ans)`;
+  }
+  function fmtVitesse(beta: number) {
+    const v = beta * C_KM_S;
+    if (v < 1) return `${nb(v * 1000, 0)} m/s`;
+    if (v < 1000) return `${nb(v, 2)} km/s`;
+    return `${nb(v, 0)} km/s`;
+  }
+  function aiguille(c: P2, ang: number, couleur: string) {
+    const x = c[0] + RH * 0.78 * Math.sin(ang), y = c[1] - RH * 0.78 * Math.cos(ang);
+    return `<line x1="${c[0]}" y1="${c[1]}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${couleur}" stroke-width="3" stroke-linecap="round"/><circle cx="${c[0]}" cy="${c[1]}" r="3.5" fill="${couleur}"/>`;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-lorentz]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const curseur = q<HTMLInputElement>('[data-v]'), pause = q<HTMLButtonElement>('[data-pause]');
+    const u = q<HTMLInputElement>('[data-u]'), w = q<HTMLInputElement>('[data-w]');
+    let g1 = 2 / 3, beta = 0.8, t = 0, avant = 0, enPause = reduit;
+    curseur.value = String(Math.log10(g1));
+
+    // Fond : axes et courbe de γ(β), cadrans, règle de référence.
+    let f = trait2D(G0, [G0[0] + GW + 18, G0[1]], { couleur: 'var(--ink-soft)', epaisseur: 1.2, fleche: 'fin' }) + trait2D(G0, [G0[0], G0[1] - GH - 18], { couleur: 'var(--ink-soft)', epaisseur: 1.2, fleche: 'fin' });
+    for (let g = 1; g <= GMAX; g++) f += texte2D([G0[0] - 8, gy(g) + 4], String(g), { ancre: 'end', taille: 11.5, couleur: 'var(--ink-soft)' }) + `<line x1="${G0[0]}" x2="${G0[0] + GW}" y1="${gy(g)}" y2="${gy(g)}" stroke="var(--rule)" stroke-width=".8"/>`;
+    for (const b of [0, 0.25, 0.5, 0.75]) f += texte2D([gx(b), G0[1] + 17], nb(b, 2).replace(/,?0+$/, '').replace(/,$/, '') || '0', { ancre: 'middle', taille: 11.5, couleur: 'var(--ink-soft)' });
+    f += `<line x1="${gx(1)}" x2="${gx(1)}" y1="${G0[1]}" y2="${G0[1] - GH - 6}" stroke="var(--ko)" stroke-width="1.2" stroke-dasharray="4 4"/>` + texte2D([gx(1), G0[1] + 17], 'c', { ancre: 'middle', taille: 13, italique: true, couleur: 'var(--ko)' });
+    f += texte2D([G0[0] + GW + 18, G0[1] + 30], 'v/c', { ancre: 'end', taille: 13, italique: true }) + texte2D([G0[0] - 30, G0[1] - GH - 8], 'γ', { taille: 16, italique: true });
+    const pts: P2[] = [];
+    for (let i = 0; i <= 400; i++) { const b = (i / 400) * 0.9922; pts.push([gx(b), gy(1 / Math.sqrt(1 - b * b))]); }
+    f += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="2.2"/>`;
+    for (const [c, n] of [[H1, 'immobile'], [H2, 'en mouvement']] as [P2, string][]) {
+      f += `<circle cx="${c[0]}" cy="${c[1]}" r="${RH}" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.6"/>`;
+      for (let k = 0; k < 12; k++) { const a = (k * Math.PI) / 6; f += trait2D([c[0] + RH * 0.86 * Math.sin(a), c[1] - RH * 0.86 * Math.cos(a)], [c[0] + RH * Math.sin(a), c[1] - RH * Math.cos(a)], { couleur: 'var(--ink-soft)', epaisseur: k % 3 ? 1 : 2 }); }
+      f += texte2D([c[0], c[1] + RH + 18], `horloge ${n}`, { ancre: 'middle', taille: 12.5, couleur: 'var(--ink-soft)' });
+    }
+    f += `<rect x="${RX}" y="200" width="${REGLE}" height="14" fill="var(--sector-2)" stroke="var(--brass)" stroke-width="1.4"/>`;
+    for (let k = 0; k <= 10; k++) f += `<line x1="${RX + (k * REGLE) / 10}" x2="${RX + (k * REGLE) / 10}" y1="200" y2="${k % 5 ? 205 : 209}" stroke="var(--brass)" stroke-width="1"/>`;
+    f += texte2D([RX, 192], 'une règle de 1 m, immobile', { taille: 12.5, couleur: 'var(--ink-soft)' });
+    q('[data-fond]').innerHTML = f;
+
+    function dyn() {
+      const g = 1 + g1, ang = (2 * Math.PI * t) / 6;
+      let s = aiguille(H1, ang, 'var(--ink)') + aiguille(H2, ang / g, 'var(--ko)');
+      const L = REGLE / g;
+      s += `<rect x="${RX}" y="252" width="${L.toFixed(2)}" height="14" fill="var(--sector)" stroke="var(--orbit)" stroke-width="1.4"/>`;
+      for (let k = 0; k <= 10; k++) s += `<line x1="${(RX + (k * L) / 10).toFixed(2)}" x2="${(RX + (k * L) / 10).toFixed(2)}" y1="252" y2="${k % 5 ? 257 : 261}" stroke="var(--orbit)" stroke-width="1"/>`;
+      s += trait2D([RX + L + 8, 259], [RX + L + 44, 259], { couleur: 'var(--ko)', epaisseur: 1.8, fleche: 'fin' }) + texte2D([RX + L + 50, 264], 'v', { taille: 14, italique: true, couleur: 'var(--ko)' });
+      s += texte2D([RX, 290], 'la même règle, en mouvement', { taille: 12.5, couleur: 'var(--ink-soft)' });
+      const x = gx(beta), y = gy(g);
+      s += `<line x1="${x}" x2="${x}" y1="${G0[1]}" y2="${y}" stroke="var(--brass)" stroke-width="1" stroke-dasharray="3 3"/>`;
+      s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="var(--brass)" stroke="var(--surface)" stroke-width="2"/>`;
+      if (g > GMAX) s += texte2D([x - 8, y - 10], `γ ≈ ${nb(g, 0)} ↑`, { ancre: 'end', taille: 12.5, couleur: 'var(--brass)' });
+      q('[data-dyn]').innerHTML = s;
+    }
+    function maj() {
+      g1 = 10 ** parseFloat(curseur.value); beta = betaDepuisGammaMoins1(g1);
+      const g = 1 + g1;
+      q('[data-v-out]').textContent = fmtVitesse(beta);
+      q('[data-beta]').textContent = beta > 0.999 ? `1 − ${fmtSci(g1 > 1e3 ? 1 / (2 * g * g) : 1 - beta)}` : beta < 1e-3 ? fmtSci(beta) : nb(beta, 4);
+      q('[data-gamma]').textContent = fmtGamma(g1);
+      q('[data-duree]').textContent = g1 < 1e-3 ? `1 h + ${fmtPetit(g1 * 3600)}` : fmtHeures(g);
+      q('[data-long]').textContent = g1 < 1e-3 ? `1 m − ${fmtSci(g1 / g)} m` : g < 1000 ? `${nb(1 / g, 1 / g < 0.01 ? 5 : 3)} m` : `${nb(1000 / g, 3)} mm`;
+      dyn();
+    }
+    function compo() {
+      const a = parseFloat(u.value), b = parseFloat(w.value), gal = a + b, ein = compositionEinstein(a, b);
+      q('[data-u-out]').textContent = `${nb(a, 2)} c`; q('[data-w-out]').textContent = `${nb(b, 2)} c`;
+      const X0 = 150, K = 150; // 1 c = 150 px : 2 c et l’étiquette tiennent dans la largeur
+      let s = `<line x1="${X0 + K}" x2="${X0 + K}" y1="8" y2="104" stroke="var(--ko)" stroke-width="1.4" stroke-dasharray="5 4"/>` + texte2D([X0 + K + 5, 18], 'vitesse de la lumière c', { taille: 12, couleur: 'var(--ko)' });
+      const barres: [string, number, string, string][] = [
+        ['Galilée : u + w', gal, 'var(--ink-soft)', `${nb(gal, 2)} c${gal > 1 ? ' : impossible !' : ''}`],
+        // Près de c, assez de décimales pour montrer qu’on reste en dessous.
+        ['Einstein', ein, 'var(--orbit)', `${nb(ein, Math.max(3, Math.ceil(-Math.log10(1 - ein)) + 1))} c`],
+      ];
+      barres.forEach(([n, val, c, txt], i) => {
+        const y = 34 + i * 40;
+        s += texte2D([X0 - 10, y + 15], n, { ancre: 'end', taille: 13 });
+        s += `<rect x="${X0}" y="${y}" width="${(val * K).toFixed(1)}" height="20" rx="3" fill="${c}" fill-opacity=".8"/>`;
+        s += texte2D([Math.max(X0 + val * K, X0 + K) + 9, y + 15], txt, { taille: 13, couleur: i === 0 && gal > 1 ? 'var(--ko)' : 'var(--ink)' });
+      });
+      q('[data-compo]').innerHTML = s;
+    }
+    function boucle(now: number) {
+      if (!enPause && avant) { t += Math.min(0.1, (now - avant) / 1000); dyn(); }
+      avant = now; requestAnimationFrame(boucle);
+    }
+    curseur.addEventListener('input', maj);
+    u.addEventListener('input', compo); w.addEventListener('input', compo);
+    pause.addEventListener('click', () => { enPause = !enPause; pause.setAttribute('aria-pressed', String(enPause)); pause.textContent = enPause ? 'Reprendre' : 'Pause'; });
+    if (reduit) { pause.setAttribute('aria-pressed', 'true'); pause.textContent = 'Reprendre'; }
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((bt) => bt.addEventListener('click', () => {
+      const p = bt.dataset.pre!;
+      // Vitesse en km/s, ou « g:γ » pour les particules ultra-relativistes.
+      const gm1 = p.startsWith('g:') ? +p.slice(2) - 1 : (() => { const b = +p / C_KM_S; return b * b / (Math.sqrt(1 - b * b) * (1 + Math.sqrt(1 - b * b))); })();
+      curseur.value = String(Math.log10(gm1)); maj();
+    }));
+    maj(); compo();
+    requestAnimationFrame(boucle);
+  });
+</script>

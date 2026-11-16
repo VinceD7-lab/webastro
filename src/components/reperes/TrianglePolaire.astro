@@ -1,0 +1,52 @@
+---
+/** Triangle sphérique pôle de l’écliptique – pôle céleste – astre (variante « triangle ») ou médiation de l’astre (variante « mediation ») (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, cross, comb, slerp, dot, ind, type V3 } from '../../lib/projection';
+interface Props { variante?: 'triangle' | 'mediation' }
+const { variante = 'triangle' } = Astro.props;
+const med = variante === 'mediation';
+const e = (23.44 * Math.PI) / 180, R = Math.PI / 180;
+const v = new Vue(300, 318, 240, 14, 20);
+const [g, dr] = v.limbe([0, 0, 1]);
+const O: V3 = [0, 0, 0], X: V3 = [1, 0, 0], Y: V3 = [0, 1, 0], Z: V3 = [0, 0, 1];
+const K: V3 = [0, -Math.sin(e), Math.cos(e)], Ye: V3 = [0, Math.cos(e), Math.sin(e)];
+const lam = 62 * R, bet = 24 * R;
+const A = comb([Math.cos(bet) * Math.cos(lam), X], [Math.cos(bet) * Math.sin(lam), Ye], [Math.sin(bet), K]);
+const H = unit([A[0], A[1], 0]), M = comb([Math.cos(lam), X], [Math.sin(lam), Ye]);
+let MA = unit(cross(unit(cross(Z, A)), K)); if (dot(MA, A) < 0) MA = mul(MA, -1);
+const rouge = { couleur: 'var(--ko)', epaisseur: 2.2 }, noir = { epaisseur: 1.5 };
+const T = (p: V3, s: string, o: object = {}) => v.texte(p, s, { taille: 16, ...o });
+let s = `<path d="M${v.cx - v.R},${v.cy} A${v.R},${v.R} 0 0 1 ${v.cx + v.R},${v.cy}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+s += v.cercle(Z, 0, { epaisseur: 1.5 });
+s += v.ligne(g, dr, { tirets: '5 4', epaisseur: 0.8 }) + v.point(g, 3.5) + v.point(dr, 3.5);
+s += v.ligne(O, mul(Z, 1.25), { tirets: '5 4', epaisseur: 1, fleche: 'fin' }) + v.ligne(O, mul(K, 1.3), { tirets: '5 4', epaisseur: 1, fleche: 'fin' });
+s += v.arc([0, -1, 0], Z, noir) + v.arc(Z, [0, 1, 0], noir);
+s += v.courbe(Array.from({ length: 91 }, (_, i) => comb([Math.cos(i * 2 * R), X], [Math.sin(i * 2 * R), Ye])), noir);
+if (!med) s += v.arc(X, Z, noir);
+s += v.arc(K, Z, rouge) + v.arc(Z, A, rouge) + v.arc(K, A, med ? noir : rouge);
+s += v.arc(A, med ? H : H, { couleur: 'var(--orbit)', epaisseur: 2.2 }) + v.arc(A, M, { couleur: 'var(--ok)', epaisseur: 2.2 });
+if (!med) s += v.angle(K, Z, A, 0.13) + v.angle(Z, K, A, 0.1) + v.angle(X, H, M, 0.16);
+else s += v.angle(X, H, M, 0.16);
+s += v.etoile(A, 8) + v.point(K, 3.5) + v.point(Z, 3.5) + v.point(X, 3.5) + v.point(H, 3.5) + v.point(M, 3.5) + (med ? v.point(MA, 3.5) : '');
+s += T(Z, 'P', { dy: -10, ancre: 'middle' }) + T(K, `P${ind('E')}`, { dx: -26, dy: 4, brut: true }) + T(A, 'A', { dx: 10, dy: -4 });
+s += T(mul(Z, 1.25), 'pôle céleste nord', { dx: 8, dy: 4, taille: 14 }) + T(mul(K, 1.3), 'pôle de l’écliptique', { dx: -8, dy: -6, ancre: 'end', taille: 14 });
+s += T(X, 'γ', { dy: 24, ancre: 'middle', taille: 19 }) + T(X, med ? 'point vernal' : '', { dx: -14, dy: 24, ancre: 'end', taille: 14 });
+s += T(H, med ? 'H' : 'M', { dy: 24, ancre: 'middle' }) + T(M, med ? 'M' : 'M′', { dx: 10, dy: 14 });
+s += T(slerp(K, Z, 0.5), 'ε', { dy: -8, ancre: 'middle', couleur: 'var(--ko)' });
+s += T(slerp(K, A, 0.5), 'π/2 − β', { dx: -8, dy: 20, ancre: 'end', couleur: med ? 'var(--ink)' : 'var(--ko)', taille: 15 });
+s += T(slerp(Z, A, 0.45), 'p = π/2 − δ', { dx: 10, dy: 0, couleur: 'var(--ko)', taille: 15 });
+s += T(slerp(A, H, 0.5), 'δ', { dx: -16, dy: 4, couleur: 'var(--orbit)' }) + T(slerp(A, M, 0.5), 'β', { dx: 6, dy: -4, couleur: 'var(--ok)' });
+s += T(slerp(X, H, 0.5), 'α', { dy: 24, ancre: 'middle' }) + T(slerp(X, M, med ? 0.92 : 0.75), 'λ', { dx: -4, dy: -12, ancre: 'middle' });
+s += T(X, 'ε', { dx: 28, dy: -6, taille: 14 });
+s += T([0, 1, 0.12], 'colure des solstices', { dx: -6, dy: -150, ancre: 'end', taille: 14 });
+s += T(slerp(X, M, 0.95), 'écliptique', { dx: 26, dy: -26, taille: 14, rotation: -40 });
+s += T(g, 'équateur céleste', { dx: 30, dy: 64, taille: 14, rotation: 14 });
+if (!med) {
+  s += T(slerp(X, Z, 0.3), 'colure des équinoxes', { dx: -10, dy: 0, taille: 14, rotation: -82, ancre: 'start' });
+  s += v.texte(v.dansAngle(K, Z, A, 0.24), 'π/2 − λ', { dy: 6, ancre: 'middle', taille: 13 }) + v.texte(v.dansAngle(Z, K, A, 0.2), 'π/2 + α', { dy: 12, ancre: 'middle', taille: 13 });
+} else {
+  s += v.arc(X, MA, { couleur: 'var(--brass)', epaisseur: 2.4 });
+  s += T(MA, `M${ind('A')}`, { dx: -12, dy: 18, ancre: 'end', brut: true }) + T(slerp(X, MA, 0.5), `m${ind('A')}`, { dx: -2, dy: -10, italique: true, couleur: 'var(--brass)', brut: true });
+}
+---
+<Figure titre={med ? 'Médiation d’un astre A : le cercle horaire de l’astre coupe l’équateur en H et l’écliptique au point de médiation M_A ; la médiation m_A est l’arc de l’écliptique compris entre γ et M_A' : 'Triangle sphérique formé par le pôle de l’écliptique P_E, le pôle céleste nord P et l’astre A ; ses côtés valent ε, π/2 − β et π/2 − δ'} largeur={600} hauteur={440} svg={s}><slot /></Figure>

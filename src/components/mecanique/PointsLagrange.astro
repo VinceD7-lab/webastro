@@ -1,0 +1,28 @@
+---
+/** Les cinq points de Lagrange d’une planète P en orbite autour du Soleil S (redessiné d’après CNRS / J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, point2D, pointe, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+const S: P2 = [270, 190], R = 150;
+const sur = (a: number, r = R): P2 => [S[0] + r * Math.cos((a * Math.PI) / 180), S[1] - r * Math.sin((a * Math.PI) / 180)];
+let s = `<circle cx="${S[0]}" cy="${S[1]}" r="${R}" fill="none" stroke="var(--orbit)" stroke-width="1.6"/>`;
+s += trait2D([20, S[1]], [580, S[1]], { couleur: 'var(--rule)', epaisseur: 1 });
+const P = sur(0), L4 = sur(60), L5 = sur(-60);
+s += trait2D(S, L4, { epaisseur: 1.2 }) + trait2D(S, L5, { epaisseur: 1.2 });
+s += arcAngle(S, 0, 60, 40, 'var(--brass)', 1.6) + arcAngle(S, -60, 0, 40, 'var(--brass)', 1.6);
+s += texte2D(sur(30, 54), '60°', { dy: 5, taille: 14, couleur: 'var(--brass)' }) + texte2D(sur(-30, 54), '60°', { dy: 5, taille: 14, couleur: 'var(--brass)' });
+// Sens du mouvement (direct) : flèches sur l’orbite.
+for (const a of [125, 235]) { const p = sur(a), q = sur(a + 6); s += pointe(p, q, 'var(--orbit)', 13); }
+const instable = 'var(--ko)', stable = 'var(--ok)';
+const pts: [string, P2, string, number, number][] = [
+  ['L1', sur(0, R * 0.8), instable, -14, -12], ['L2', sur(0, R * 1.2), instable, 0, -12], ['L3', sur(180, R * 1.01), instable, -12, -12],
+  ['L4', L4, stable, 10, -8], ['L5', L5, stable, 10, 20],
+];
+for (const [n, p, c, dx, dy] of pts) s += point2D(p, 6, c) + texte2D(p, n, { dx, dy, taille: 15, gras: true, couleur: c });
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="14" fill="var(--sun)" stroke="var(--ink)"/>` + texte2D(S, 'S', { dx: -6, dy: 34, taille: 16 });
+s += point2D(P, 8, 'var(--orbit)') + texte2D(P, 'P', { dx: 6, dy: 26, taille: 16 });
+s += point2D([460, 352], 5, stable) + texte2D([472, 357], 'équilibre stable', { taille: 13 });
+s += point2D([460, 374], 5, instable) + texte2D([472, 379], 'équilibre instable', { taille: 13 });
+s += texte2D([20, 374], 'L1 et L2 écartés de P pour la lisibilité', { taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Les points de Lagrange L1 à L5 d’une planète P autour du Soleil S ; L4 et L5 font un angle de 60° avec la direction de P" largeur={600} hauteur={390} svg={s}><slot /></Figure>

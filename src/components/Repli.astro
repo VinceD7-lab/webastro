@@ -1,0 +1,9 @@
+---
+/** Bloc repliable : correction d’exercice, approfondissement… */
+interface Props { titre?: string }
+const { titre = 'Afficher la correction' } = Astro.props;
+---
+<details class="reveal">
+  <summary>{titre}</summary>
+  <div class="inner"><slot /></div>
+</details>

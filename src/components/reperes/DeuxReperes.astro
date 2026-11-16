@@ -1,0 +1,38 @@
+---
+/** Les repères écliptique et équatorial, inclinés de l’obliquité ε autour de la droite des équinoxes (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, cross, comb, slerp, type V3 } from '../../lib/projection';
+const e = (23.44 * Math.PI) / 180, R = Math.PI / 180;
+const v = new Vue(300, 292, 195, 25, 14);
+const O: V3 = [0, 0, 0], X: V3 = [1, 0, 0], Y: V3 = [0, 1, 0], Z: V3 = [0, 0, 1];
+const K: V3 = [0, -Math.sin(e), Math.cos(e)], Ye: V3 = [0, Math.cos(e), Math.sin(e)];
+const lam = 58 * R, bet = 24 * R;
+const A = comb([Math.cos(bet) * Math.cos(lam), X], [Math.cos(bet) * Math.sin(lam), Ye], [Math.sin(bet), K]);
+const piedEq = unit([A[0], A[1], 0]), piedEcl = comb([Math.cos(lam), X], [Math.sin(lam), Ye]);
+const rouge = 'var(--ko)', mag = 'var(--brass)', bleu = 'var(--orbit)';
+let s = v.contour();
+s += v.cercle(Z, 0, { epaisseur: 1.4 }) + v.cercle(K, 0, { couleur: bleu, epaisseur: 1.4 });
+s += v.cercle(unit(cross(Z, A)), 0, { epaisseur: 0.8, couleur: 'var(--ink-soft)', arriere: 'masque' });
+s += v.cercle(unit(cross(K, A)), 0, { epaisseur: 0.8, couleur: 'var(--ink-soft)', arriere: 'masque' });
+s += v.ligne(O, A, { epaisseur: 1 }) + v.ligne(O, piedEq, { epaisseur: 0.8 }) + v.ligne(O, piedEcl, { epaisseur: 0.8 });
+s += v.arc(X, piedEq, { couleur: rouge, epaisseur: 2.2, fleche: 'fin' }) + v.arc(piedEq, A, { couleur: rouge, epaisseur: 2.2, fleche: 'fin' });
+s += v.arc(X, piedEcl, { couleur: mag, epaisseur: 2.2, fleche: 'fin' }) + v.arc(piedEcl, A, { couleur: mag, epaisseur: 2.2, fleche: 'fin' });
+s += v.ligne(O, Z, { tirets: '5 4', epaisseur: 1.1 }) + v.ligne(Z, mul(Z, 1.32), { fleche: 'fin' });
+s += v.ligne(O, K, { tirets: '5 4', epaisseur: 1.1 }) + v.ligne(K, mul(K, 1.36), { fleche: 'fin' });
+s += v.arc(Z, K, { epaisseur: 1 }, 1.2);
+s += v.ligne(O, mul(X, 1.42), { fleche: 'fin' }) + v.ligne(O, mul(Y, 1.48), { fleche: 'fin' }) + v.ligne(O, mul(Ye, 1.48), { fleche: 'fin', couleur: bleu });
+s += v.point(O, 3.5) + v.point(A, 4.5) + v.point(X, 3.5);
+s += v.texte(mul(Z, 1.32), 'z′ (pôle céleste nord)', { dx: 10, dy: 6, italique: true });
+s += v.texte(mul(K, 1.36), 'z (pôle de l’écliptique)', { dx: -10, dy: -4, ancre: 'end', italique: true });
+s += v.texte(mul(slerp(Z, K, 0.5), 1.2), 'ε', { dy: -8, ancre: 'middle', taille: 18 });
+s += v.texte(mul(X, 1.42), 'x', { dx: 8, dy: 10, italique: true, taille: 17 }) + v.texte(mul(Y, 1.48), 'y′', { dx: 6, dy: 14, italique: true, taille: 17 }) + v.texte(mul(Ye, 1.48), 'y', { dx: 8, dy: 0, italique: true, taille: 17, couleur: bleu });
+s += v.texte(X, 'γ', { dx: 4, dy: 22, taille: 18 }) + v.texte(X, 'équinoxe', { dx: -16, dy: 2, ancre: 'end' });
+s += v.texte(A, 'astre', { dx: 8, dy: -8 }) + v.texte(O, 'O', { dx: -18, dy: 0, italique: true, taille: 16 });
+s += v.texte(slerp(X, piedEq, 0.5), 'α', { dy: 22, ancre: 'middle', taille: 18, couleur: rouge });
+s += v.texte(slerp(piedEq, A, 0.5), 'δ', { dx: -18, dy: 4, taille: 18, couleur: rouge });
+s += v.texte(slerp(X, piedEcl, 0.55), 'λ', { dx: 0, dy: -8, ancre: 'middle', taille: 18, couleur: mag });
+s += v.texte(slerp(piedEcl, A, 0.5), 'β', { dx: 8, dy: 4, taille: 18, couleur: mag });
+s += v.texte([0.62, 0.78, 0], 'plan de l’équateur', { dx: -40, dy: 26, taille: 14 });
+s += v.texte(comb([Math.cos(-1.35), X], [Math.sin(-1.35), Ye]), 'plan de l’écliptique', { dx: 4, dy: 22, taille: 14, couleur: bleu });
+---
+<Figure titre="Les repères écliptique et équatorial ont le même axe x, dirigé vers le point γ ; on passe de l’un à l’autre par une rotation d’angle ε autour de cet axe" largeur={600} hauteur={520} svg={s}><slot /></Figure>

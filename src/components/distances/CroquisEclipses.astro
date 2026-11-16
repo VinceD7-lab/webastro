@@ -1,0 +1,22 @@
+---
+/** Éclipses de Soleil et de Lune : cônes d’ombre de la Lune et de la Terre (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, chemin, pointe, type P2 } from '../../lib/projection';
+import { disque, terre } from '../../lib/dessin';
+const T: P2 = [300, 190], rT = 28, rO = 150, rL = 8;
+const LS: P2 = [T[0] - rO, T[1]], LL: P2 = [T[0] + rO, T[1]];
+let s = `<circle cx="${T[0]}" cy="${T[1]}" r="${rO}" fill="none" stroke="var(--ink)" stroke-width="1.2"/>`;
+for (const y of [60, 190, 320]) s += trait2D([10, y], [62, y], { couleur: 'var(--sun)', epaisseur: 10 }) + pointe([60, y], [92, y], 'var(--sun)', 30);
+s += texte2D([14, 34], 'rayons du Soleil', { taille: 14, couleur: 'var(--brass)' });
+// Cône d’ombre de la Lune : il se referme juste à la surface de la Terre.
+s += `<path d="${chemin([[LS[0], LS[1] - rL], [T[0] - rT, T[1]], [LS[0], LS[1] + rL]], true)}" fill="var(--ko)" fill-opacity=".25" stroke="var(--ko)" stroke-width="1.4"/>`;
+// Cône d’ombre de la Terre : à la distance de la Lune, il est rétréci d’un diamètre lunaire.
+const xF = T[0] + (rT * rO) / rL; // sommet du cône d’ombre de la Terre : il perd un diamètre lunaire sur la distance Terre-Lune
+s += `<path d="${chemin([[T[0], T[1] - rT], [Math.min(xF, 590), T[1] - rT * (1 - (Math.min(xF, 590) - T[0]) / (xF - T[0]))], [Math.min(xF, 590), T[1] + rT * (1 - (Math.min(xF, 590) - T[0]) / (xF - T[0]))], [T[0], T[1] + rT]], true)}" fill="var(--ko)" fill-opacity=".18" stroke="var(--ko)" stroke-width="1.4"/>`;
+s += terre(T, rT) + disque(LS, rL, 'var(--surface-2)') + disque(LL, rL, 'var(--surface-2)');
+s += texte2D(T, 'Terre', { dy: rT + 18, ancre: 'middle', taille: 14 });
+s += texte2D(LS, 'Lune', { dx: -12, dy: -16, ancre: 'middle', taille: 14 }) + texte2D(LS, 'éclipse de Soleil', { dx: -12, dy: 34, ancre: 'middle', taille: 13 });
+s += texte2D(LL, 'Lune', { dy: -24, ancre: 'middle', taille: 14 }) + texte2D(LL, 'éclipse de Lune', { dy: 40, ancre: 'middle', taille: 13 });
+s += texte2D([300, 372], 'L’ombre de la Lune se referme sur la Terre ; celle de la Terre a perdu un diamètre lunaire au niveau de la Lune.', { ancre: 'middle', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Éclipses : l’ombre de la Lune atteint tout juste la Terre lors d’une éclipse de Soleil ; lors d’une éclipse de Lune, l’ombre de la Terre a rétréci d’un diamètre lunaire au niveau de la Lune" largeur={600} hauteur={385} svg={s}><slot /></Figure>

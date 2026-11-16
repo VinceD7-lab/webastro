@@ -1,0 +1,41 @@
+---
+/** Périhélie de Mercure et angle θ qui le repère ; l’orbite tourne lentement (redessiné d’après ASM / J.-E. Arlot et G. Bessou, excentricité et avance exagérées). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, point2D, type P2 } from '../../lib/projection';
+import { arcAngle } from '../../lib/dessin';
+const F: P2 = [292, 214], a = 160, e = 0.45, RAD = Math.PI / 180;
+/** Point de l’orbite d’anomalie vraie v (degrés), périhélie dans la direction th (degrés, y vers le haut). */
+const pt = (v: number, th: number): P2 => {
+  const r = (a * (1 - e * e)) / (1 + e * Math.cos(v * RAD)), ang = (v + th) * RAD;
+  return [F[0] + r * Math.cos(ang), F[1] - r * Math.sin(ang)];
+};
+const orbite = (th: number) => chemin(Array.from({ length: 241 }, (_, i) => pt((360 * i) / 240, th)), true);
+const th1 = 22, th2 = 44;
+let s = '';
+// Orbite plus tardive (périhélie avancé), en tirets.
+s += `<path d="${orbite(th2)}" fill="none" stroke="var(--ink-soft)" stroke-width="1.4" stroke-dasharray="6 5"/>`;
+s += trait2D(F, pt(0, th2), { couleur: 'var(--ink-soft)', epaisseur: 1.2, tirets: '4 4' });
+s += point2D(pt(0, th2), 3.5, 'var(--ink-soft)');
+s += texte2D(pt(0, th2), 'périhélie plus tard', { dx: 10, dy: 0, taille: 13, couleur: 'var(--ink-soft)' });
+// Orbite actuelle.
+s += `<path d="${orbite(th1)}" fill="none" stroke="var(--orbit)" stroke-width="2.4"/>`;
+s += trait2D(F, pt(0, th1), { couleur: 'var(--brass)', epaisseur: 1.8 });
+s += point2D(pt(0, th1), 4, 'var(--brass)');
+s += texte2D(pt(0, th1), 'périhélie', { dx: 8, dy: 5, taille: 14, couleur: 'var(--brass)' });
+// Direction fixe et angle θ.
+s += trait2D(F, [F[0] + 250, F[1]], { couleur: 'var(--ink)', epaisseur: 1.2, tirets: '7 5', fleche: 'fin' });
+s += texte2D([F[0] + 250, F[1]], 'direction fixe', { dx: -2, dy: 20, ancre: 'end', taille: 13.5 });
+s += arcAngle(F, 0, th1, 62, 'var(--brass)', 1.6);
+s += texte2D([F[0] + 72 * Math.cos(11 * RAD), F[1] - 72 * Math.sin(11 * RAD)], 'θ', { dx: 2, dy: 6, taille: 17, italique: true, couleur: 'var(--brass)' });
+// Flèche du sens de l’avance.
+const avance: P2[] = Array.from({ length: 21 }, (_, i) => { const t = (th1 + 4 + ((th2 - th1 - 8) * i) / 20) * RAD; return [F[0] + 175 * Math.cos(t), F[1] - 175 * Math.sin(t)]; });
+s += `<path d="${chemin(avance)}" fill="none" stroke="var(--ink-soft)" stroke-width="1.2"/>` + trait2D(avance[18], avance[20], { couleur: 'var(--ink-soft)', epaisseur: 1.2, fleche: 'fin' });
+// Soleil et Mercure.
+s += `<circle cx="${F[0]}" cy="${F[1]}" r="11" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>`;
+s += texte2D(F, 'Soleil', { dx: -16, dy: 28, ancre: 'middle', taille: 14 });
+const M = pt(128, th1);
+s += `<circle cx="${M[0].toFixed(1)}" cy="${M[1].toFixed(1)}" r="6" fill="var(--ink-soft)" stroke="var(--ink)" stroke-width="1"/>`;
+s += texte2D(M, 'Mercure', { dx: -10, dy: -10, ancre: 'end', taille: 14 });
+s += texte2D([592, 412], 'Excentricité et avance très exagérées', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Orbite de Mercure autour du Soleil : l’angle θ repère la direction du périhélie par rapport à une direction fixe ; au fil du temps, le périhélie avance" largeur={600} hauteur={420} svg={s}><slot /></Figure>

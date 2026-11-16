@@ -1,0 +1,29 @@
+---
+/** Repère céleste écliptique (λ, β) ou équatorial (α, δ) (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, sph, mul, unit, cross, type V3 } from '../../lib/projection';
+interface Props { plan?: 'ecliptique' | 'equateur' }
+const { plan = 'ecliptique' } = Astro.props;
+const ecl = plan === 'ecliptique';
+const [lon, lat] = ecl ? ['λ', 'β'] : ['α', 'δ'];
+const v = new Vue(300, 268, 190, 25, 18);
+const O: V3 = [0, 0, 0], X: V3 = [1, 0, 0], Y: V3 = [0, 1, 0], Z: V3 = [0, 0, 1];
+const L = 52, B = 30, dir = sph(L, B), pied = sph(L, 0), astre = mul(dir, 0.62);
+let s = v.contour();
+s += v.cercle(Z, 0, { epaisseur: 1.3 });
+s += v.cercle(unit(cross(Z, pied)), 0, { epaisseur: 1, arriere: 'masque' });
+s += v.secteur(O, X, pied, 0.44, 'var(--sun)', 0.55) + v.arc(X, pied, { couleur: 'var(--brass)', fleche: 'fin', epaisseur: 1.4 }, 0.44);
+s += v.secteur(O, pied, dir, 0.34, 'var(--orbit)', 0.45) + v.arc(pied, dir, { couleur: 'var(--orbit)', fleche: 'fin', epaisseur: 1.4 }, 0.34);
+s += v.ligne(O, Z, { tirets: '5 4', epaisseur: 1.2 }) + v.ligne(Z, mul(Z, 1.32), { fleche: 'fin' });
+s += v.ligne(O, mul(X, 1.5), { fleche: 'fin' }) + v.ligne(O, mul(Y, 1.5), { fleche: 'fin' });
+s += v.ligne(O, pied, { epaisseur: 1.1 }) + v.ligne(O, astre, { epaisseur: 1.6 });
+s += v.point(O, 3.5) + v.point(astre, 4.5) + v.point(X, 3.5);
+s += v.texte(mul(Z, 1.32), 'z', { dx: 10, dy: 8, italique: true, taille: 17 }) + v.texte(mul(Z, 1.08), ecl ? 'pôle de l’écliptique' : 'pôle céleste nord', { dx: 10, dy: 4 });
+s += v.texte(mul(X, 1.5), 'x', { dx: 6, dy: 14, italique: true, taille: 17 }) + v.texte(mul(Y, 1.5), 'y', { dx: 0, dy: -10, italique: true, taille: 17 });
+s += v.texte(X, 'γ', { dx: 8, dy: 14, taille: 18 }) + v.texte(mul(X, 0.62), 'équinoxe', { dx: -40, dy: -6, ancre: 'end' });
+s += v.texte(O, 'O', { dx: -14, dy: -6, italique: true, taille: 16 }) + v.texte(astre, 'astre', { dx: 8, dy: -6 });
+s += v.texte(mul(sph(L / 2, 0), 0.32), lon, { dx: -4, dy: 6, ancre: 'middle', taille: 18 });
+s += v.texte(mul(sph(L, B / 2), 0.25), lat, { dx: 2, dy: 6, ancre: 'middle', taille: 17 });
+s += v.texte(sph(70, 0), ecl ? 'plan de l’écliptique' : 'plan de l’équateur', { dx: 8, dy: 22, taille: 14 });
+---
+<Figure titre={ecl ? 'Repère écliptique : la longitude λ se compte sur l’écliptique depuis le point γ, la latitude β depuis le plan de l’écliptique' : 'Repère équatorial : l’ascension droite α se compte sur l’équateur depuis le point γ, la déclinaison δ depuis le plan de l’équateur'} largeur={600} hauteur={510} svg={s}><slot /></Figure>

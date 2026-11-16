@@ -1,0 +1,22 @@
+---
+/** Distances Terre-Lune et Terre-Soleil à l’échelle (d’après CNRS, J.-E. Arlot). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D } from '../../lib/projection';
+import { disque, terre } from '../../lib/dessin';
+const dLune = 384_400, dSoleil = 149_597_871, rT = 6_378, rL = 1_737, rS = 696_000;
+const x0 = 40, L = 520;
+// Ligne 1 : la distance Terre-Lune occupe L pixels.
+const k1 = L / dLune;
+let s = texte2D([x0, 34], 'Terre-Lune à l’échelle (1 pixel ≈ 740 km)', { taille: 14, couleur: 'var(--ink-soft)' });
+s += trait2D([x0, 80], [x0 + L, 80], { tirets: '6 6', epaisseur: 1, couleur: 'var(--ink-soft)' });
+s += terre([x0, 80], Math.max(3, rT * k1)) + disque([x0 + L, 80], Math.max(2.5, rL * k1), 'var(--surface-2)');
+s += texte2D([x0, 112], 'Terre', { ancre: 'middle', taille: 14 }) + texte2D([x0 + L, 112], 'Lune', { ancre: 'middle', taille: 14 }) + texte2D([x0 + L / 2, 72], '384 400 km', { ancre: 'middle', taille: 13 });
+// Ligne 2 : la distance Terre-Soleil occupe L pixels ; la Lune est alors presque collée à la Terre.
+const k2 = L / dSoleil;
+s += texte2D([x0, 164], 'Terre-Soleil à la même place (1 pixel ≈ 288 000 km)', { taille: 14, couleur: 'var(--ink-soft)' });
+s += trait2D([x0, 210], [x0 + L, 210], { tirets: '6 6', epaisseur: 1, couleur: 'var(--ink-soft)' });
+s += disque([x0 + L, 210], Math.max(3, rS * k2), 'var(--sun)');
+s += terre([x0, 210], 2.5) + `<circle cx="${x0 + dLune * k2}" cy="210" r="1.6" fill="var(--ink)"/>`;
+s += texte2D([x0, 242], 'Terre et Lune', { ancre: 'start', dx: -12, taille: 14 }) + texte2D([x0 + L, 242], 'Soleil', { ancre: 'middle', taille: 14 }) + texte2D([x0 + L / 2, 202], '149,6 millions de km ≈ 389 fois Terre-Lune', { ancre: 'middle', taille: 13 });
+---
+<Figure titre="Distances à l’échelle : en haut, la Terre et la Lune séparées de 384 400 km ; en bas, à une échelle 389 fois plus petite, la Terre et le Soleil, la Lune étant presque confondue avec la Terre" largeur={600} hauteur={260} svg={s}><slot /></Figure>

@@ -1,0 +1,88 @@
+---
+/**
+ * Approximation de Tchebychev : le rayon vecteur de Mars (mouvement képlérien moyen) est représenté sur un intervalle
+ * [t₀, t₀ + DT] par N + 1 coefficients. On compare l’erreur à la borne « somme des coefficients négligés » et à celle
+ * d’un polynôme de même degré passant par des points équidistants (approximation « lagrangienne »).
+ */
+---
+<div class="sim" data-tchebychev data-pagefind-ignore>
+  <svg viewBox="0 0 600 270" role="img" aria-label="Erreur de représentation, en échelle logarithmique, de l’approximation de Tchebychev et d’un polynôme passant par des points équidistants">
+    <g font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Degré n</span> <input data-n type="range" min="1" max="14" step="1" value="9" /> <output data-n-out></output></label>
+    <label><span>Intervalle DT</span>
+      <select data-dt><option value="32">32 jours</option><option value="64">64 jours</option><option value="186" selected>186 jours</option><option value="372">372 jours</option></select>
+    </label>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-err>–</b><span>erreur maximale (Tchebychev)</span></div>
+    <div><b data-borne>–</b><span>somme des |a<sub>k</sub>| négligés</span></div>
+    <div><b data-lag>–</b><span>erreur maximale (points équidistants)</span></div>
+    <div><b data-val>–</b><span>R de Mars le 5 novembre 2003 à 16 h 52 min 47 s</span></div>
+  </div>
+  <p class="note" data-coef></p>
+  <p class="note">Intervalle commençant le 0 juillet 2003 (30 juin) à 0 h, comme dans l’exemple de la source ; erreurs en unités astronomiques (1 ua ≈ 150 millions de km : 10⁻⁹ ua ≈ 150 m). Le mouvement de Mars est ici un mouvement képlérien moyen, sans perturbations : la valeur obtenue diffère de 10⁻⁴ ua de celle de la vraie théorie.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 240px;flex-wrap:wrap}
+  .controls output{min-width:3em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0;font-variant-numeric:tabular-nums}
+</style>
+
+<script>
+  import { coefficientsTchebychev, sommeTchebychev, lagrangeEquidistant, rayonMars } from '../lib/ephemerides';
+  import { jourJulien } from '../lib/reperes';
+  import { fmtSci, nbFr as nb } from '../lib/relativite';
+  import { chemin, texte2D, ind, type P2 } from '../lib/projection';
+
+  const T0 = jourJulien(new Date(Date.UTC(2003, 5, 30))), TEX = jourJulien(new Date(Date.UTC(2003, 10, 5, 16, 52, 47)));
+  const X0 = 60, W = 510, Y0 = 20, H = 210, LMIN = -14, LMAX = -1;
+  const gx = (x: number) => X0 + ((x + 1) / 2) * W, gy = (l: number) => Y0 + ((LMAX - Math.max(LMIN, Math.min(LMAX, l))) / (LMAX - LMIN)) * H;
+
+  document.querySelectorAll<HTMLElement>('[data-tchebychev]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const nIn = q<HTMLInputElement>('[data-n]'), dtIn = q<HTMLSelectElement>('[data-dt]');
+
+    function maj() {
+      const n = +nIn.value, DT = +dtIn.value, f = (x: number) => rayonMars(T0 + ((x + 1) / 2) * DT);
+      const a = coefficientsTchebychev(f, 32);
+      let eC = 0, eL = 0;
+      const cC: P2[] = [], cL: P2[] = [];
+      for (let i = 0; i <= 300; i++) {
+        const x = -1 + i / 150, v = f(x), ec = Math.abs(sommeTchebychev(a, x, n) - v), el = Math.abs(lagrangeEquidistant(f, n, x) - v);
+        eC = Math.max(eC, ec); eL = Math.max(eL, el);
+        cC.push([gx(x), gy(Math.log10(ec || 1e-16))]); cL.push([gx(x), gy(Math.log10(el || 1e-16))]);
+      }
+      const borne = a.slice(n + 1).reduce((s, v) => s + Math.abs(v), 0);
+      let s = '';
+      for (let l = LMIN; l <= LMAX; l += 2) s += `<line x1="${X0}" x2="${X0 + W}" y1="${gy(l)}" y2="${gy(l)}" stroke="var(--rule)" stroke-width=".8"/>` + texte2D([X0 - 6, gy(l) + 4], `10${String(l).replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c])}`, { ancre: 'end', taille: 11, couleur: 'var(--ink-soft)' });
+      s += `<path d="${chemin(cL)}" fill="none" stroke="var(--ko)" stroke-width="1.4"/>`;
+      s += `<path d="${chemin(cC)}" fill="none" stroke="var(--orbit)" stroke-width="1.8"/>`;
+      s += `<line x1="${X0}" x2="${X0 + W}" y1="${gy(Math.log10(borne || 1e-16))}" y2="${gy(Math.log10(borne || 1e-16))}" stroke="var(--brass)" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+      s += texte2D([X0, Y0 + H + 18], `t${ind('0')} (x = −1)`, { taille: 11.5, couleur: 'var(--ink-soft)', brut: true }) + texte2D([X0 + W, Y0 + H + 18], `t${ind('0')} + DT (x = +1)`, { ancre: 'end', taille: 11.5, couleur: 'var(--ink-soft)', brut: true });
+      s += texte2D([X0 + W / 2, Y0 + H + 34], 'erreur |approximation − fonction| (ua), échelle logarithmique', { ancre: 'middle', taille: 11.5, couleur: 'var(--ink-soft)' });
+      s += texte2D([X0 + 8, Y0 + 12], '— Tchebychev', { taille: 12, couleur: 'var(--orbit)' }) + texte2D([X0 + 118, Y0 + 12], '— points équidistants', { taille: 12, couleur: 'var(--ko)' }) + texte2D([X0 + 270, Y0 + 12], '- - borne (coefficients négligés)', { taille: 12, couleur: 'var(--brass)' });
+      q('svg g').innerHTML = s;
+      q('[data-n-out]').textContent = `${n} (${n + 1} coefficients)`;
+      q('[data-err]').textContent = `${fmtSci(eC)} ua`;
+      q('[data-borne]').textContent = `${fmtSci(borne)} ua`;
+      q('[data-lag]').textContent = `${fmtSci(eL)} ua`;
+      const xe = -1 + (2 * (TEX - T0)) / DT;
+      q('[data-val]').textContent = Math.abs(xe) <= 1 ? `${nb(sommeTchebychev(a, xe, n), 8)} ua` : 'hors de l’intervalle';
+      const ctrl = a.slice(0, n + 1).reduce((s, v, k) => s + (k % 2 ? -v : v), 0);
+      q('[data-coef]').innerHTML = `Coefficients a<sub>0</sub> … a<sub>${n}</sub> : ` + a.slice(0, n + 1).map((v) => nb(v, 8).replace('-', '−')).join(' ; ') + `. Valeur de contrôle y(t<sub>0</sub>) = a<sub>0</sub> − a<sub>1</sub> + a<sub>2</sub> − … = ${nb(ctrl, 8)} ua.`;
+    }
+    nIn.addEventListener('input', maj); dtIn.addEventListener('input', maj);
+    maj();
+  });
+</script>

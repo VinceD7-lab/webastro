@@ -1,0 +1,46 @@
+---
+/**
+ * Parallaxe : un astre visé depuis deux lieux de la Terre.
+ * Variante « observateurs » (redessiné d’après ASM, J.-E. Arlot, G. Bessou, D. Taharbouche)
+ * ou « lune » : principe de la mesure de la distance Terre-Lune (d’après ASM, J.-E. Arlot, G. Bessou).
+ */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, point2D, chemin, type P2 } from '../../lib/projection';
+import { observateur, croissant, disque, terre, arcAngle, direction } from '../../lib/dessin';
+interface Props { variante?: 'observateurs' | 'lune' }
+const { variante = 'observateurs' } = Astro.props;
+const lune = variante === 'lune';
+const O: P2 = lune ? [300, 470] : [300, 900], R = lune ? 150 : 660;
+const surTerre = (a: number, r = R): P2 => [O[0] + r * Math.cos((a * Math.PI) / 180), O[1] - r * Math.sin((a * Math.PI) / 180)];
+const [aA, aB] = lune ? [118, 62] : [107, 73];
+const A = surTerre(aA), B = surTerre(aB), M: P2 = lune ? [340, 40] : [420, 60];
+let s = '';
+if (lune) {
+  s += terre(O, R) + disque(M, 14, 'var(--surface-2)');
+  for (const [P, a, n] of [[A, aA, 'A'], [B, aB, 'B']] as [P2, number, string][]) {
+    s += trait2D(O, surTerre(a, R + 170), { epaisseur: 1.2 }) + trait2D(P, M, { epaisseur: 1.4 }) + point2D(P, 5, 'var(--ko)');
+    s += texte2D(P, n, { dx: n === 'A' ? -20 : 10, dy: 18, taille: 17 });
+    s += texte2D(surTerre(a, R + 170), `zénith du lieu ${n}`, { dx: n === 'A' ? -10 : 10, dy: -6, ancre: n === 'A' ? 'end' : 'start', taille: 13 });
+  }
+  s += arcAngle(A, aA, direction(A, M), 46, 'var(--brass)', 2) + texte2D(surTerre(aA, R + 58), 'α', { dx: 14, dy: -4, taille: 18, couleur: 'var(--brass)' });
+  s += arcAngle(B, direction(B, M), aB, 70, 'var(--brass)', 2) + texte2D(surTerre(aB, R + 80), 'β', { dx: -26, dy: -6, taille: 18, couleur: 'var(--brass)' });
+  const arcD: P2[] = []; for (let i = 0; i <= 30; i++) arcD.push(surTerre(aA + ((aB - aA) * i) / 30, R + 4));
+  s += `<path d="${chemin(arcD)}" fill="none" stroke="var(--ko)" stroke-width="2.4"/>` + texte2D(surTerre(90, R + 14), 'D', { ancre: 'middle', taille: 17, couleur: 'var(--ko)' });
+  s += point2D(O, 3.5) + texte2D(O, 'centre de la Terre', { dx: 8, dy: 18, taille: 13 });
+  s += texte2D(M, 'Lune', { dx: 20, dy: 5, taille: 14 });
+} else {
+  const arc: P2[] = []; for (let i = 0; i <= 60; i++) arc.push(surTerre(60 + i, R));
+  s += `<path d="${chemin([...arc, [0, 360], [600, 360]], true)}" fill="var(--surface-2)" stroke="var(--ink-soft)" stroke-width="1.4"/>`;
+  s += texte2D([300, 330], 'Terre', { ancre: 'middle', taille: 22 });
+  s += croissant(M, 22);
+  for (const [P, a, n] of [[A, aA, 'V1'], [B, aB, 'V2']] as [P2, number, string][]) {
+    const ob = observateur(P, direction(P, M), 54);
+    s += trait2D(surTerre(a, R - 30), surTerre(a, R + 120), { epaisseur: 1 });
+    s += trait2D(ob.oeil, M, { epaisseur: 1.3 }) + ob.svg;
+    const v = surTerre(a, R + 60), d = direction(ob.oeil, M);
+    s += arcAngle(ob.oeil, Math.min(a, d), Math.max(a, d), 46, 'var(--ko)', 1.6) + texte2D(v, n, { dx: n === 'V1' ? 6 : -30, dy: -2, taille: 15, couleur: 'var(--ko)' });
+  }
+  s += texte2D(surTerre(90, R + 26), 'base', { ancre: 'middle', taille: 16 });
+}
+---
+<Figure titre={lune ? 'Mesure de la distance Terre-Lune : depuis deux lieux A et B séparés de D, on mesure les angles α et β entre le zénith de chaque lieu et la direction de la Lune' : 'Parallaxe : deux observateurs éloignés sur la Terre visent la Lune sous des angles V1 et V2 différents ; la distance qui les sépare sert de base'} largeur={600} hauteur={lune ? 640 : 360} svg={s}><slot /></Figure>

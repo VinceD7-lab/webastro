@@ -1,0 +1,28 @@
+---
+/** Schéma des paramètres d’une ellipse (redessiné d’après ASM, J.-E. Arlot et G. Bessou). */
+---
+<figure>
+  <svg viewBox="0 0 640 340" role="img" aria-labelledby="fig-ellipse-t">
+    <title id="fig-ellipse-t">Ellipse de demi-grand axe a et de demi-petit axe b, avec le Soleil au foyer F et le foyer vide F’</title>
+    <g font-family="Literata Variable, Georgia, serif">
+      <ellipse cx="320" cy="170" rx="250" ry="140" fill="none" stroke="var(--orbit)" stroke-width="2.5"/>
+      <line x1="70" y1="170" x2="570" y2="170" stroke="var(--rule)" stroke-dasharray="4 5"/>
+      <line x1="320" y1="30" x2="320" y2="310" stroke="var(--rule)" stroke-dasharray="4 5"/>
+      <circle cx="527" cy="170" r="10" fill="var(--sun)"/>
+      <circle cx="113" cy="170" r="4" fill="var(--ink-soft)"/>
+      <circle cx="320" cy="170" r="3" fill="var(--ink)"/>
+      <text x="527" y="200" text-anchor="middle" font-size="16" fill="var(--ink)">F (Soleil)</text>
+      <text x="113" y="200" text-anchor="middle" font-size="16" fill="var(--ink-soft)">F’</text>
+      <text x="320" y="196" text-anchor="middle" font-size="15" fill="var(--ink)">O</text>
+      <line x1="320" y1="150" x2="570" y2="150" stroke="var(--brass)" stroke-width="1.5"/>
+      <text x="445" y="142" text-anchor="middle" font-size="18" font-style="italic" fill="var(--brass)">a</text>
+      <line x1="300" y1="170" x2="300" y2="30" stroke="var(--brass)" stroke-width="1.5"/>
+      <text x="288" y="105" text-anchor="end" font-size="18" font-style="italic" fill="var(--brass)">b</text>
+      <line x1="320" y1="232" x2="527" y2="232" stroke="var(--ink-soft)"/>
+      <text x="423" y="254" text-anchor="middle" font-size="16" font-style="italic" fill="var(--ink-soft)">c = ae</text>
+      <circle cx="570" cy="170" r="5" fill="var(--orbit)"/><text x="580" y="160" font-size="14" fill="var(--ink)">P</text>
+      <circle cx="70" cy="170" r="5" fill="var(--orbit)"/><text x="48" y="160" font-size="14" fill="var(--ink)">A</text>
+    </g>
+  </svg>
+  <figcaption><slot /></figcaption>
+</figure>

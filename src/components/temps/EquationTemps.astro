@@ -1,0 +1,27 @@
+---
+/** Équation du temps sur une année (valeurs recalculées, redessiné d’après IMCCE / BDL) et ses deux composantes. */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { equationDuTemps, jdDuJour } from '../../lib/temps';
+const G0: P2 = [58, 290], GW = 520, GH = 250, M = 20; // M : minutes en haut et en bas de l’axe
+const gx = (j: number) => G0[0] + ((j - 1) / 364) * GW, gy = (m: number) => G0[1] - ((m + M) / (2 * M)) * GH;
+const jours = Array.from({ length: 365 }, (_, i) => i + 1);
+const serie = (f: (e: ReturnType<typeof equationDuTemps>) => number): P2[] => jours.map((j) => [gx(j), gy(f(equationDuTemps(jdDuJour(2023, j))))]);
+let s = '';
+for (let m = -20; m <= 20; m += 10) s += `<line x1="${G0[0]}" x2="${G0[0] + GW}" y1="${gy(m)}" y2="${gy(m)}" stroke="${m === 0 ? 'var(--ink-soft)' : 'var(--rule)'}" stroke-width="${m === 0 ? 1.4 : 0.9}"/>` + texte2D([G0[0] - 8, gy(m) + 4], String(m).replace('-', '−'), { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+const mois = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'], deb = [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+deb.forEach((d, i) => { s += `<line x1="${gx(d)}" x2="${gx(d)}" y1="${G0[1]}" y2="${G0[1] + 5}" stroke="var(--ink-soft)"/>` + texte2D([gx(d + 15), G0[1] + 19], mois[i], { ancre: 'middle', taille: 12.5, couleur: 'var(--ink-soft)' }); });
+s += texte2D([G0[0] - 8, G0[1] - GH - 12], 'minutes', { taille: 12.5, couleur: 'var(--ink-soft)' });
+s += `<path d="${chemin(serie((e) => e.centre))}" fill="none" stroke="var(--brass)" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+s += `<path d="${chemin(serie((e) => e.reduction))}" fill="none" stroke="var(--orbit)" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+s += `<path d="${chemin(serie((e) => e.total))}" fill="none" stroke="var(--ink)" stroke-width="2.8"/>`;
+const ex = jours.map((j) => [j, equationDuTemps(jdDuJour(2023, j)).total] as [number, number]);
+const mx = ex.reduce((a, b) => (b[1] > a[1] ? b : a)), mn = ex.reduce((a, b) => (b[1] < a[1] ? b : a));
+const fmt = (m: number) => `${m > 0 ? '+' : '−'}${Math.abs(m).toFixed(1).replace('.', ',')} min`;
+s += `<circle cx="${gx(mx[0])}" cy="${gy(mx[1])}" r="4.5" fill="var(--ko)"/>` + texte2D([gx(mx[0]) - 8, gy(mx[1]) - 8], `début novembre : ${fmt(mx[1])}`, { ancre: 'end', taille: 13, couleur: 'var(--ko)' });
+s += `<circle cx="${gx(mn[0])}" cy="${gy(mn[1])}" r="4.5" fill="var(--ko)"/>` + texte2D([gx(mn[0]) + 10, gy(mn[1]) + 16], `mi-février : ${fmt(mn[1])}`, { taille: 13, couleur: 'var(--ko)' });
+s += trait2D([80, 44], [110, 44], { couleur: 'var(--ink)', epaisseur: 2.8 }) + texte2D([116, 48], 'équation du temps', { taille: 13 });
+s += trait2D([80, 64], [110, 64], { couleur: 'var(--brass)', epaisseur: 1.6, tirets: '6 4' }) + texte2D([116, 68], 'équation du centre (excentricité)', { taille: 13, couleur: 'var(--brass)' });
+s += trait2D([80, 84], [110, 84], { couleur: 'var(--orbit)', epaisseur: 1.6, tirets: '6 4' }) + texte2D([116, 88], 'réduction à l’équateur (obliquité)', { taille: 13, couleur: 'var(--orbit)' });
+---
+<Figure titre="Équation du temps au cours de l’année, avec ses deux composantes : l’équation du centre et la réduction à l’équateur" largeur={600} hauteur={320} svg={s}><slot /></Figure>

@@ -1,0 +1,22 @@
+---
+const annee = new Date().getFullYear();
+---
+<div class="tool-box" data-v13 data-pagefind-ignore>
+  <label for="annee-v13">Trouver les vendredis 13 de l’année</label>
+  <input id="annee-v13" type="number" inputmode="numeric" value={annee} min="1583" max="9999" step="1" />
+  <output for="annee-v13" aria-live="polite"></output>
+</div>
+<script>
+  import { versJD, indexJourSemaine, MOIS } from '../lib/calendriers';
+  document.querySelectorAll<HTMLElement>('[data-v13]').forEach((root) => {
+    const input = root.querySelector('input')!, out = root.querySelector('output')!;
+    const maj = () => {
+      const y = parseInt(input.value, 10);
+      if (isNaN(y) || y < 1583 || y > 9999) { out.textContent = 'Saisissez une année grégorienne entre 1583 et 9999.'; return; }
+      const mois = MOIS.filter((_, i) => indexJourSemaine(versJD(y, i + 1, 13, true)) === 5);
+      const liste = mois.length === 1 ? mois[0] : mois.slice(0, -1).join(', ') + ' et ' + mois[mois.length - 1];
+      out.innerHTML = `En <strong>${y}</strong>, ${mois.length} vendredi${mois.length > 1 ? 's' : ''} 13&#8239;: ${liste}.`;
+    };
+    input.addEventListener('input', maj); maj();
+  });
+</script>

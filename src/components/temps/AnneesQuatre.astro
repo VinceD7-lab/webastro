@@ -1,0 +1,40 @@
+---
+/**
+ * Quatre façons de mesurer une année : retour de la Terre dans une même direction de référence
+ * (redessiné d’après ASM / J.-E. Arlot et G. Bessou). Les décalages sont exagérés, sauf pour l’année draconitique.
+ */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+const RAD = Math.PI / 180, r = 52;
+const pt = (c: P2, a: number, l: number): P2 => [c[0] + l * Math.cos(a * RAD), c[1] - l * Math.sin(a * RAD)];
+interface Vignette { titre: string; duree: string; ref: string; fin: number; precision: string }
+const v: Vignette[] = [
+  { titre: 'Année sidérale', duree: '365 j 6 h 9 min 10 s', ref: 'direction fixe (étoile)', fin: 0, precision: '' },
+  { titre: 'Année tropique', duree: '365 j 5 h 48 min 45 s', ref: 'point vernal (équinoxe)', fin: -9, precision: 'le point vernal recule' },
+  { titre: 'Année anomalistique', duree: '365 j 6 h 13 min 53 s', ref: 'périhélie', fin: 7, precision: 'le périhélie avance' },
+  { titre: 'Année draconitique', duree: '346 j 14 h 53 min', ref: 'nœud de l’orbite lunaire', fin: -19.3, precision: 'le nœud recule vite' },
+];
+let s = '';
+v.forEach((w, i) => {
+  const c: P2 = [240 + (i % 2) * 290, 100 + Math.floor(i / 2) * 175], tx = i % 2 ? 300 : 14;
+  const debut = 90; // la Terre part du haut
+  s += `<circle cx="${c[0]}" cy="${c[1]}" r="${r}" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="4 4"/>`;
+  s += `<circle cx="${c[0]}" cy="${c[1]}" r="9" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>`;
+  // Direction de référence au début (pleine) et à la fin (tirets), à partir du Soleil.
+  s += trait2D(c, pt(c, debut, r + 28), { couleur: 'var(--brass)', epaisseur: 1.8 });
+  if (w.fin !== 0) s += trait2D(c, pt(c, debut + w.fin, r + 28), { couleur: 'var(--brass)', epaisseur: 1.5, tirets: '4 3' });
+  // Trajet de la Terre : tour de 360° moins/plus le déplacement de la référence.
+  const total = 360 + w.fin, pts: P2[] = Array.from({ length: 91 }, (_, k) => pt(c, debut + (total * k) / 90, r));
+  s += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="3"/>`;
+  const e = pts[90], e0 = pts[89];
+  s += trait2D(e0, e, { couleur: 'var(--orbit)', epaisseur: 3, fleche: 'fin' });
+  s += `<circle cx="${pts[0][0]}" cy="${pts[0][1]}" r="5" fill="var(--ink)" stroke="var(--surface)" stroke-width="1.5"/>`;
+  s += `<circle cx="${e[0].toFixed(1)}" cy="${e[1].toFixed(1)}" r="5.5" fill="var(--ko)" stroke="var(--surface)" stroke-width="1.5"/>`;
+  s += texte2D([tx, c[1] - 30], w.titre, { taille: 14.5, gras: true });
+  s += texte2D([tx, c[1] - 12], w.duree, { taille: 13, couleur: 'var(--brass)' });
+  s += texte2D([tx, c[1] + 12], w.ref, { taille: 11.5, couleur: 'var(--ink-soft)' });
+  if (w.precision) s += texte2D([tx, c[1] + 27], w.precision, { taille: 11.5, couleur: 'var(--ink-soft)' });
+});
+s += texte2D([592, 344], 'Décalages exagérés (sauf l’année draconitique)', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Quatre façons de mesurer une année : retour de la Terre dans la direction d’une étoile (sidérale), du point vernal (tropique), du périhélie (anomalistique) ou du nœud de l’orbite lunaire (draconitique)" largeur={600} hauteur={350} svg={s}><slot /></Figure>

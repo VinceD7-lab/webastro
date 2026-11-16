@@ -1,0 +1,21 @@
+---
+/** Axe gradué et vecteur unitaire (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, point2D } from '../../lib/projection';
+const X0 = 300, U = 50, Y = 92;
+const x = (v: number) => X0 + v * U;
+let s = `<rect x="${x(-5.4)}" y="40" width="${U * 10.8}" height="${Y - 28}" rx="3" fill="var(--sun)" fill-opacity=".28" stroke="var(--ink-soft)"/>`;
+for (let k = -50; k <= 50; k++) {
+  const h = k % 10 === 0 ? 16 : k % 5 === 0 ? 11 : 7;
+  s += `<line x1="${x(k / 10)}" y1="${Y}" x2="${x(k / 10)}" y2="${Y - h}" stroke="var(--ink)" stroke-width="${k % 10 ? 0.8 : 1.3}"/>`;
+  if (k % 10 === 0) s += texte2D([x(k / 10), Y - 22], k < 0 ? `−${-k / 10}` : String(k / 10), { ancre: 'middle', taille: 14 });
+}
+s += `<line x1="${x(-5.4)}" y1="${Y + 12}" x2="${x(5.4)}" y2="${Y + 12}" stroke="var(--ink)" stroke-width="1.2"/>`;
+s += trait2D([x(0), Y + 12], [x(1), Y + 12], { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+s += texte2D([x(0.5), Y + 32], 'i', { ancre: 'middle', italique: true, gras: true, couleur: 'var(--ko)', taille: 17 });
+for (const [v, n] of [[3.8, 'A'], [-2.5, 'B'], [0, 'O']] as const) {
+  s += point2D([x(v), Y + 12], 4);
+  s += texte2D([x(v), Y + 52], n === 'O' ? 'O : origine' : n, { ancre: 'middle', italique: true, taille: 17 });
+}
+---
+<Figure titre="Axe gradué de −5 à 5 avec l’origine O, le point A d’abscisse 3,8, le point B d’abscisse −2,5 et le vecteur unitaire i" largeur={600} hauteur={160} svg={s}><slot /></Figure>

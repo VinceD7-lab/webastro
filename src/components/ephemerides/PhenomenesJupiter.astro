@@ -1,0 +1,40 @@
+---
+/**
+ * Les quatre phénomènes des satellites galiléens, vus du dessus du plan de l’orbite : éclipse, occultation, passage,
+ * passage d’ombre (redessiné d’après IMCCE / D. T. Vu et W. Thuillot). Distances et tailles non respectées.
+ */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+const S: P2 = [44, 150], J: P2 = [350, 150], RJ = 30, RO = 100, E: P2 = [140, 300];
+const n = Math.hypot(J[0] - E[0], J[1] - E[1]), u: P2 = [(J[0] - E[0]) / n, (J[1] - E[1]) / n];
+const sur = (k: number): P2 => [J[0] + k * u[0], J[1] + k * u[1]];
+let s = '';
+// Ombre de Jupiter (cône d’ombre, presque un cylindre à cette échelle).
+s += `<path d="${chemin([[J[0], J[1] - RJ], [596, J[1] - RJ + 6], [596, J[1] + RJ - 6], [J[0], J[1] + RJ]], true)}" fill="var(--ink)" fill-opacity=".18"/>`;
+s += texte2D([560, J[1] + 4], 'ombre', { ancre: 'end', taille: 12.5, couleur: 'var(--ink-soft)' });
+// Rayons du Soleil et ligne de visée de la Terre.
+s += trait2D([S[0] + 26, S[1] - 18], [J[0], J[1] - RJ], { couleur: 'var(--sun)', epaisseur: 1.2 }) + trait2D([S[0] + 26, S[1] + 18], [J[0], J[1] + RJ], { couleur: 'var(--sun)', epaisseur: 1.2 });
+s += trait2D(E, sur(170), { couleur: 'var(--ink-soft)', epaisseur: 1.2, tirets: '6 5' });
+s += texte2D([E[0] + 64, E[1] - 6], 'vers la Terre', { taille: 12.5, couleur: 'var(--ink-soft)', rotation: (Math.atan2(u[1], u[0]) * 180) / Math.PI });
+// Orbite d’un satellite.
+s += `<circle cx="${J[0]}" cy="${J[1]}" r="${RO}" fill="none" stroke="var(--orbit)" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+s += trait2D([J[0] + RO * Math.cos(2.6), J[1] - RO * Math.sin(2.6)], [J[0] + RO * Math.cos(2.75), J[1] - RO * Math.sin(2.75)], { couleur: 'var(--orbit)', epaisseur: 1.6, fleche: 'debut' });
+// Soleil, Terre, Jupiter.
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="30" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>` + texte2D(S, 'Soleil', { dy: 50, ancre: 'middle', taille: 13.5 });
+s += `<circle cx="${E[0]}" cy="${E[1]}" r="9" fill="var(--orbit)" fill-opacity=".5" stroke="var(--ink)" stroke-width="1"/>` + texte2D(E, 'Terre', { dx: -14, dy: 5, ancre: 'end', taille: 13.5 });
+s += `<circle cx="${J[0]}" cy="${J[1]}" r="${RJ}" fill="var(--sun)" fill-opacity=".55" stroke="var(--ink)" stroke-width="1.2"/>`;
+s += `<path d="M${J[0]},${J[1] - RJ} A${RJ},${RJ} 0 0 1 ${J[0]},${J[1] + RJ} Z" fill="var(--ink)" fill-opacity=".25"/>`;
+s += texte2D(J, 'Jupiter', { dy: -40, ancre: 'middle', taille: 13, gras: true });
+// Les quatre positions.
+const pos: [P2, string, number, number, 'start' | 'end' | 'middle'][] = [
+  [[J[0] + RO, J[1]], 'éclipse', 10, -12, 'start'],
+  [sur(RO), 'occultation', 10, -8, 'start'],
+  [sur(-RO), 'passage', -12, -8, 'end'],
+  [[J[0] - RO, J[1]], 'passage d’ombre', -14, 5, 'end'],
+];
+for (const [p, t, dx, dy, ancre] of pos) s += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="6" fill="var(--ko)" stroke="var(--surface)" stroke-width="1.5"/>` + texte2D(p, t, { dx, dy, ancre, taille: 13.5, couleur: 'var(--ko)' });
+// Ombre du satellite sur le disque, lors du passage d’ombre.
+s += `<circle cx="${J[0] - RJ + 5}" cy="${J[1]}" r="3.5" fill="var(--ink)"/>`;
+s += texte2D([592, 312], 'Vue du dessus ; tailles et distances non respectées', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Positions d’un satellite de Jupiter pour les quatre types de phénomènes : éclipse dans l’ombre de Jupiter, occultation derrière la planète, passage devant le disque, passage de son ombre sur le disque" largeur={600} hauteur={322} svg={s}><slot /></Figure>

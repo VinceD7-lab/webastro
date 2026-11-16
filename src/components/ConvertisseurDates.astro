@@ -1,0 +1,114 @@
+---
+/** Convertit une date grégorienne ou julienne vers les autres calendriers du chapitre. */
+import { MOIS } from '../lib/calendriers';
+---
+<div class="conv" data-conv data-pagefind-ignore>
+  <div class="conv-in">
+    <label>Jour <input data-d type="number" min="1" max="31" inputmode="numeric" /></label>
+    <label>Mois <select data-m>{MOIS.map((m, i) => <option value={i + 1}>{m}</option>)}</select></label>
+    <label>Année <input data-y type="number" min="-4712" max="9999" inputmode="numeric" /></label>
+    <label>Calendrier <select data-c><option value="g">grégorien</option><option value="j">julien</option></select></label>
+  </div>
+  <div class="presets" role="group" aria-label="Dates remarquables">
+    <button class="tool" type="button" data-p="today">Aujourd’hui</button>
+    <button class="tool" type="button" data-p="1582,10,4,j">Veille de la réforme</button>
+    <button class="tool" type="button" data-p="622,7,16,j">Hégire</button>
+    <button class="tool" type="button" data-p="1792,9,22,g">Ère des Français</button>
+    <button class="tool" type="button" data-p="1794,7,27,g">27 juillet 1794</button>
+    <button class="tool" type="button" data-p="-4712,1,1,j">Origine de la période julienne</button>
+  </div>
+  <p class="err" data-err role="alert" hidden></p>
+  <div class="head" aria-live="polite">
+    <div><b data-wd>–</b><span>jour de la semaine</span></div>
+    <div><b data-jd>–</b><span>date julienne à 0 h TU</span></div>
+  </div>
+  <dl data-out></dl>
+</div>
+
+<style>
+  .conv{border:1px solid var(--brass);border-radius:12px;background:var(--bg);padding:1.3rem;margin:1.6rem 0}
+  .conv-in{display:grid;grid-template-columns:5rem 1fr 7rem 1fr;gap:.8rem;margin-bottom:.9rem}
+  .conv-in label{display:flex;flex-direction:column;gap:.25rem;font-size:.88rem;color:var(--ink-soft)}
+  .conv-in input,.conv-in select{width:100%}
+  .err{color:var(--ko);margin:.8rem 0 0}
+  .head{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0 .6rem;padding-top:1rem;border-top:1px solid var(--rule)}
+  .head b{display:block;font-family:var(--display);font-size:2.1rem;font-weight:600;line-height:1.1;color:var(--brass);font-variant-numeric:tabular-nums}
+  .head span{font-size:.88rem;color:var(--ink-soft)}
+  dl{margin:0;display:grid;grid-template-columns:auto 1fr;font-size:.98rem}
+  dl :global(dt),dl :global(dd){margin:0;padding:.55rem 0;border-top:1px solid var(--rule)}
+  dl :global(dt){color:var(--ink-soft);padding-right:1.2rem}
+  dl :global(dd small){display:block;color:var(--ink-soft);font-size:.82rem}
+  dl :global(dd.na){color:var(--ink-soft);font-style:italic}
+  @media (max-width:640px){ .conv-in{grid-template-columns:1fr 1fr} .head b{font-size:1.6rem} }
+</style>
+
+<script>
+  import {
+    versJD, depuisJD, jourSemaine, dateTexte, jourTexte,
+    versHijri, hijriAbondante, EPOQUE_HEGIRE, HIJRI,
+    versHebreu, hebreuEmbolismique, joursAnneeHebraique, ORIGINE_HEBRAIQUE, HEBREU,
+    versCopte, EPOQUE_COPTE, COPTE,
+    versRepublicain, REPUBLICAIN, SANSCULOTTIDES, DECADE, ROMAINS,
+    versIndien, INDIEN,
+  } from '../lib/calendriers';
+
+  const fmt = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const ligne = (label: string, val: string, note = '', na = false) =>
+    `<dt>${label}</dt><dd${na ? ' class="na"' : ''}>${val}${note ? `<small>${note}</small>` : ''}</dd>`;
+
+  document.querySelectorAll<HTMLElement>('[data-conv]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const iY = q<HTMLInputElement>('[data-y]'), iM = q<HTMLSelectElement>('[data-m]'), iD = q<HTMLInputElement>('[data-d]'), iC = q<HTMLSelectElement>('[data-c]');
+    const err = q<HTMLElement>('[data-err]'), out = q<HTMLElement>('[data-out]');
+
+    function convertir() {
+      const y = parseInt(iY.value, 10), m = parseInt(iM.value, 10), d = parseInt(iD.value, 10), greg = iC.value === 'g';
+      let invalide = isNaN(y) || isNaN(d) || y < -4712 || y > 9999;
+      const jd = invalide ? 0 : versJD(y, m, d, greg);
+      if (!invalide) { const r = depuisJD(jd, greg); invalide = r[0] !== y || r[1] !== m || r[2] !== d || jd < -0.5; }
+      if (invalide) {
+        err.hidden = false;
+        err.textContent = `Cette date n’existe pas dans le calendrier ${greg ? 'grégorien' : 'julien'}, ou sort de la plage −4712 à 9999. Vérifiez le jour et l’année.`;
+        out.innerHTML = ''; q('[data-wd]').textContent = '–'; q('[data-jd]').textContent = '–';
+        return;
+      }
+      err.hidden = true;
+      q('[data-wd]').textContent = jourSemaine(jd);
+      q('[data-jd]').textContent = fmt(jd, 1);
+
+      const g = depuisJD(jd, true), j = depuisJD(jd, false), reforme = versJD(1582, 10, 15, true);
+      let h = ligne('Grégorien', dateTexte(g), jd < reforme ? 'calendrier proleptique&#8239;: il n’était pas encore en usage' : g[0] <= 0 ? `année astronomique ${g[0]}` : '');
+      h += ligne('Julien', dateTexte(j), j[0] <= 0 ? `année astronomique ${j[0]}` : jd >= reforme ? 'encore utilisé pour fixer les fêtes orthodoxes' : '');
+
+      if (jd < EPOQUE_HEGIRE) h += ligne('Musulman', 'avant l’Hégire', '', true);
+      else { const i = versHijri(jd); h += ligne('Musulman', `${jourTexte(i[2])} ${HIJRI[i[1] - 1]} ${i[0]}`, `année ${hijriAbondante(i[0]) ? 'abondante (355 j)' : 'commune (354 j)'}`); }
+
+      if (jd < ORIGINE_HEBRAIQUE()) h += ligne('Israélite', 'avant l’ère judaïque', '', true);
+      else { const b = versHebreu(jd); const nom = hebreuEmbolismique(b[0]) && b[1] === 12 ? 'Adar I' : HEBREU[b[1] - 1];
+        h += ligne('Israélite', `${jourTexte(b[2])} ${nom} ${b[0]}`, `année ${hebreuEmbolismique(b[0]) ? 'embolismique (13 mois)' : 'commune (12 mois)'}, ${joursAnneeHebraique(b[0])} jours`); }
+
+      if (jd < EPOQUE_COPTE) h += ligne('Copte', 'avant l’ère de Dioclétien', '', true);
+      else { const c = versCopte(jd); h += ligne('Copte', c[1] === 13 ? `${c[2] === 1 ? '1<sup>er</sup>' : c[2] + '<sup>e</sup>'} jour épagomène de l’an ${c[0]}` : `${jourTexte(c[2])} ${COPTE[c[1] - 1]} ${c[0]}`, 'ère de Dioclétien'); }
+
+      const r = versRepublicain(jd);
+      h += r ? ligne('Républicain', r[1] === 13 ? `${SANSCULOTTIDES[r[2] - 1]} de l’an ${ROMAINS[r[0] - 1]}` : `${DECADE[(r[2] - 1) % 10]} ${jourTexte(r[2])} ${REPUBLICAIN[r[1] - 1]} an ${ROMAINS[r[0] - 1]}`, 'ère des Français')
+             : ligne('Républicain', 'hors de la période d’usage', '', true);
+
+      if (g[0] < 79) h += ligne('Indien', 'avant l’ère Saka', '', true);
+      else { const n = versIndien(jd); h += ligne('Indien', `${jourTexte(n[2])} ${INDIEN[n[1] - 1]} ${n[0]}`, jd < versJD(1957, 3, 22, true) ? 'calcul rétrospectif&#8239;: officiel depuis 1957' : 'ère Saka'); }
+
+      const ecart = versJD(j[0], j[1], j[2], false) - versJD(j[0], j[1], j[2], true);
+      h += ligne('Écart julien / grégorien', `${Math.abs(ecart)} jour${Math.abs(ecart) > 1 ? 's' : ''}${ecart > 0 ? ' d’avance pour le grégorien' : ecart < 0 ? ' de retard pour le grégorien' : ''}`);
+      out.innerHTML = h;
+    }
+    function fixer(y: number, m: number, d: number, c: string) { iY.value = String(y); iM.value = String(m); iD.value = String(d); iC.value = c; convertir(); }
+    const aujourdhui = () => { const n = new Date(); fixer(n.getUTCFullYear(), n.getUTCMonth() + 1, n.getUTCDate(), 'g'); };
+    [iY, iD].forEach((el) => el.addEventListener('input', convertir));
+    [iM, iC].forEach((el) => el.addEventListener('change', convertir));
+    root.querySelectorAll<HTMLButtonElement>('[data-p]').forEach((b) => b.addEventListener('click', () => {
+      if (b.dataset.p === 'today') return aujourdhui();
+      const p = b.dataset.p!.split(','); fixer(+p[0], +p[1], +p[2], p[3]);
+    }));
+    aujourdhui();
+  });
+</script>

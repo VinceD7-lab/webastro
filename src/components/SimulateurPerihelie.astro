@@ -1,0 +1,125 @@
+---
+/**
+ * Avance du périhélie de Mercure : l’ellipse tourne lentement dans son plan et la trajectoire dessine une rosette.
+ * Les contributions (perturbations des autres planètes, relativité générale) sont réelles ; l’effet est exagéré pour être visible.
+ */
+---
+<div class="sim" data-perihelie data-pagefind-ignore>
+  <svg viewBox="0 0 600 420" role="img" aria-label="Orbite de Mercure autour du Soleil dont le périhélie avance à chaque tour, dessinant une rosette">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <path data-trace fill="none" stroke="var(--orbit)" stroke-width="1.3" opacity=".75"></path>
+    <g data-dyn font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <fieldset>
+      <legend>Causes de l’avance prises en compte</legend>
+      <label><input data-pla type="checkbox" checked /> perturbations des autres planètes (Newton)</label>
+      <label><input data-rel type="checkbox" checked /> relativité générale (Einstein)</label>
+    </fieldset>
+    <label><span>Exagération</span> <input data-exa type="range" min="2" max="5" step="any" value="4.3" /> <output data-exa-out></output></label>
+    <label><span>Excentricité</span> <input data-exc type="range" min="0" max="0.5" step="0.005" value="0.205" /> <output data-exc-out></output></label>
+    <button class="tool" data-pause type="button" aria-pressed="false">Pause</button>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-siecle>–</b><span>avance réelle par siècle</span></div>
+    <div><b data-tour>–</b><span>avance réelle par révolution (88 jours)</span></div>
+    <div><b data-complet>–</b><span>pour que le périhélie fasse un tour complet</span></div>
+  </div>
+  <p class="note">Avances par siècle, dans un repère lié aux étoiles : 531,6″ dues aux autres planètes, calculées par la mécanique newtonienne, et 43,0″ dues à la relativité générale. L’avance observée est de 574,1″ ± 0,7″. L’excentricité réelle de l’orbite de Mercure est 0,206.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls > label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  fieldset{border:0;padding:0;margin:0;flex:1 1 100%;display:flex;flex-wrap:wrap;gap:.3rem 1.4rem}
+  legend{padding:0;color:var(--ink-soft);font-size:.9rem;margin-bottom:.2rem}
+  fieldset label{display:flex;align-items:center;gap:.4rem}
+  input[type=checkbox]{accent-color:var(--brass)}
+  .controls output{min-width:7em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { AVANCE_MERCURE, MERCURE, revolutionsParSiecle, nbFr as nb } from '../lib/relativite';
+  import { chemin, texte2D, trait2D, type P2 } from '../lib/projection';
+  import { arcAngle } from '../lib/dessin';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const F: P2 = [300, 210], A = 130, TOURS_TRACE = 14, SEC_PAR_TOUR = 2.4;
+  const PAR_SIECLE = revolutionsParSiecle(MERCURE.periode);
+
+  /** Anomalie vraie à l’anomalie moyenne M (équation de Kepler, méthode de Newton). */
+  function anomalieVraie(M: number, e: number) {
+    let E = M;
+    for (let i = 0; i < 8; i++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+    return 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E / 2), Math.sqrt(1 - e) * Math.cos(E / 2));
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-perihelie]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const pla = q<HTMLInputElement>('[data-pla]'), rel = q<HTMLInputElement>('[data-rel]');
+    const exa = q<HTMLInputElement>('[data-exa]'), exc = q<HTMLInputElement>('[data-exc]'), pause = q<HTMLButtonElement>('[data-pause]');
+    const trace = q('[data-trace]');
+    let n = 6, avant = 0, enPause = reduit, e = 0.205, delta = 0; // n : nombre de révolutions ; delta : avance dessinée par tour (rad)
+
+    /** Position à l’écran au temps n (en révolutions). */
+    const pos = (t: number): P2 => {
+      const v = anomalieVraie(2 * Math.PI * (t - Math.floor(t)), e), om = delta * t;
+      const r = (A * (1 - e * e)) / (1 + e * Math.cos(v));
+      return [F[0] + r * Math.cos(v + om), F[1] - r * Math.sin(v + om)];
+    };
+
+    let fond = trait2D(F, [F[0] + 240, F[1]], { couleur: 'var(--ink-soft)', epaisseur: 1.1, tirets: '7 5', fleche: 'fin' });
+    fond += texte2D([F[0] + 240, F[1] + 20], 'direction fixe', { ancre: 'end', taille: 12.5, couleur: 'var(--ink-soft)' });
+    q('[data-fond]').innerHTML = fond;
+
+    function dessiner() {
+      const pts: P2[] = [], t0 = Math.max(0, n - TOURS_TRACE), k = 180;
+      for (let i = 0; i <= (n - t0) * k; i++) pts.push(pos(t0 + i / k));
+      pts.push(pos(n));
+      trace.setAttribute('d', chemin(pts));
+      // Ellipse instantanée, direction du périhélie et angle θ.
+      const om = delta * n, ell: P2[] = [];
+      for (let i = 0; i <= 200; i++) { const v = (2 * Math.PI * i) / 200, r = (A * (1 - e * e)) / (1 + e * Math.cos(v)); ell.push([F[0] + r * Math.cos(v + om), F[1] - r * Math.sin(v + om)]); }
+      const rp = A * (1 - e), P: P2 = [F[0] + rp * Math.cos(om), F[1] - rp * Math.sin(om)];
+      const thDeg = (((om * 180) / Math.PI) % 360 + 360) % 360;
+      let s = `<path d="${chemin(ell, true)}" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="3 4"/>`;
+      s += trait2D(F, P, { couleur: 'var(--brass)', epaisseur: 1.8 }) + `<circle cx="${P[0].toFixed(1)}" cy="${P[1].toFixed(1)}" r="4" fill="var(--brass)"/>`;
+      if (delta > 0 && thDeg > 2) s += arcAngle(F, 0, thDeg, 44, 'var(--brass)', 1.5) + texte2D([F[0] + 56 * Math.cos((thDeg / 2) * Math.PI / 180), F[1] - 56 * Math.sin((thDeg / 2) * Math.PI / 180) + 5], 'θ', { ancre: 'middle', taille: 16, italique: true, couleur: 'var(--brass)' });
+      s += texte2D([16, 26], delta > 0 ? `θ = ${nb(thDeg)}° (dessin exagéré)` : 'Ellipse fixe : problème à deux corps', { taille: 13.5, couleur: 'var(--brass)' });
+      s += `<circle cx="${F[0]}" cy="${F[1]}" r="10" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>`;
+      const M = pos(n);
+      s += `<circle cx="${M[0].toFixed(1)}" cy="${M[1].toFixed(1)}" r="6" fill="var(--ink-soft)" stroke="var(--surface)" stroke-width="2"/>`;
+      q('[data-dyn]').innerHTML = s;
+    }
+    function maj() {
+      e = parseFloat(exc.value);
+      const siecle = (pla.checked ? AVANCE_MERCURE.planetes : 0) + (rel.checked ? AVANCE_MERCURE.relativite : 0);
+      const brut = 10 ** parseFloat(exa.value), pas = 10 ** (Math.floor(Math.log10(brut)) - 1);
+      const tour = siecle / PAR_SIECLE, facteur = Math.round(brut / pas) * pas; // deux chiffres significatifs
+      delta = ((tour * facteur) / 3600) * (Math.PI / 180);
+      q('[data-exa-out]').textContent = `× ${nb(facteur)}`;
+      q('[data-exc-out]').textContent = nb(e, 3);
+      q('[data-siecle]').textContent = `${nb(siecle, 1)}″`;
+      q('[data-tour]').textContent = `${nb(tour, 3)}″`;
+      q('[data-complet]').textContent = siecle ? `${nb((1_296_000 / siecle) * 100, 0)} ans` : 'jamais';
+      dessiner();
+    }
+    function boucle(now: number) {
+      if (!enPause && avant) { n += Math.min(0.1, (now - avant) / 1000) / SEC_PAR_TOUR; dessiner(); }
+      avant = now; requestAnimationFrame(boucle);
+    }
+    for (const el of [pla, rel, exa, exc]) el.addEventListener('input', maj);
+    pause.addEventListener('click', () => { enPause = !enPause; pause.setAttribute('aria-pressed', String(enPause)); pause.textContent = enPause ? 'Reprendre' : 'Pause'; });
+    if (reduit) { pause.setAttribute('aria-pressed', 'true'); pause.textContent = 'Reprendre'; n = TOURS_TRACE; }
+    maj();
+    requestAnimationFrame(boucle);
+  });
+</script>

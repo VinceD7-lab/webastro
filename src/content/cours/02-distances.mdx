@@ -1,0 +1,225 @@
+---
+title: La mesure des distances
+slug: distances
+numero: 2
+resume: De la triangulation à la distance Terre–Lune.
+source: https://media4.obspm.fr/public/ressources_lu/pages_mesure-distances/introduction-mesure-distances.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import SimulateurParallaxe from '../../components/SimulateurParallaxe.astro';
+import SimulateurDeuxModeles from '../../components/SimulateurDeuxModeles.astro';
+import Triangulation from '../../components/distances/Triangulation.astro';
+import ParallaxeTerre from '../../components/distances/ParallaxeTerre.astro';
+import ExerciceTriangulation from '../../components/distances/ExerciceTriangulation.astro';
+import ParallaxeHorizontale from '../../components/distances/ParallaxeHorizontale.astro';
+import EchelleLuneSoleil from '../../components/distances/EchelleLuneSoleil.astro';
+import TerrePlate from '../../components/distances/TerrePlate.astro';
+import Eratosthene from '../../components/distances/Eratosthene.astro';
+import AngleApparent from '../../components/distances/AngleApparent.astro';
+import CroquisEclipses from '../../components/distances/CroquisEclipses.astro';
+
+## Introduction
+
+L’astronome observe essentiellement des angles, sur un ciel qu’on appelle la [sphère céleste](../reperes/#la-sphère-locale). Pourtant, tous les astres ne sont pas à la même distance de nous. La Terre paraît plate et immobile. Comment, à partir de simples mesures d’angles, mesurer la taille de la Terre, la distance qui la sépare des astres et son mouvement dans l’espace ? Deux notions sont nécessaires.
+
+- **La parallaxe.** Si deux observateurs voient un même objet dans deux directions différentes, c’est que l’objet n’est pas à l’infini. La différence de direction ne dépend que de la position des observateurs et de la distance de l’objet. C’est elle que notre cerveau exploite pour créer le relief, à partir des deux images reçues par nos yeux. Plus l’objet est loin, plus les deux « yeux » qui l’observent doivent être écartés.
+- **Un modèle théorique d’Univers.** On suppose a priori des ordres de grandeur pour les quantités à mesurer, puis on les confronte aux observations et au mouvement des corps célestes. L’accord avec l’observation ne prouve pas que le modèle est juste, seulement qu’il colle aux mesures du moment. Quand les mesures s’améliorent, un écart apparaît et il faut remettre le modèle en cause.
+
+## Comment mesurer une distance en astronomie ?
+
+### La triangulation
+
+Commençons par mesurer la distance d’un objet situé sur la Terre : c’est ainsi qu’on cartographie la surface terrestre, de proche en proche.
+
+La méthode est la <Terme id="triangulation">triangulation</Terme>. On voit un objet dans une certaine direction (visée n° 1). Si l’on se déplace d’une distance connue, appelée **base**, on le voit dans une autre direction (visée n° 2). Dans le triangle « objet, visée n° 1, visée n° 2 », on connaît un côté et deux angles : on peut calculer les autres côtés, donc la distance de l’objet. En astronomie, cet effet s’appelle la <Terme id="parallaxe">parallaxe</Terme>.
+
+<Triangulation>
+Calcul d’une distance par triangulation. Schéma redessiné d’après l’original (ASM, J.-E. Arlot, G. Bessou et D. Taharbouche).
+</Triangulation>
+
+### La parallaxe en astronomie
+
+On procède de même pour un corps céleste. Depuis deux lieux de la Terre, on mesure la direction de l’astre et, connaissant la base, on calcule sa distance.
+
+Cette méthode a des limites. La plus grande base terrestre ne peut dépasser 12 000 km environ, le diamètre de la Terre. Si l’astre est très loin, la différence entre les deux directions devient minuscule, et il faut qu’elle reste mesurable avec les instruments dont on dispose. Jusqu’au XVIIe siècle, même la distance de la Lune n’était pas accessible ainsi.
+
+<ParallaxeTerre>
+Calcul d’une distance par parallaxe : la base est l’arc de Terre qui sépare les deux observateurs. Schéma redessiné d’après l’original (ASM, J.-E. Arlot, G. Bessou et D. Taharbouche).
+</ParallaxeTerre>
+
+Le simulateur ci-dessous montre ce qui limite la méthode : pour une base donnée, la parallaxe diminue à mesure que l’objet s’éloigne, jusqu’à passer sous la précision de l’instrument.
+
+<SimulateurParallaxe />
+
+### Exercice : calcul d’une distance par triangulation
+
+On veut mesurer la distance CH entre un bâtiment C et une route nord-sud ABH. L’observateur, qui se déplace sur la route, ne peut mesurer que des angles et des distances le long de la route. Depuis la position A, il voit le bâtiment à un azimut de 30° par rapport à la direction du sud. Depuis la position B, un kilomètre plus loin sur la route, il le voit à 45°.
+
+<ExerciceTriangulation>
+Mesure d’une distance par triangulation. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</ExerciceTriangulation>
+
+**1.** Calculez la distance CH.
+
+<Repli titre="Indice">
+Il suffit de résoudre le triangle ABC, dont on connaît les angles en A et en B et la base AB, avec la relation entre angles et côtés d’un triangle quelconque :
+
+$$
+\frac{a}{\sin\widehat{A}} = \frac{b}{\sin\widehat{B}} = \frac{c}{\sin\widehat{C}}
+$$
+</Repli>
+
+<Repli>
+Dans le triangle ABC, l’angle en A vaut 30° et l’angle en B vaut 180° − 45° = 135°. L’angle en C vaut donc 180° − 30° − 135° = 15°.
+
+La relation des sinus donne $a = BC = AB \times \dfrac{\sin 30°}{\sin 15°} = \dfrac{0{,}5}{0{,}258\,8} \approx 1{,}932$ km.
+
+Dans le triangle rectangle BCH, $CH = BC \times \sin 45° \approx$ **1,366 km**.
+
+Vérification : $AH = CH/\tan 30°$ et $BH = CH/\tan 45°$, et leur différence vaut bien $1{,}366 \times (1{,}732 - 1) = 1$ km.
+</Repli>
+
+### La mesure par la parallaxe
+
+La figure montre le principe de la mesure de la distance Terre-Lune par la parallaxe. On connaît l’écart D entre les deux lieux et le rayon terrestre, et l’on mesure les angles α et β. Comme on l’a vu, il faut des instruments capables de mesurer une différence entre α et β, ce qui limite les distances accessibles.
+
+<ParallaxeTerre variante="lune">
+Principe de la mesure de la distance Terre-Lune par triangulation. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou, avec images de la NASA).
+</ParallaxeTerre>
+
+### En savoir plus : la parallaxe horizontale
+
+<span class="tag plus">En savoir plus</span>
+
+Triangulation et parallaxe reposent sur le même principe : déterminer la distance d’un objet éloigné sans s’y rendre et sans la mesurer directement. La précision dépend de la longueur de la base, et il faut mesurer les angles avec assez de finesse. Pour un astre pas trop lointain, il suffit de se déplacer à la surface de la Terre, ou mieux de faire deux observations simultanées depuis deux lieux éloignés. C’est tout à fait faisable pour la Lune avec les instruments actuels.
+
+<ParallaxeHorizontale>
+Parallaxe horizontale d’un astre. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</ParallaxeHorizontale>
+
+La rotation de la Terre déplace aussi chaque observateur au cours de la journée. Ce déplacement modifie la direction dans laquelle il voit un astre proche, par rapport à la direction vue depuis le centre de la Terre, qui ne bouge pas : c’est la **parallaxe diurne**. Deux positions d’un même observateur peuvent donc servir de base. Mais cette base ne peut dépasser le diamètre terrestre.
+
+On appelle <Terme id="parallaxe-horizontale">parallaxe horizontale</Terme> d’un astre la valeur maximale de sa parallaxe diurne, atteinte quand l’astre est à l’horizon. C’est l’angle sous lequel un observateur placé sur l’astre verrait le rayon terrestre. Pour la Lune, elle vaut environ 57′ ; pour le Soleil, moins de 9″.
+
+On verra plus loin que le déplacement de la Terre autour du Soleil sert de base à une autre parallaxe, la parallaxe annuelle, qui permet d’atteindre les étoiles proches.
+
+### Distances Terre-Soleil et Terre-planètes
+
+La triangulation devrait s’appliquer à tous les corps du système solaire. Pour le Soleil, c’est très difficile : il n’est pas facile à observer, et il est environ 400 fois plus loin que la Lune. Pour lui et pour les objets lointains du système solaire, la méthode des parallaxes ne suffit pas, car la précision des mesures d’angles est limitée et la base terrestre trop courte. Le principe est simple, mais il ne s’applique pas aux astres éloignés.
+
+Il faudra un modèle théorique pour mesurer certaines distances et en déduire celles qui ne sont pas directement mesurables. Les [lois de Kepler](../kepler/) et la mécanique céleste seront nécessaires pour déterminer les distances dans le système solaire.
+
+<EchelleLuneSoleil>
+La distance Terre-Lune et la distance Terre-Soleil à l’échelle. D’après l’original (CNRS, J.-E. Arlot).
+</EchelleLuneSoleil>
+
+### La nécessité d’un modèle théorique
+
+La méthode précédente ne suffit pas, loin de là, à connaître toutes les distances du système solaire. Appliquée naïvement au Soleil en supposant la Terre plate, elle le place à 6 500 kilomètres de la Terre !
+
+<TerrePlate>
+Le raisonnement sur une Terre plate : le Soleil est au zénith à Syène et vu sous l’angle α du zénith à Alexandrie. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou, avec image de la NASA).
+</TerrePlate>
+
+<Encadre type="hist">
+Ce type de mesure a probablement été fait dans l’Antiquité. On prête à Anaxagore (Ve siècle av. J.-C.) un Soleil d’une soixantaine de kilomètres de diamètre, situé à 6 500 kilomètres de la Terre. Son calcul reposait sur une hypothèse fausse. Pour calculer les distances dans le système solaire, il faut donc de bonnes hypothèses, c’est-à-dire un modèle théorique de ce que l’on cherche à mesurer. Premier modèle indispensable : la Terre est ronde, et le Soleil est loin.
+</Encadre>
+
+#### Exercice : le raisonnement d’Anaxagore
+
+**1.** Expliquez en détail le raisonnement qui conduit Anaxagore à placer le Soleil à 6 500 km et à lui donner un diamètre d’environ 60 km.
+
+<Repli titre="Indice">
+La distance Alexandrie-Syène est de 5 000 stades, soit 800 km. Depuis Alexandrie, l’angle entre le zénith et le Soleil vaut 7°, alors que le Soleil est au zénith à Syène. Le diamètre apparent du Soleil est de 0,5°.
+</Repli>
+
+<Repli>
+On suppose la Terre plate : les verticales d’Alexandrie et de Syène sont alors parallèles. Le Soleil, à la verticale de Syène, forme avec les deux villes un triangle rectangle en Syène. Depuis Alexandrie, il est vu à 7° de la verticale. Sa hauteur au-dessus de Syène vaut donc :
+
+$$
+d = \frac{800}{\tan 7°} \approx 6\,500 \text{ km}
+$$
+
+Vu depuis 6 500 km sous un <Terme id="diametre-apparent">diamètre apparent</Terme> de 0,5°, le Soleil mesure environ $6\,515 \times \tan 0{,}5° \approx 57$ km, soit une soixantaine de kilomètres.
+</Repli>
+
+La même mesure, 7° sur 800 km, conduit à un résultat tout autre si l’on suppose la Terre ronde et le Soleil très lointain : c’est le raisonnement d’Ératosthène, décrit ci-dessous. Comparez les deux interprétations.
+
+<SimulateurDeuxModeles />
+
+### La mesure de la Terre
+
+Comment constater que la Terre est ronde, puis la mesurer ? Deux faits avaient convaincu les astronomes de l’Antiquité de sa rotondité. Lors des éclipses de Lune, l’ombre de la Terre est circulaire ; mais cela pourrait aussi signifier une Terre plate en forme de disque. C’est surtout la disparition progressive des navires sous l’horizon qui montre que la Terre est ronde.
+
+<Encadre type="hist" titre="La mesure d’Ératosthène">
+La première mesure du rayon de la Terre est due à Ératosthène (vers 276-194 av. J.-C.). Il admettait que les rayons du Soleil sont parallèles, autrement dit que le Soleil est très loin. Il savait qu’à midi, le jour du solstice d’été, les objets n’ont pas d’ombre à Syène (aujourd’hui Assouan) et qu’on y voit le Soleil au fond d’un puits, ce qui n’est pas le cas à Alexandrie, environ 800 km plus au nord. Il mesura donc l’ombre d’un bâton à Alexandrie ce jour-là. Il lui fallait aussi la distance Alexandrie-Syène (5 000 stades), ce qui n’allait pas de soi à l’époque.
+</Encadre>
+
+<Eratosthene>
+Principe des premières mesures de la taille de la Terre. Le Soleil n’est pas à l’infini, mais il est assez loin pour que la valeur obtenue soit très proche de la réalité. L’angle est exagéré sur le schéma. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou, avec image de la NASA).
+</Eratosthene>
+
+Cette mesure n’était pas interprétée comme une triangulation prouvant que le Soleil est proche. Pour constater un changement de direction du Soleil, il fallait en effet se déplacer du nord au sud. Des mesures à la même heure solaire locale (la seule disponible alors) en des lieux alignés d’est en ouest n’auraient rien montré, d’où l’hypothèse de rayons parallèles.
+
+Avec des rayons parallèles, l’angle de 7° mesuré à Alexandrie est aussi l’angle au centre de la Terre entre les deux villes. 800 km correspondent donc à 7/360 du tour de la Terre :
+
+$$
+\text{tour} = 800 \times \frac{360}{7} \approx 41\,000 \text{ km}, \qquad R = \frac{\text{tour}}{2\pi} \approx 6\,500 \text{ km}
+$$
+
+La valeur réelle est de 40 000 km environ. L’écart dépend de la longueur exacte du stade, mal connue, mais le résultat d’Ératosthène est remarquablement proche de la réalité.
+
+### Passage d’un angle apparent à une distance
+
+<AngleApparent>
+Deux objets vus sous le même angle. Schéma redessiné d’après l’original (ASM, J.-E. Arlot, G. Bessou et D. Taharbouche).
+</AngleApparent>
+
+Si les deux angles $\alpha_1$ et $\alpha_2$ sont égaux, peut-on en déduire que la Lune et la tête du second personnage ont la même taille ? Non, bien sûr… En revanche, si $\alpha_1 = \alpha_2$, distances et tailles sont liées par le théorème de Thalès : les tailles sont proportionnelles aux distances.
+
+#### Exercice : le diamètre du Soleil
+
+**1.** La Lune et le Soleil ont à peu près le même diamètre apparent. La Lune mesure 3 475 km de diamètre et se trouve à 384 400 km de la Terre. Quel est le diamètre du Soleil, sachant qu’il se trouve à 149 600 000 km ?
+
+<Repli titre="Indice">
+Appliquez le théorème de Thalès.
+</Repli>
+
+<Repli>
+À diamètre apparent égal, les diamètres sont proportionnels aux distances :
+
+$$
+D_\odot = 3\,475 \times \frac{149\,600\,000}{384\,400} \approx 1\,350\,000 \text{ km}
+$$
+
+Le Soleil mesure donc environ 1,35 million de kilomètres de diamètre, près de 400 fois la Lune. La valeur réelle est de 1,39 million de km : l’écart vient de ce que les deux diamètres apparents ne sont qu’à peu près égaux.
+</Repli>
+
+## La distance Terre-Lune
+
+### La mesure par les éclipses
+
+La première mesure de la taille de la Lune et de la distance Terre-Lune date de l’Antiquité ; elle repose sur l’observation des éclipses.
+
+- Lors d’une éclipse de Lune, on voit la largeur de l’ombre de la Terre sur la Lune : au niveau de la Lune, le diamètre de ce <Terme id="cone-ombre">cône d’ombre</Terme> vaut 2,5 diamètres lunaires.
+- Lors d’une éclipse de Soleil, la surface terrestre est au sommet du cône d’ombre de la Lune, car la zone de la Terre plongée dans l’ombre est petite (les diamètres apparents de la Lune et du Soleil sont presque identiques). Sur la distance Terre-Lune, l’ombre de la Lune a donc rétréci d’un diamètre lunaire.
+
+<CroquisEclipses>
+Principe de la mesure de la taille de la Lune et de la distance Terre-Lune grâce aux éclipses (échelle non respectée). Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</CroquisEclipses>
+
+Il doit en être de même pour l’ombre de la Terre : sur la même distance, elle a perdu un diamètre lunaire. La Terre mesure donc 2,5 + 1 = **3,5 diamètres lunaires**. Connaissant le diamètre terrestre, on en déduit celui de la Lune en kilomètres (environ 3 600 km, pour 3 475 km en réalité).
+
+Enfin, la Lune est vue sous un angle d’un demi-degré, soit environ 1/110 radian. La distance Terre-Lune vaut donc 110 diamètres lunaires, soit $110 / 3{,}5 \approx 31$ diamètres ou 63 rayons terrestres. On retrouve l’ordre de grandeur de la valeur moderne, 60 rayons terrestres, soit 384 000 km.
+
+## Testez-vous
+
+<Quiz questions={[
+  { question: "Pourquoi la parallaxe d’une étoile est-elle bien plus difficile à mesurer que celle de la Lune ?", choix: ["Les étoiles sont trop brillantes pour être visées", "La parallaxe devient minuscule quand la distance est très grande devant la base", "Les étoiles se déplacent trop vite dans le ciel"], reponse: 1 },
+  { question: "Avec la même mesure de 7° sur 800 km, Ératosthène et Anaxagore aboutissent à des résultats très différents parce que :", choix: ["ils n’utilisent pas le même modèle de la Terre", "l’un des deux s’est trompé dans ses calculs", "ils n’ont pas observé le même jour"], reponse: 0 },
+  { question: "La Lune (3 475 km) et le Soleil ont le même diamètre apparent, et le Soleil est environ 389 fois plus loin. Son diamètre vaut donc environ :", choix: ["9 000 km", "149 millions de km", "1,35 million de km"], reponse: 2 },
+  { question: "Lors d’une éclipse de Lune, l’ombre de la Terre mesure 2,5 diamètres lunaires au niveau de la Lune. La Terre mesure donc environ :", choix: ["2,5 diamètres lunaires", "3,5 diamètres lunaires", "1,5 diamètre lunaire"], reponse: 1 },
+]} />

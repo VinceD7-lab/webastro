@@ -1,0 +1,23 @@
+---
+/** Triangulation : deux visées d’un même objet depuis les deux extrémités d’une base (redessiné d’après ASM, J.-E. Arlot, G. Bessou, D. Taharbouche). */
+import Figure from '../reperes/Figure.astro';
+import { trait2D, texte2D, type P2 } from '../../lib/projection';
+import { observateur, arbre, arcAngle, direction } from '../../lib/dessin';
+const sol = 300;
+const cible: P2 = [480, 168];
+const o1 = observateur([90, sol], 12, 62), o2 = observateur([370, sol], 50, 62);
+let s = `<rect x="0" y="${sol}" width="600" height="60" fill="var(--surface-2)"/><line x1="0" y1="${sol}" x2="600" y2="${sol}" stroke="var(--ink-soft)"/>`;
+s += arbre([480, sol], 140);
+s += o1.svg + o2.svg;
+for (const o of [o1, o2]) {
+  s += trait2D(o.oeil, cible, { epaisseur: 1.3 });
+  s += trait2D(o.oeil, [560, o.oeil[1]], { tirets: '5 4', epaisseur: 1, couleur: 'var(--ink-soft)' });
+}
+const d1 = direction(o1.oeil, cible), d2 = direction(o2.oeil, cible);
+s += arcAngle(o1.oeil, 0, d1, 90, 'var(--ko)', 1.6) + texte2D([o1.oeil[0] + 100, o1.oeil[1] - 8], 'V1', { couleur: 'var(--ko)', taille: 16 });
+s += arcAngle(o2.oeil, 0, d2, 46, 'var(--ko)', 1.6) + texte2D([o2.oeil[0] + 52, o2.oeil[1] - 26], 'V2', { couleur: 'var(--ko)', taille: 16 });
+s += trait2D([90, sol + 30], [370, sol + 30], { fleche: 'deux', epaisseur: 1.2 }) + texte2D([230, sol + 52], 'base', { ancre: 'middle', taille: 16 });
+s += texte2D([90, sol + 52], 'visée n° 1', { ancre: 'middle', taille: 13, couleur: 'var(--ink-soft)' }) + texte2D([370, sol + 52], 'visée n° 2', { ancre: 'middle', taille: 13, couleur: 'var(--ink-soft)' });
+s += texte2D([cible[0] + 18, cible[1] + 4], 'objet', { taille: 14 });
+---
+<Figure titre="Triangulation : un arbre est visé sous l’angle V1 depuis une première position, puis sous l’angle V2 après un déplacement le long d’une base de longueur connue" largeur={600} hauteur={360} svg={s}><slot /></Figure>

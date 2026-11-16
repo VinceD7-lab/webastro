@@ -1,0 +1,24 @@
+---
+/** Triangle sphérique ABC (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, sph, slerp, type V3, type P2 } from '../../lib/projection';
+const v = new Vue(300, 300, 240, 15, 22);
+const A = sph(52, 24), B = sph(18, 70), C = sph(-52, 46);
+const rouge = { couleur: 'var(--ko)', epaisseur: 2.2 };
+let s = `<path d="M${v.cx - v.R},${v.cy} A${v.R},${v.R} 0 0 1 ${v.cx + v.R},${v.cy}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+s += v.cercle([0, 0, 1], 0, { epaisseur: 1.6, arriere: 'masque' });
+s += v.arc(A, B, rouge) + v.arc(B, C, rouge) + v.arc(C, A, rouge);
+const centre: P2 = [(v.xy(A)[0] + v.xy(B)[0] + v.xy(C)[0]) / 3, (v.xy(A)[1] + v.xy(B)[1] + v.xy(C)[1]) / 3];
+const dehors = (p: V3, k = 18): P2 => { const q = v.xy(p), d = Math.hypot(q[0] - centre[0], q[1] - centre[1]); return [q[0] + ((q[0] - centre[0]) * k) / d, q[1] + ((q[1] - centre[1]) * k) / d]; };
+for (const [S, U, W, n] of [[A, B, C, 'A'], [B, C, A, 'B'], [C, A, B, 'C']] as [V3, V3, V3, string][]) {
+  s += v.angle(S, U, W, 0.13, { couleur: 'var(--ko)' }) + v.point(S, 4);
+  const q = v.dansAngle(S, U, W, 0.22), o = dehors(S, 20);
+  s += `<text x="${q[0].toFixed(1)}" y="${(q[1] + 5).toFixed(1)}" font-size="15" text-anchor="middle" fill="var(--ink)">${n}</text>`;
+  s += `<text x="${o[0].toFixed(1)}" y="${(o[1] + 5).toFixed(1)}" font-size="17" text-anchor="middle" fill="var(--ink)">${n}</text>`;
+}
+for (const [P, Q, n] of [[B, C, 'a'], [C, A, 'b'], [A, B, 'c']] as [V3, V3, string][]) {
+  const o = dehors(slerp(P, Q, 0.5), 18);
+  s += `<text x="${o[0].toFixed(1)}" y="${(o[1] + 6).toFixed(1)}" font-size="18" font-style="italic" text-anchor="middle" fill="var(--ink)">${n}</text>`;
+}
+---
+<Figure titre="Triangle sphérique ABC formé de trois arcs de grands cercles : A, B et C désignent les angles aux sommets, a, b et c les côtés opposés, mesurés en angle" largeur={600} hauteur={420} svg={s}><slot /></Figure>

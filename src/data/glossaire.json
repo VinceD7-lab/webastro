@@ -1,0 +1,322 @@
+{
+  "foyer": {
+    "titre": "Foyer",
+    "definition": "Chacun des deux points fixes d’une ellipse. Pour tout point de la courbe, la somme des distances aux deux foyers vaut 2a."
+  },
+  "excentricite": {
+    "titre": "Excentricité",
+    "definition": "Nombre e compris entre 0 et 1 qui mesure l’aplatissement d’une ellipse. Pour e = 0, l’ellipse est un cercle."
+  },
+  "sens-direct": {
+    "titre": "Sens direct",
+    "definition": "Sens inverse des aiguilles d’une montre, pour un observateur situé au nord du plan de l’orbite."
+  },
+  "perihelie": {
+    "titre": "Périhélie",
+    "definition": "Point de l’orbite le plus proche du Soleil, à la distance q = a(1 − e)."
+  },
+  "aphelie": {
+    "titre": "Aphélie",
+    "definition": "Point de l’orbite le plus éloigné du Soleil, à la distance Q = a(1 + e)."
+  },
+  "demi-grand-axe": {
+    "titre": "Demi-grand axe",
+    "definition": "Moitié du plus grand diamètre de l’ellipse, noté a. C’est aussi la moyenne des distances au périhélie et à l’aphélie."
+  },
+  "unite-astronomique": {
+    "titre": "Unité astronomique",
+    "definition": "Unité de longueur fixée à 149 597 870 700 m, proche de la distance moyenne Terre–Soleil."
+  },
+  "bissextile": {
+    "titre": "Année bissextile",
+    "definition": "Année de 366 jours, avec un 29 février, insérée pour rattraper le retard d’un calendrier solaire sur les saisons."
+  },
+  "lunaison": {
+    "titre": "Lunaison",
+    "definition": "Durée moyenne entre deux nouvelles lunes successives, soit 29,530589 jours. On l’appelle aussi mois synodique."
+  },
+  "annee-tropique": {
+    "titre": "Année tropique",
+    "definition": "Intervalle entre deux passages du Soleil à l’équinoxe de printemps, soit 365,242190 jours. C’est l’année des saisons."
+  },
+  "ere": {
+    "titre": "Ère",
+    "definition": "Origine choisie pour compter les années d’un calendrier, souvent un événement historique ou religieux."
+  },
+  "jour-julien": {
+    "titre": "Jour julien",
+    "definition": "Numéro d’un jour dans la période julienne, compté sans interruption depuis le 1er janvier −4712 à midi."
+  },
+  "epagomenes": {
+    "titre": "Jours épagomènes",
+    "definition": "Jours ajoutés après le dernier mois d’une année faite de mois égaux, pour atteindre 365 ou 366 jours."
+  },
+  "embolismique": {
+    "titre": "Année embolismique",
+    "definition": "Année d’un calendrier luni-solaire qui comporte un treizième mois, intercalé pour rester en phase avec les saisons."
+  },
+  "sphere-celeste": {
+    "titre": "Sphère céleste",
+    "definition": "Sphère imaginaire de rayon arbitraire, centrée sur l’observateur (ou sur la Terre), sur laquelle on projette les astres. Seules les directions comptent : on y mesure des angles."
+  },
+  "zenith": {
+    "titre": "Zénith",
+    "definition": "Point de la sphère céleste situé à la verticale de l’observateur, au-dessus de sa tête. Son opposé est le nadir."
+  },
+  "nadir": {
+    "titre": "Nadir",
+    "definition": "Point de la sphère céleste situé à la verticale de l’observateur, sous ses pieds ; opposé du zénith."
+  },
+  "horizon": {
+    "titre": "Horizon",
+    "definition": "Plan perpendiculaire à la verticale du lieu, passant par l’observateur. Il sépare la partie visible du ciel de la partie cachée."
+  },
+  "meridien": {
+    "titre": "Méridien du lieu",
+    "definition": "Grand cercle de la sphère céleste qui passe par les pôles célestes et par le zénith. Il contient les directions du nord et du sud."
+  },
+  "almicantarat": {
+    "titre": "Almicantarat",
+    "definition": "Petit cercle de la sphère céleste parallèle à l’horizon : tous ses points ont la même hauteur."
+  },
+  "pole-celeste": {
+    "titre": "Pôle céleste",
+    "definition": "Point où l’axe de rotation de la Terre perce la sphère céleste. Le pôle céleste nord est actuellement à moins d’un degré de l’étoile Polaire."
+  },
+  "equateur-celeste": {
+    "titre": "Équateur céleste",
+    "definition": "Grand cercle de la sphère céleste situé dans le plan de l’équateur terrestre, à 90° des pôles célestes."
+  },
+  "ecliptique": {
+    "titre": "Écliptique",
+    "definition": "Trajectoire apparente annuelle du Soleil sur la sphère céleste ; plus précisément, plan de l’orbite du barycentre Terre-Lune autour du Soleil."
+  },
+  "point-vernal": {
+    "titre": "Point vernal",
+    "definition": "Point γ de la sphère céleste où le Soleil traverse l’équateur en passant des déclinaisons négatives aux positives : c’est l’équinoxe de printemps, origine des ascensions droites et des longitudes écliptiques."
+  },
+  "obliquite": {
+    "titre": "Obliquité de l’écliptique",
+    "definition": "Angle ε entre l’écliptique et l’équateur céleste, voisin de 23° 26′. C’est aussi l’inclinaison de l’axe de rotation de la Terre sur la perpendiculaire à son orbite."
+  },
+  "ascension-droite": {
+    "titre": "Ascension droite",
+    "definition": "Coordonnée α du repère équatorial : angle mesuré sur l’équateur céleste depuis le point vernal, vers l’est, de 0 h à 24 h."
+  },
+  "declinaison": {
+    "titre": "Déclinaison",
+    "definition": "Coordonnée δ du repère équatorial : angle entre la direction de l’astre et l’équateur céleste, de −90° à +90°."
+  },
+  "angle-horaire": {
+    "titre": "Angle horaire",
+    "definition": "Angle H mesuré sur l’équateur céleste depuis le méridien du lieu, vers l’ouest, de 0 h à 24 h. Il croît avec le temps et vaut H = T − α."
+  },
+  "temps-sideral": {
+    "titre": "Temps sidéral local",
+    "definition": "Angle horaire du point vernal pour un lieu donné, exprimé en heures. Il augmente de 24 h en 23 h 56 min 4 s de temps moyen."
+  },
+  "azimut": {
+    "titre": "Azimut",
+    "definition": "Angle mesuré dans le plan de l’horizon. Les astronomes le comptent depuis le sud, vers l’ouest, de 0° à 360° ; les géographes et les marins depuis le nord."
+  },
+  "hauteur": {
+    "titre": "Hauteur",
+    "definition": "Angle entre la direction d’un astre et le plan de l’horizon, de −90° (nadir) à +90° (zénith). Son complément est la distance zénithale."
+  },
+  "circumpolaire": {
+    "titre": "Circumpolaire",
+    "definition": "Se dit d’un astre qui reste toujours au-dessus de l’horizon d’un lieu : ses passages au méridien supérieur et inférieur sont tous deux visibles."
+  },
+  "precession": {
+    "titre": "Précession des équinoxes",
+    "definition": "Lent mouvement conique de l’axe de rotation de la Terre autour du pôle de l’écliptique, en environ 26 000 ans. Il fait reculer le point vernal d’environ 50″ par an."
+  },
+  "radian": {
+    "titre": "Radian",
+    "definition": "Unité d’angle du système international : angle qui intercepte, sur un cercle, un arc de longueur égale au rayon. π rad = 180°."
+  },
+  "parallaxe": {
+    "titre": "Parallaxe",
+    "definition": "Différence de direction sous laquelle on voit un même objet depuis deux points différents ; c’est aussi l’angle sous lequel on verrait, depuis l’objet, la base qui sépare ces deux points."
+  },
+  "triangulation": {
+    "titre": "Triangulation",
+    "definition": "Mesure d’une distance inaccessible : on vise l’objet depuis les deux extrémités d’une base de longueur connue, puis on résout le triangle ainsi formé."
+  },
+  "parallaxe-horizontale": {
+    "titre": "Parallaxe horizontale",
+    "definition": "Angle sous lequel on verrait le rayon équatorial de la Terre depuis un astre. Pour la Lune, elle vaut environ 57′."
+  },
+  "diametre-apparent": {
+    "titre": "Diamètre apparent",
+    "definition": "Angle sous lequel on voit un objet. Le Soleil et la Lune ont tous deux un diamètre apparent voisin d’un demi-degré."
+  },
+  "cone-ombre": {
+    "titre": "Cône d’ombre",
+    "definition": "Région de l’espace, derrière un corps éclairé par le Soleil, d’où le Soleil est entièrement caché. Elle se rétrécit en s’éloignant du corps."
+  },
+  "referentiel-galileen": {
+    "titre": "Référentiel galiléen",
+    "definition": "Référentiel dans lequel un corps soumis à aucune force est immobile ou en mouvement rectiligne uniforme (principe d’inertie). Le principe fondamental de la dynamique s’y applique sans forces d’inertie."
+  },
+  "barycentre": {
+    "titre": "Barycentre",
+    "definition": "Centre de masse d’un système : la moyenne des positions de ses éléments, pondérée par leurs masses. Dans le problème à deux corps, les deux astres tournent autour de leur barycentre commun."
+  },
+  "perturbation": {
+    "titre": "Perturbation",
+    "definition": "Petite force qui s’ajoute à l’attraction du corps central, comme celle des autres planètes. Elle fait lentement varier les éléments de l’orbite elliptique (demi-grand axe, excentricité, orientation…)."
+  },
+  "vitesse-liberation": {
+    "titre": "Vitesse de libération",
+    "definition": "Vitesse minimale qu’il faut donner à un objet pour qu’il échappe définitivement à l’attraction d’un astre : √(2GM/r). Elle vaut 11,2 km/s à la surface de la Terre."
+  },
+  "points-lagrange": {
+    "titre": "Points de Lagrange",
+    "definition": "Les cinq positions d’équilibre d’un petit corps dans le système formé par deux astres en orbite l’un autour de l’autre. L1, L2 et L3 sont alignés avec les deux astres et instables ; L4 et L5 forment avec eux des triangles équilatéraux."
+  },
+  "ellipse-osculatrice": {
+    "titre": "Ellipse osculatrice",
+    "definition": "Ellipse que suivrait un astre à un instant donné si toutes les perturbations disparaissaient brusquement. Ses éléments varient lentement au cours du temps."
+  },
+  "satellite-geostationnaire": {
+    "titre": "Satellite géostationnaire",
+    "definition": "Satellite placé sur une orbite circulaire dans le plan de l’équateur, à 35 786 km d’altitude, dont la période est égale à la rotation de la Terre (23 h 56 min) : il paraît immobile dans le ciel."
+  },
+  "assistance-gravitationnelle": {
+    "titre": "Assistance gravitationnelle",
+    "definition": "Manœuvre qui utilise le passage d’une sonde près d’une planète pour modifier sa vitesse et sa direction sans consommer de carburant. On parle aussi de fronde gravitationnelle."
+  },
+  "avance-perihelie": {
+    "titre": "Avance du périhélie",
+    "definition": "Lente rotation de l’orbite d’une planète dans son plan : la direction de son périhélie tourne dans le sens du mouvement. Pour Mercure, elle atteint 574″ par siècle, dont 43″ ne s’expliquent que par la relativité générale."
+  },
+  "masse-inerte-grave": {
+    "titre": "Masse inerte et masse grave",
+    "definition": "La masse inerte mesure la résistance d’un corps à la mise en mouvement (F = m a) ; la masse grave (ou gravifique) mesure l’attraction qu’il subit (son poids). Elles sont égales à mieux que 10⁻¹⁴ près : c’est le point de départ du principe d’équivalence."
+  },
+  "transformation-lorentz": {
+    "titre": "Transformation de Lorentz",
+    "definition": "Formules qui relient les coordonnées d’espace et de temps d’un même événement mesurées dans deux référentiels galiléens en mouvement l’un par rapport à l’autre. Elles laissent la vitesse de la lumière inchangée et redonnent la transformation de Galilée aux faibles vitesses."
+  },
+  "principe-equivalence": {
+    "titre": "Principe d’équivalence",
+    "definition": "Localement, on ne peut pas distinguer un champ de gravitation d’une accélération : dans un laboratoire en chute libre, les lois de la physique (hors gravitation) sont celles d’un référentiel galiléen. C’est le fondement de la relativité générale."
+  },
+  "geodesique": {
+    "titre": "Géodésique",
+    "definition": "Ligne la plus « droite » possible dans un espace donné : la droite dans un plan, le grand cercle sur une sphère. En relativité générale, un corps en chute libre suit une géodésique de l’espace-temps courbé par les masses."
+  },
+  "lentille-gravitationnelle": {
+    "titre": "Lentille gravitationnelle",
+    "definition": "Masse (galaxie, amas de galaxies, étoile) qui dévie la lumière d’un astre plus lointain situé presque derrière elle et en donne plusieurs images déformées, parfois un anneau : c’est un mirage gravitationnel."
+  },
+  "temps-solaire-vrai": {
+    "titre": "Temps solaire vrai",
+    "definition": "Temps donné par le Soleil lui-même, celui d’un cadran solaire : c’est l’angle horaire du Soleil vrai, augmenté de 12 heures. Il est local et ses heures n’ont pas une durée constante."
+  },
+  "temps-solaire-moyen": {
+    "titre": "Temps solaire moyen",
+    "definition": "Temps donné par un Soleil moyen fictif qui parcourt l’équateur céleste à vitesse constante. Ses jours ont une durée uniforme de 24 heures en moyenne ; il diffère du temps solaire vrai de l’équation du temps."
+  },
+  "equation-du-temps": {
+    "titre": "Équation du temps",
+    "definition": "Différence entre le temps solaire vrai et le temps solaire moyen. Elle varie au cours de l’année entre environ −14 min 15 s (mi-février) et +16 min 25 s (début novembre), à cause de l’excentricité de l’orbite terrestre et de l’obliquité de l’écliptique."
+  },
+  "temps-universel": {
+    "titre": "Temps universel (UT)",
+    "definition": "Temps solaire moyen du méridien de Greenwich, compté à partir de minuit. Lié à la rotation de la Terre, il n’est pas uniforme. UT1 est sa forme précise, observée ; UTC en est une approximation obtenue à partir des horloges atomiques."
+  },
+  "temps-atomique-international": {
+    "titre": "Temps atomique international (TAI)",
+    "definition": "Échelle de temps uniforme obtenue en calculant une moyenne pondérée des indications d’environ 500 horloges atomiques réparties dans le monde ; elle est établie par le Bureau international des poids et mesures. Elle est indépendante des mouvements célestes."
+  },
+  "utc": {
+    "titre": "Temps universel coordonné (UTC)",
+    "definition": "Échelle de temps des horloges civiles : c’est le TAI décalé d’un nombre entier de secondes, de façon à ne pas s’écarter de plus de 0,9 s du temps universel UT1. On y ajoute au besoin une seconde intercalaire. L’heure légale s’en déduit par un nombre entier d’heures."
+  },
+  "temps-terrestre": {
+    "titre": "Temps terrestre (TT)",
+    "definition": "Échelle de temps uniforme des éphémérides géocentriques, égale à TAI + 32,184 s. Elle prolonge, depuis le 1er janvier 1977, le temps des éphémérides."
+  },
+  "annee-siderale": {
+    "titre": "Année sidérale",
+    "definition": "Durée du retour de la Terre dans la même direction de l’espace vu du Soleil : 365 j 6 h 9 min 10 s, soit 365,2564 jours."
+  },
+  "annee-anomalistique": {
+    "titre": "Année anomalistique",
+    "definition": "Durée entre deux passages de la Terre au périhélie : 365 j 6 h 13 min 53 s. Elle est un peu plus longue que l’année sidérale, car le périhélie avance lentement."
+  },
+  "annee-draconitique": {
+    "titre": "Année draconitique",
+    "definition": "Durée du retour du Soleil au même nœud de l’orbite de la Lune : environ 346,62 jours. Elle règle le retour des éclipses de Soleil."
+  },
+  "nutation": {
+    "titre": "Nutation",
+    "definition": "Petites oscillations périodiques de l’axe de rotation de la Terre autour de sa position moyenne, dues surtout à l’action de la Lune. La principale a une période de 18,6 ans et une amplitude d’environ 9″."
+  },
+  "fuseau-horaire": {
+    "titre": "Fuseau horaire",
+    "definition": "Zone du globe, large d’environ 15° de longitude, où l’on adopte la même heure légale, décalée d’un nombre entier d’heures par rapport au temps universel (quelques pays utilisent des demi-heures, comme l’Inde : +5 h 30)."
+  },
+  "seconde-si": {
+    "titre": "Seconde du Système international",
+    "definition": "Durée de 9 192 631 770 périodes de la radiation correspondant à la transition entre les deux niveaux hyperfins de l’état fondamental de l’atome de césium 133. Cette définition date de 1967."
+  },
+  "ephemeride": {
+    "titre": "Éphéméride",
+    "definition": "Représentation du mouvement d’un astre (ou d’un phénomène) en fonction du temps : table de positions, graphique, ou coefficients de fonctions qui permettent de calculer la position à tout instant d’un intervalle donné."
+  },
+  "interpolation": {
+    "titre": "Interpolation",
+    "definition": "Calcul de la valeur d’une fonction à un instant compris entre deux instants d’une table. L’interpolation linéaire suppose la variation régulière ; la formule de Bessel tient compte des différences secondes."
+  },
+  "polynomes-tchebychev": {
+    "titre": "Polynômes de Tchebychev",
+    "definition": "Polynômes Tₙ(x) = cos(n arccos x), définis sur [−1, 1]. Une fonction développée sur ces polynômes est approchée avec une erreur répartie uniformément sur l’intervalle, et le moins de coefficients possible : c’est la forme moderne des éphémérides."
+  },
+  "coordonnees-geometriques": {
+    "titre": "Coordonnées géométriques",
+    "definition": "Position réellement occupée par un astre à l’instant donné, sans tenir compte du temps que met la lumière à nous parvenir."
+  },
+  "coordonnees-apparentes": {
+    "titre": "Coordonnées apparentes",
+    "definition": "Position où un observateur placé au centre du repère voit l’astre : on tient compte du temps de lumière et de l’aberration annuelle, dans le repère vrai de la date (précession et nutation). Ce sont les coordonnées utiles pour pointer un télescope."
+  },
+  "coordonnees-astrometriques": {
+    "titre": "Coordonnées astrométriques",
+    "definition": "Coordonnées directement comparables à un catalogue d’étoiles : rapportées au repère fixe du catalogue (par exemple J2000), en tenant compte du temps de lumière mais sans l’aberration annuelle."
+  },
+  "coordonnees-topocentriques": {
+    "titre": "Coordonnées topocentriques",
+    "definition": "Coordonnées rapportées à un observateur situé à la surface de la Terre, et non au centre de celle-ci. L’écart avec les coordonnées géocentriques est surtout sensible pour la Lune."
+  },
+  "repere-reference": {
+    "titre": "Repère de référence",
+    "definition": "Matérialisation concrète d’un système de référence (concept théorique) : un plan et une direction privilégiés, réalisés par des catalogues d’étoiles ou de radiosources, ou par des théories du mouvement des planètes ajustées aux observations."
+  },
+  "repere-vrai-moyen": {
+    "titre": "Repère vrai, repère moyen",
+    "definition": "Le repère vrai de la date suit l’équateur et l’équinoxe affectés de la précession et de la nutation : c’est celui de l’observateur. Le repère moyen ne tient compte que de la précession, et il est fixé à une date conventionnelle (1950, 2000…)."
+  },
+  "aberration-annuelle": {
+    "titre": "Aberration annuelle",
+    "definition": "Déplacement apparent des astres dû à la vitesse de la Terre sur son orbite (environ 30 km/s), combinée à la vitesse finie de la lumière. Il atteint 20,5″."
+  },
+  "temps-de-lumiere": {
+    "titre": "Temps de lumière",
+    "definition": "Durée que met la lumière pour venir de l’astre jusqu’à l’observateur : on voit l’astre là où il était à ce moment-là. Il est de 8 min 20 s pour le Soleil, de 33 à 54 min pour Jupiter selon sa distance."
+  },
+  "occultation": {
+    "titre": "Occultation",
+    "definition": "Disparition d’un astre derrière un autre astre de plus grand diamètre apparent : une étoile derrière la Lune, un satellite derrière sa planète."
+  },
+  "passage": {
+    "titre": "Passage",
+    "definition": "Transit d’un astre devant le disque d’un autre astre : passage de Mercure ou de Vénus devant le Soleil, d’un satellite (ou de son ombre) devant le disque de Jupiter."
+  },
+  "refraction-astronomique": {
+    "titre": "Réfraction astronomique",
+    "definition": "Déviation de la lumière par l’atmosphère terrestre, qui fait paraître les astres plus hauts qu’ils ne sont. Nulle au zénith, elle atteint environ 34′ à l’horizon, un peu plus que le diamètre apparent du Soleil."
+  }
+}

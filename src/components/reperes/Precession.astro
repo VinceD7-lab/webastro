@@ -1,0 +1,36 @@
+---
+/** Précession des équinoxes : l’axe du pôle décrit un cône autour du pôle de l’écliptique (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, chemin, renvoi, ind, type V3 } from '../../lib/projection';
+const R = Math.PI / 180, e = 23.44 * R, hc = 1.15;
+const v = new Vue(300, 300, 122, -28, 20);
+const O: V3 = [0, 0, 0], Z: V3 = [0, 0, 1];
+const axe = (t: number): V3 => [Math.sin(e) * Math.cos(t * R), Math.sin(e) * Math.sin(t * R), Math.cos(e)];
+const t1 = 215, t2 = 165;
+let s = v.polygone([[-1.5, -1.65, 0], [1.5, -1.65, 0], [1.5, 1.65, 0], [-1.5, 1.65, 0]], 'var(--sun)', 0.35, 'var(--ink-soft)');
+const cercle = Array.from({ length: 121 }, (_, i) => mul(axe(i * 3), hc / Math.cos(e)));
+const ecran = cercle.map((p) => v.xy(p));
+const iG = ecran.reduce((b, p, i) => (p[0] < ecran[b][0] ? i : b), 0), iD = ecran.reduce((b, p, i) => (p[0] > ecran[b][0] ? i : b), 0);
+const bas: typeof ecran = []; for (let k = 0, i = iG; k < 121; k++, i = (i + 1) % 120) { bas.push(ecran[i]); if (i === iD) break; }
+const haut: typeof ecran = []; for (let k = 0, i = iG; k < 121; k++, i = (i + 119) % 120) { haut.push(ecran[i]); if (i === iD) break; }
+const devant = bas.reduce((m, p) => m + p[1], 0) / bas.length > haut.reduce((m, p) => m + p[1], 0) / haut.length ? bas : haut;
+s += `<path d="${chemin([v.xy(O), ...devant], true)}" fill="var(--ko)" fill-opacity=".22" stroke="none"/>`;
+s += `<path d="${chemin(ecran, true)}" fill="var(--orbit)" fill-opacity=".3" stroke="var(--ink)" stroke-width="1"/>`;
+s += `<path d="${chemin([ecran[iG], v.xy(O), ecran[iD]])}" fill="none" stroke="var(--ink)" stroke-width="1"/>`;
+s += v.ligne(O, mul(Z, 1.95), { tirets: '6 4', fleche: 'fin', epaisseur: 1.2 });
+for (const [t, n] of [[t1, '1'], [t2, '2']] as const) {
+  s += v.ligne(O, mul(axe(t), 1.85), { epaisseur: 1.8 });
+  s += v.texte(mul(axe(t), 1.85), `A${ind(n)}`, { dx: -8, dy: -8, brut: true });
+  const eq: V3 = [Math.sin(t * R), -Math.cos(t * R), 0];
+  s += v.ligne(mul(eq, -1.25), mul(eq, 1.25), { epaisseur: 1.4 });
+  s += v.texte(mul(eq, 1.25), '♈', { dx: -16, dy: 6, taille: 17 }) + v.texte(mul(eq, 0.75), `Δ${ind(n)}`, { dx: 0, dy: 20, brut: true });
+}
+s += v.arc(axe(t1), axe(t2), { couleur: 'var(--ko)', epaisseur: 2, fleche: 'fin' }, hc / Math.cos(e) * 0.999);
+s += v.arc([Math.sin(t1 * R), -Math.cos(t1 * R), 0], [Math.sin(t2 * R), -Math.cos(t2 * R), 0], { couleur: 'var(--ko)', epaisseur: 1.6, fleche: 'fin' }, 0.55);
+s += v.texte(mul(axe((t1 + t2) / 2), hc / Math.cos(e)), 'P', { dx: -4, dy: -8, italique: true, couleur: 'var(--ko)' });
+s += v.point(O, 3.5) + v.texte(O, 'O', { dx: 8, dy: 18, italique: true });
+s += v.texte(mul(Z, 1.95), 'pôle de l’écliptique', { dx: 10, dy: 6, italique: true, taille: 15 });
+s += renvoi(['cône parcouru par l’axe', 'du pôle en ≈ 26 000 ans'], [14, 150], [150, 170], v.xy(mul(axe(250), hc / Math.cos(e) * 0.8)), { taille: 13 });
+s += v.texte([1.5, -1.65, 0], 'plan de l’écliptique', { dx: 6, dy: 18, taille: 14 });
+---
+<Figure titre="Précession des équinoxes : l’axe de rotation de la Terre décrit en environ 26 000 ans un cône autour du pôle de l’écliptique, entraînant la droite des équinoxes dans le sens rétrograde" largeur={600} hauteur={450} svg={s}><slot /></Figure>

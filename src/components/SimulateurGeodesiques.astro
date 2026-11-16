@@ -1,0 +1,113 @@
+---
+/**
+ * Deux mobiles partent de l’équateur sur des trajectoires parallèles et vont « tout droit » (grands cercles) :
+ * sur une sphère, ils se rapprochent sans qu’aucune force ne les attire. Sur un plan, leur distance resterait constante.
+ */
+---
+<div class="sim" data-geodesiques data-pagefind-ignore>
+  <svg viewBox="0 0 600 380" role="img" aria-label="Deux mobiles partant parallèlement de l’équateur d’une sphère vers le pôle nord, et graphique de la distance qui les sépare">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <g data-dyn font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Écart au départ</span> <input data-ecart type="range" min="2" max="60" step="1" value="20" /> <output data-ecart-out></output></label>
+    <label><span>Chemin parcouru</span> <input data-lat type="range" min="0" max="90" step="any" value="0" /> <output data-lat-out></output></label>
+    <button class="tool" data-jouer type="button">Lancer</button>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-dist>–</b><span>distance entre A et B</span></div>
+    <div><b data-plan>–</b><span>distance si la surface était plane</span></div>
+  </div>
+  <p class="note">Sphère de la taille de la Terre. A et B partent vers le nord, parallèlement, et ne tournent jamais : chacun suit un méridien, c’est-à-dire un grand cercle, le chemin le plus court entre deux points de la sphère.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:6em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { Vue, sph, chemin, texte2D, trait2D, type P2, type V3 } from '../lib/projection';
+  import { nbFr as nb } from '../lib/relativite';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const KM_DEG = (Math.PI * 6371) / 180; // longueur d’un degré de grand cercle sur la Terre
+  const v = new Vue(165, 205, 140, 0, 24);
+  /** Graphe : chemin parcouru (0 à 90°) en abscisse, distance AB (0 à l’écart initial) en ordonnée. */
+  const G0: P2 = [355, 300], GW = 215, GH = 210;
+  const gx = (lat: number) => G0[0] + (lat / 90) * GW, gy = (r: number) => G0[1] - r * GH;
+  const RAD = Math.PI / 180;
+  /** Distance angulaire (degrés) entre deux points de même latitude séparés en longitude de `dl`. */
+  const distance = (lat: number, dl: number) => (2 * Math.asin(Math.cos(lat * RAD) * Math.sin((dl / 2) * RAD))) / RAD;
+  const meridien = (lon: number, b0: number, b1: number): V3[] => Array.from({ length: 61 }, (_, i) => sph(lon, b0 + ((b1 - b0) * i) / 60));
+
+  document.querySelectorAll<HTMLElement>('[data-geodesiques]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const ecart = q<HTMLInputElement>('[data-ecart]'), lat = q<HTMLInputElement>('[data-lat]'), jouer = q<HTMLButtonElement>('[data-jouer]');
+    let anime = false, avant = 0;
+
+    let f = v.contour({ remplir: 'var(--sector)', couleur: 'var(--ink-soft)', epaisseur: 1.3 });
+    for (const b of [30, 60]) f += v.cercle([0, 0, 1], Math.sin(b * RAD), { couleur: 'var(--rule)', epaisseur: 1, arriere: 'masque' });
+    f += v.cercle([0, 0, 1], 0, { couleur: 'var(--ink-soft)', epaisseur: 1.3, arriere: 'masque' });
+    f += v.point([0, 0, 1], 4, 'var(--ink)') + v.texte([0, 0, 1], 'N', { dy: -10, ancre: 'middle', taille: 15, gras: true });
+    f += trait2D(G0, [G0[0] + GW + 14, G0[1]], { couleur: 'var(--ink-soft)', epaisseur: 1.1, fleche: 'fin' }) + trait2D(G0, [G0[0], G0[1] - GH - 18], { couleur: 'var(--ink-soft)', epaisseur: 1.1, fleche: 'fin' });
+    f += texte2D([G0[0] + GW, G0[1] + 20], 'chemin parcouru', { ancre: 'end', taille: 12.5, couleur: 'var(--ink-soft)' });
+    f += texte2D([G0[0] + GW, G0[1] + 36], 'arrivée au pôle', { ancre: 'end', taille: 11.5, couleur: 'var(--ink-soft)' });
+    f += texte2D([G0[0] - 8, G0[1] - GH - 24], 'distance AB', { taille: 12.5, couleur: 'var(--ink-soft)' });
+    f += trait2D([G0[0], gy(1)], [G0[0] + GW, gy(1)], { couleur: 'var(--ink-soft)', epaisseur: 1.6, tirets: '6 4' });
+    f += texte2D([G0[0] + GW, gy(1) - 8], 'sur un plan', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+    q('[data-fond]').innerHTML = f;
+
+    function maj() {
+      const d = parseFloat(ecart.value), b = parseFloat(lat.value), lA = -d / 2, lB = d / 2;
+      const d0 = distance(0, d), db = distance(b, d);
+      let s = '';
+      for (const [lon, n] of [[lA, 'A'], [lB, 'B']] as [number, string][]) {
+        s += v.courbe(meridien(lon, b, 90), { couleur: 'var(--orbit)', epaisseur: 1.2, tirets: '4 4' });
+        if (b > 0.2) s += v.courbe(meridien(lon, 0, b), { couleur: 'var(--orbit)', epaisseur: 2.4 });
+        s += v.point(sph(lon, 0), 3, 'var(--ink-soft)');
+        s += v.point(sph(lon, b), 6, 'var(--ko)');
+        s += v.texte(sph(lon, b), n, { dx: lon < 0 ? -16 : 9, dy: 5, taille: 15, gras: true, couleur: 'var(--ko)' });
+      }
+      if (db > 0.3) s += v.arc(sph(lA, b), sph(lB, b), { couleur: 'var(--brass)', epaisseur: 1.6 });
+      // Courbe de la distance sur la sphère, rapportée à l’écart initial.
+      const pts: P2[] = [];
+      for (let i = 0; i <= 90; i++) pts.push([gx(i), gy(distance(i, d) / d0)]);
+      s += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="2.2"/>`;
+      s += texte2D([gx(52), gy(distance(52, d) / d0) - 10], 'sur la sphère', { taille: 12, couleur: 'var(--orbit)' });
+      s += `<line x1="${gx(b)}" x2="${gx(b)}" y1="${G0[1]}" y2="${gy(db / d0)}" stroke="var(--brass)" stroke-width="1" stroke-dasharray="3 3"/>`;
+      s += `<circle cx="${gx(b).toFixed(1)}" cy="${gy(db / d0).toFixed(1)}" r="5.5" fill="var(--brass)" stroke="var(--surface)" stroke-width="2"/>`;
+      q('[data-dyn]').innerHTML = s;
+      q('[data-ecart-out]').textContent = `${nb(d0 * KM_DEG)} km`;
+      q('[data-lat-out]').textContent = `${nb(b * KM_DEG)} km`;
+      q('[data-dist]').textContent = `${nb(db * KM_DEG)} km`;
+      q('[data-plan]').textContent = `${nb(d0 * KM_DEG)} km`;
+    }
+    function boucle(now: number) {
+      if (anime && avant) {
+        const b = Math.min(90, parseFloat(lat.value) + (Math.min(0.1, (now - avant) / 1000) * 90) / 6);
+        lat.value = String(b); maj();
+        if (b >= 90) { anime = false; jouer.textContent = 'Recommencer'; }
+      }
+      avant = now; requestAnimationFrame(boucle);
+    }
+    ecart.addEventListener('input', maj);
+    lat.addEventListener('input', () => { anime = false; jouer.textContent = 'Lancer'; maj(); });
+    jouer.addEventListener('click', () => {
+      if (reduit) { lat.value = '90'; maj(); return; }
+      if (parseFloat(lat.value) >= 90) lat.value = '0';
+      anime = !anime; jouer.textContent = anime ? 'Pause' : 'Lancer';
+    });
+    maj();
+    requestAnimationFrame(boucle);
+  });
+</script>

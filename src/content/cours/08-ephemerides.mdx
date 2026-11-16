@@ -1,0 +1,516 @@
+---
+title: Les éphémérides
+slug: ephemerides
+numero: 8
+resume: Prédire la position des astres.
+source: https://media4.obspm.fr/public/ressources_lu/pages_ephemerides/introduction-ephemerides.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import Frise from '../../components/Frise.astro';
+import Personne from '../../components/Personne.astro';
+import AspectSaturne from '../../components/ephemerides/AspectSaturne.astro';
+import PhenomenesJupiter from '../../components/ephemerides/PhenomenesJupiter.astro';
+import SimulateurInterpolation from '../../components/SimulateurInterpolation.astro';
+import SimulateurJupiter from '../../components/SimulateurJupiter.astro';
+import SimulateurTchebychev from '../../components/SimulateurTchebychev.astro';
+import SimulateurLeverCoucher from '../../components/SimulateurLeverCoucher.astro';
+
+## Introduction
+
+Dans le langage courant, l’éphéméride désigne ce qui se passe journellement : l’éphéméride du jour est la liste des événements marquants de ce jour. Par extension, les éphémérides astronomiques désignent a priori une table journalière des positions des corps célestes mobiles (ceux du système solaire), ainsi que des phénomènes astronomiques ayant lieu ce jour, telles les éclipses. Les <Terme id="ephemeride">éphémérides</Terme> de positions sont donc avant tout la représentation d’un mouvement. Les éphémérides que l’on connaît sous forme de tables de nombres sont les plus courantes et les plus anciennes ; mais ce n’est pas la seule forme possible et, de nos jours, ce n’est plus la meilleure, car il en existe d’autres beaucoup plus performantes.
+
+Pour obtenir une éphéméride, il est nécessaire de disposer :
+
+- d’un modèle théorique (dynamique ou cinématique) du mouvement du corps considéré ;
+- d’observations de ce corps pour ajuster le modèle ;
+- d’une représentation du mouvement pour donner les positions souhaitées à l’utilisateur.
+
+La qualité d’une éphéméride pour la représentation d’un mouvement dépend de deux facteurs : utiliser un petit nombre de données (éviter des tables gigantesques), et avoir une bonne précision (commettre l’erreur la plus faible possible par rapport à la position « vraie » que l’on veut décrire).
+
+## Qu’est-ce qu’une éphéméride ?
+
+### Modèles théoriques des mouvements
+
+Depuis les débuts de l’astronomie, modéliser le mouvement des corps du système solaire a toujours été un défi. Il s’est agi tout d’abord d’extrapolations empiriques des observations réalisées : les premières tables proviennent ainsi d’une analyse purement cinématique des mouvements observés. Leur précision est évidemment médiocre, et ne progresse qu’avec l’amélioration de la précision des observations.
+
+Viennent ensuite des prédictions fondées sur des théories gravitationnelles, dont les paramètres sont déduits d’observations. À partir de <Personne id="newton">Newton</Personne>, les lois dynamiques sont connues ; il importe alors de mettre en équation et de prendre en compte tous les effets gravitationnels qui peuvent agir sur les corps. Les recherches théoriques de <Personne id="lagrange">Lagrange</Personne> sur le problème planétaire ont conduit à modéliser l’évolution à long terme des orbites par un système différentiel linéaire qui couple les excentricités et les inclinaisons. C’est un résultat fondamental. On consultera les chapitres sur les [lois de Kepler](../kepler/) et sur la [mécanique céleste](../mecanique-celeste/#en-savoir-plus--théories-analytiques-ou-intégration-numérique-) pour approfondir ces notions.
+
+### Histoire des éphémérides
+
+Des recueils de prédictions diverses liées au calendrier, appelés almanachs ou éphémérides, existaient dès le XIII<sup>e</sup> siècle. Citons :
+
+- les **tables alphonsines**, faites sur l’ordre d’<Personne id="alphonse">Alphonse X de Castille</Personne> à partir de l’*Almageste*, vers 1250, et qui arrivèrent à Paris en 1320 ;
+- les éphémérides de <Personne id="regiomontanus">Regiomontanus</Personne>, couvrant les années 1475-1506 ;
+- les **tables pruténiques**, construites en 1551 par <Personne id="reinhold">Reinhold</Personne> sur la base des travaux de <Personne id="copernic">Copernic</Personne> ;
+- les éphémérides des satellites de Jupiter de <Personne id="marius">Simon Marius</Personne>, en 1614 ;
+- les **tables rudolphines**, en 1627, construites sur la base des travaux de <Personne id="kepler">Kepler</Personne> et de <Personne id="tycho">Tycho Brahe</Personne>.
+
+Les premières éphémérides vraiment destinées aux astronomes, pour faire progresser notre connaissance du système solaire et de la Terre, apparurent avec la *Connaissance des Temps*, dont le premier volume parut à Paris en 1679. Ce premier volume se bornait à annoncer aux astronomes les principaux phénomènes et à leur fournir les calculs nécessaires aux réductions de leurs observations journalières. On y trouvait les levers et couchers du Soleil, de la Lune et des cinq planètes connues (Mercure, Vénus, Mars, Jupiter et Saturne), leurs passages au méridien de Paris, leurs longitudes, leurs latitudes et leurs déclinaisons. Au XVIII<sup>e</sup> siècle, <Personne id="lalande">Lalande</Personne> construisit les tables du Soleil et des planètes qui servirent de base aux éphémérides publiées dans la *Connaissance des Temps* jusqu’en 1808. En 1767 paraît à Londres le *Nautical Almanac and Astronomical Ephemeris*, éphéméride de même nature, destinée également à contribuer à l’amélioration de l’astronomie, de la géographie et de la navigation.
+
+Au cours des années 1770-1825, <Personne id="laplace">Laplace</Personne> étudie les conséquences de l’application de la loi de la gravitation de Newton au mouvement des corps du système solaire, et résout plusieurs problèmes concernant les théories planétaires. La plupart des tables du Soleil et des planètes utilisées dans la *Connaissance des Temps* durant la première moitié du XIX<sup>e</sup> siècle sont issues de ses travaux.
+
+La représentation de ces éphémérides a évolué au cours du temps. Jusqu’à la fin du XVIII<sup>e</sup> siècle, la *Connaissance des Temps* présentait les éphémérides des astres mois par mois, le Soleil de jour en jour et les planètes de six jours en six jours. À partir de 1838, les éphémérides sont publiées corps par corps : elles sont journalières pour le Soleil, de trois jours en trois jours pour Mercure, de six jours en six jours pour Vénus et Mars, de huit jours en huit jours pour Jupiter, de dix jours en dix jours pour Saturne et de quinze jours en quinze jours pour Uranus. En 1863, les éphémérides deviennent journalières pour Mercure, Vénus, Mars, Jupiter et Saturne, et de quatre jours en quatre jours pour Uranus et Neptune.
+
+Les éphémérides ont subi de nos jours d’importantes transformations. En 1980, la présentation sous forme de tables interpolables a été remplacée par une représentation en polynômes de Tchebychev, beaucoup plus compacte et bien adaptée au développement de la micro-informatique. Dans la *Connaissance des Temps* de 1808, par exemple, l’ascension droite de la Lune était donnée de 12 h en 12 h et sa déclinaison de 6 h en 6 h : la précision restait faible du fait de la rapidité du mouvement de la Lune.
+
+<Frise evenements={[
+  { date: "vers 1250", titre: "Tables alphonsines", texte: "Établies pour Alphonse X de Castille d’après l’<i>Almageste</i>." },
+  { date: "1475-1506", titre: "Regiomontanus", texte: "Éphémérides imprimées pour trente ans." },
+  { date: "1551", titre: "Tables pruténiques", texte: "Reinhold, d’après Copernic." },
+  { date: "1614", titre: "Simon Marius", texte: "Éphémérides des satellites de Jupiter." },
+  { date: "1627", titre: "Tables rudolphines", texte: "Kepler, d’après les observations de Tycho Brahe." },
+  { date: "1679", titre: "<i>Connaissance des Temps</i>", texte: "Premières éphémérides destinées aux astronomes, à Paris." },
+  { date: "1767", titre: "<i>Nautical Almanac</i>", texte: "Éphéméride britannique pour l’astronomie et la navigation." },
+  { date: "1838-1863", titre: "Éphémérides corps par corps", texte: "Puis journalières pour les planètes." },
+  { date: "1980", titre: "Polynômes de Tchebychev", texte: "La <i>Connaissance des Temps</i> abandonne les tables interpolables." },
+]} />
+
+## Les différents types d’éphémérides
+
+### Les éphémérides de position
+
+Selon la quantité à représenter dans les éphémérides, on est amené à choisir un plan fondamental et des coordonnées. Pour les éphémérides destinées à l’observateur terrestre, le plan fondamental est l’équateur terrestre, et l’on fournit l’<Terme id="ascension-droite">ascension droite</Terme> (angle compté habituellement en heures vers l’est à partir de l’équinoxe, de 0 à 24 heures, le long de l’équateur) et la <Terme id="declinaison">déclinaison</Terme> (angle compté habituellement en degrés vers le nord au-dessus du plan équatorial). On donne aussi le rayon vecteur, distance du centre du repère à l’astre considéré : il ne dépend pas du repère, sauf en ce qui concerne la prise en compte du <Terme id="temps-de-lumiere">temps de lumière</Terme>. (Pour les systèmes de coordonnées, voir le chapitre [Introduction à la notion de repère](../reperes/).)
+
+Les éphémérides de la Lune, du Soleil et des planètes principales donnent des <Terme id="coordonnees-apparentes">coordonnées apparentes</Terme>, pour le pointage des télescopes. Pour Pluton, les astéroïdes et les comètes, on donne les <Terme id="coordonnees-astrometriques">coordonnées astrométriques</Terme>, directement comparables aux catalogues d’étoiles. Dans le cas des satellites naturels proches des planètes, on donne des coordonnées tangentielles relatives à la planète, dans un plan tangent à la sphère céleste, directement comparables aux clichés photographiques ou aux images des caméras CCD.
+
+Citons aussi les <Terme id="coordonnees-topocentriques">coordonnées topocentriques</Terme>, centrées sur un observateur situé à la surface terrestre : elles ne peuvent être calculées qu’à la demande, et l’on passe en général des coordonnées apparentes aux coordonnées topocentriques par une petite correction, si nécessaire.
+
+Certaines positions sont données en coordonnées non pas sphériques mais rectangulaires, l’axe X étant dirigé vers l’équinoxe du repère et l’axe Z vers le pôle Nord céleste de ce repère. Les éphémérides données sous cette forme sont plutôt destinées à la navigation spatiale.
+
+### Éphémérides pour les observations physiques
+
+Pour observer de la Terre, à un instant donné, des points situés à la surface d’un astre du système solaire, il faut définir les paramètres qui caractérisent la rotation de l’astre autour de son axe, donner leurs valeurs numériques, et définir les systèmes de coordonnées par rapport auxquels ces points sont repérés sur l’astre (repère planétographique). On calcule ensuite les données qui permettent de savoir quels points de l’astre sont visibles de la Terre à l’instant considéré. Il est également utile de connaître des quantités liées à l’éclairement du disque apparent. L’Union astronomique internationale publie régulièrement les paramètres qui permettent de définir la rotation des corps, ainsi qu’un système de coordonnées pour situer le relief ou les structures de surface de ces corps.
+
+Le pôle Nord est, par définition, celui des deux pôles de l’axe de rotation qui se trouve au nord du plan invariant du système solaire (plan proche de l’écliptique). Les longitudes sont comptées à partir du méridien origine, mais dans le sens opposé à la rotation. Il en résulte que, pour un observateur lointain, la longitude planétographique du centre du disque apparent augmente toujours avec le temps, quel que soit le sens de rotation de l’astre. Afin de respecter une tradition historique et de pouvoir continuer à utiliser des cartes anciennes, on admet en général des exceptions à cette règle pour la Terre, le Soleil et la Lune, dont les rotations sont directes.
+
+<AspectSaturne>
+Aspect de Saturne et de ses anneaux vu de la Terre. Une éphéméride pour les observations physiques donne, pour un instant donné, la longitude et la latitude planétocentriques de la Terre (SEP) et du Soleil (SSP), et l’angle de position NP du pôle Nord de la planète par rapport au pôle Nord céleste. Schéma d’après l’original (IMCCE, aspect du 4 novembre 2003), valeurs illustratives.
+</AspectSaturne>
+
+## Le repérage des éphémérides de position
+
+### Les systèmes de référence
+
+La connaissance des positions et des mouvements des astres nécessite des notions précises sur les systèmes de référence de coordonnées spatiales et temporelles dans lesquels on situe les positions décrites par les éphémérides. Nous avons vu que l’argument temps des éphémérides ne peut pas être pris dans n’importe quelle échelle de temps (voir le chapitre sur la [mesure du temps](../mesure-temps/)). De même, nous allons voir que les coordonnées spatiales à utiliser doivent être rattachées à un système de référence grâce à un repère de référence.
+
+On distingue les systèmes de référence célestes et terrestres.
+
+Les systèmes de référence célestes sont soit **dynamiques** (fondés sur l’étude dynamique des mouvements des corps du système solaire), soit **cinématiques** (fondés sur l’étude statistique des mouvements des corps lointains tels que les étoiles, les galaxies et les quasars). Les systèmes de référence célestes dynamiques, d’abord construits dans le cadre de la mécanique newtonienne, le sont aujourd’hui dans celui de la mécanique relativiste, qui lie l’argument temps aux variables spatiales. Pour les besoins des éphémérides actuelles, les définitions que nous avons données pour l’argument temps des éphémérides sont suffisantes. Pour rattacher les positions des corps célestes à un observateur situé sur la Terre, on a besoin de définir également un système de référence terrestre.
+
+Les systèmes de référence terrestres nécessitent la connaissance d’un modèle de la Terre, de sa forme et de ses déformations au cours du temps. La détermination d’une position topocentrique nécessite un tel système, pour connaître la position du lieu en question par rapport aux positions données dans le système céleste. Les éphémérides étant en général géocentriques, les positions des corps célestes doivent être définies d’abord dans un système de référence céleste.
+
+### Les repères de référence célestes
+
+Un système de référence est un concept théorique, et la construction d’éphémérides nécessite la connaissance d’un <Terme id="repere-reference">repère de référence</Terme>, qui est la matérialisation concrète d’un système de référence. Un repère de référence céleste est donc associé à des théories dynamiques, à des constantes et à des catalogues d’étoiles.
+
+Un repère de référence se définit par un plan de référence et par une direction privilégiée. Pour les éphémérides publiées actuellement, le plan de référence est l’équateur de la Terre (repère équatorial) ou l’<Terme id="ecliptique">écliptique</Terme>, plan de l’orbite de la Terre autour du Soleil (repère écliptique). La direction de référence est celle de l’équinoxe, nœud ascendant de l’écliptique sur l’équateur, intersection des deux plans. Ces plans et cette direction sont liés à la Terre : on définit différents repères de référence selon les théories et les constantes utilisées pour les construire, puis, pour chaque repère ainsi construit, on fixe les plans et la direction de référence pour obtenir un repère parfaitement défini.
+
+### Les repères cinématiques liés aux étoiles
+
+Ces repères sont définis par les positions et les mouvements propres des étoiles. Citons les catalogues FK4 et FK5, qui utilisent 1 535 étoiles. Des repères utilisant par exemple les étoiles du catalogue Hipparcos et des radiosources très lointaines servent de catalogues pour l’astrométrie. Ils seront supplantés par le catalogue issu de la mission Gaia, en cours de construction : deux versions de ce catalogue existaient déjà en 2018, date de la source.
+
+### Les repères dynamiques liés aux corps du système solaire
+
+Les modèles dynamiques des corps du système solaire, ajustés sur les observations radar ou laser, sont indépendants des étoiles des catalogues et définissent un plan et une direction de référence. Associés à une théorie de la précession-nutation, ils définissent un repère. Citons le repère lié aux intégrations numériques DE430/DE431 du Jet Propulsion Laboratory, ou encore INPOP de l’IMCCE, et celui lié aux théories analytiques ELP2000/VSOP87 de la Lune et des planètes du Bureau des longitudes (versions en usage à la date de la source).
+
+### Les systèmes de coordonnées
+
+Une fois défini un repère de référence, il faut choisir les coordonnées à utiliser pour fournir des positions dans les éphémérides.
+
+À un repère de référence donné, on associe une théorie de la précession-nutation, et l’on définit (voir <Terme id="repere-vrai-moyen">repère vrai, repère moyen</Terme>) :
+
+- les positions dans le **repère moyen** : les plans fondamentaux sont des plans moyens, c’est-à-dire affectés de la seule <Terme id="precession">précession</Terme>. Une date doit être donnée pour fixer le repère, mais cette date est conventionnelle (par exemple 1950 pour le repère FK4 et 2000 pour le FK5) ;
+- les positions dans le **repère vrai** : les plans fondamentaux sont affectés de la précession et de la <Terme id="nutation">nutation</Terme>. La date du repère est celle à laquelle on donne les positions : le repère n’est pas fixe. C’est le seul repère accessible directement à un observateur terrestre.
+
+Dans le repère ainsi défini, les coordonnées peuvent être :
+
+- **géométriques** : ce sont les positions occupées réellement par le corps à l’instant donné, sans tenir compte de la vitesse de la lumière (<Terme id="coordonnees-geometriques">coordonnées géométriques</Terme>) ;
+- **apparentes** : ce sont les positions vues par un observateur placé au centre du repère. Elles sont rapportées à un repère vrai de la date ; on tient compte de la vitesse de la lumière et de l’<Terme id="aberration-annuelle">aberration annuelle</Terme> ;
+- **astrométriques** ou astrographiques : ce sont des coordonnées directement comparables aux catalogues d’étoiles. Elles se déduisent des coordonnées apparentes par la transformation de précession-nutation, pour se ramener à un repère fixe (de la date du catalogue d’étoiles), et par la suppression de l’aberration annuelle. Le temps de lumière est toujours pris en compte.
+
+Les coordonnées sont en général données sous forme sphérique : ascension droite et déclinaison dans le repère équatorial, ou longitude et latitude dans le repère écliptique. Elles peuvent être données sous forme d’<Terme id="angle-horaire">angle horaire</Terme> à la place de l’ascension droite, pour un instant donné, dans un repère local. Enfin, toujours dans un repère local, on peut donner l’azimut et la hauteur d’un astre à un instant donné.
+
+Les coordonnées géométriques sont fournies sous forme cartésienne X, Y, Z dans un repère équatorial, l’axe X étant dirigé vers le <Terme id="point-vernal">point vernal</Terme> et l’axe Z vers le pôle Nord. Enfin, des coordonnées tangentielles ou différentielles peuvent être données pour des corps proches l’un de l’autre, sur un plan tangent à la sphère céleste.
+
+## Représentation des éphémérides
+
+### Les éphémérides sous forme de tables
+
+La plus ancienne forme sous laquelle les éphémérides fournissent les positions des astres est une table de positions dont l’intervalle (une heure, un jour, un mois…) dépend de la vitesse de variation de ces positions : plus cette variation est rapide, plus petit doit être l’intervalle de temps séparant deux données successives. La simple lecture d’une table, accompagnée d’une interpolation à vue, suffit pour fournir une position permettant de repérer l’astre dans le ciel. Si l’on souhaite une précision plus grande, il faut effectuer une interpolation qui n’est plus linéaire, ce qui demande des calculs plus complexes à partir des valeurs publiées, si celles-ci le permettent. Pour une précision plus grande encore, il faut diminuer l’intervalle entre deux positions, et donc augmenter le volume de données publiées. L’*Astronomical Almanac* et le *Guide des données astronomiques* encore aujourd’hui, et la *Connaissance des Temps* jusqu’en 1979, contiennent des éphémérides sous forme de telles tables.
+
+Citons le cas de la Lune : pour une précision de 0,01 seconde de degré, l’intervalle entre deux positions doit être de 3 heures, ce qui conduit à publier 2 920 valeurs par an et par coordonnée. Citons aussi les satellites galiléens de Jupiter, qui ont un mouvement extrêmement rapide autour de la planète : une éphéméride tabulée aurait nécessité un pas de 20 minutes, soit plus de 26 000 valeurs par an et par coordonnée ! Cela conduit à un volume de données trop important pour être publié tel quel dans une éphéméride imprimée. D’autres solutions doivent être trouvées.
+
+Dans la *Connaissance des Temps* de 1978, par exemple, l’ascension droite et la déclinaison de la Lune sont données de 3 h en 3 h, avec la variation pour une minute : le nombre de données à publier et les calculs d’interpolation à réaliser pour une précision correcte sont importants.
+
+### En savoir plus : l’interpolation des éphémérides
+
+<span class="tag plus">En savoir plus</span>
+
+Une éphéméride est une table qui fournit, pour des dates particulières, en principe équidistantes, les valeurs d’une ou de plusieurs fonctions qui décrivent l’évolution des positions des astres concernés, ou d’autres grandeurs relatives à ces astres. On appelle <Terme id="interpolation">interpolation</Terme> la technique de calcul qui permet d’évaluer les valeurs de ces fonctions pour des dates intermédiaires.
+
+Le cas le plus simple est celui où la fonction varie assez lentement, ou est donnée avec assez peu de précision, pour qu’aucun calcul ne soit nécessaire : on se contente alors d’une interpolation à vue (par exemple, pour la magnitude de la planète Jupiter, aucun calcul n’est nécessaire pour estimer, d’après une table, qu’elle vaut −1,8 le 2 juillet 2002).
+
+Plus souvent, on doit employer l’**interpolation linéaire**. Soit $t$ l’instant pour lequel on veut calculer la fonction $f$ ; $t_1$ l’instant de la table immédiatement inférieur ou égal à $t$, la valeur correspondante de $f$ étant $f_1$ ; et $t_2$ l’instant de la table immédiatement supérieur à $t$, la valeur correspondante étant $f_2$. On calcule alors :
+
+$$
+f = f_1 + n\,\Delta^1_1 \qquad \text{avec} \qquad n = \frac{t - t_1}{t_2 - t_1}, \qquad \Delta^1_1 = f_2 - f_1
+$$
+
+$n$ et $\Delta^1_1$ s’appellent respectivement le **facteur d’interpolation** et la **différence première**.
+
+Dans certains cas, l’interpolation linéaire fournit un résultat trop imprécis. Pour s’en rendre compte, on forme le tableau des différences, où $t_0, t_1, t_2, t_3$… sont des instants de l’éphéméride et $f_0, f_1, f_2, f_3$… les valeurs correspondantes :
+
+| Instant | Valeur | Différences premières | Différences secondes | Différences troisièmes |
+| :-- | :-- | :-- | :-- | :-- |
+| $t_0$ | $f_0$ | $\Delta^1_0 = f_1 - f_0$ | $\Delta^2_0 = \Delta^1_1 - \Delta^1_0$ | $\Delta^3_0 = \Delta^2_1 - \Delta^2_0$ |
+| $t_1$ | $f_1$ | $\Delta^1_1 = f_2 - f_1$ | $\Delta^2_1 = \Delta^1_2 - \Delta^1_1$ | |
+| $t_2$ | $f_2$ | $\Delta^1_2 = f_3 - f_2$ | | |
+| $t_3$ | $f_3$ | | | |
+
+L’interpolation linéaire est suffisante si les différences secondes sont inférieures à 4 unités du dernier ordre envisagé. Sinon (et à condition que les différences troisièmes n’excèdent pas 62 unités du dernier ordre), on emploie la **formule de Bessel** :
+
+$$
+f = f_1 + n\,\Delta^1_1 - \frac{1}{4}\,n\,(1 - n)\left(\Delta^2_0 + \Delta^2_1\right) \qquad \text{où} \qquad \Delta^2_0 + \Delta^2_1 = \Delta^1_2 - \Delta^1_0
+$$
+
+<SimulateurInterpolation />
+
+### Les éphémérides sous forme graphique
+
+Comme nous l’avons vu, les corps rapides comme les satellites de Jupiter ne peuvent pas avoir d’éphémérides précises publiées annuellement sous forme de tables. Une première solution consiste à offrir au lecteur une représentation graphique, dont la lecture conduit à une précision de quelques dizaines de secondes de degré : précision bien faible, mais suffisante pour identifier les corps lors d’une observation. La *Connaissance des Temps* a publié de telles configurations des satellites de Jupiter dès 1808, et les publiait encore en 2000.
+
+### Détermination de la configuration des satellites de Jupiter à une date donnée
+
+Sur ces diagrammes, le temps s’écoule de haut en bas, jour par jour ; chaque satellite y trace une sinusoïde « en serpentin » de part et d’autre de la bande verticale qui représente le disque de Jupiter. Pour connaître la configuration à une date et une heure données, on trace une ligne horizontale à l’instant choisi : ses intersections avec les courbes donnent la position des satellites, à l’est ou à l’ouest de la planète. Le widget ci-dessous recalcule ces diagrammes pour n’importe quel mois.
+
+<SimulateurJupiter />
+
+### Approximation d’une fonction par un polynôme
+
+L’usage très répandu des calculatrices de poche et des micro-ordinateurs permet d’utiliser une formulation plus complexe pour les éphémérides : on cherche plutôt à conserver une précision de représentation optimale sur la période couverte par l’éphéméride. Ainsi, au lieu d’évaluer une fonction $f(t)$ sous la forme d’un tableau de valeurs calculées à des intervalles rapprochés, on établit des fonctions d’approximation de $f(t)$ valables sur de grands intervalles de temps, en minimisant les erreurs et le volume global des données.
+
+L’éphéméride veut donc représenter une fonction $f(t)$, constituée soit par le résultat d’une intégration numérique, soit par une fonction analytique du temps, qui traduit le mouvement d’un corps ou l’évolution temporelle d’un phénomène. Or on sait que toute fonction peut être approchée sur un intervalle de temps donné par un polynôme, dont le degré et le nombre de termes sont d’autant plus élevés que l’intervalle de temps est grand. Une telle approximation n’est pas optimisée et le volume de données à publier est important ; mais l’utilisation d’une telle éphéméride est très simple, puisqu’il suffit de substituer le temps dans les polynômes ainsi construits. D’autres représentations sont cependant bien meilleures.
+
+### En savoir plus : approximation de Tchebychev (1)
+
+<span class="tag plus">En savoir plus</span>
+
+Les fonctions que nous voulons approcher sont toujours définies pour toutes les valeurs de la variable temps. L’approximation lagrangienne par des polynômes consiste à faire passer, sur un intervalle donné, un polynôme de degré $n$ par $n + 1$ valeurs, alors qu’il serait préférable de tenir compte de toutes les valeurs de la fonction sur cet intervalle. L’approximation de <Personne id="tchebychev">Tchebychev</Personne> s’impose pour cela : elle est celle de plus bas degré dont l’erreur ne dépasse pas une valeur donnée a priori, et son erreur est régulièrement répartie sur l’intervalle considéré.
+
+La fonction d’approximation se présente comme une suite de développements en <Terme id="polynomes-tchebychev">polynômes de Tchebychev</Terme> sur une succession d’intervalles de temps. Le volume de données est ainsi réduit et le calcul des positions est rapide. Cette représentation est donc bien adaptée aux besoins des astronomes (amateurs, professionnels, théoriciens, astrométristes…).
+
+Les éphémérides de Tchebychev se présentent sous la forme d’une suite de coefficients $a_0, a_1, \dots, a_n$ pour une coordonnée donnée, sur un intervalle $[t_1, t_2]$. Pour calculer la valeur de la coordonnée à l’instant $t$ de l’intervalle, on effectue le changement de variable
+
+$$
+x = -1 + \frac{2\,(t - t_1)}{t_2 - t_1}, \qquad x \in [-1, +1]
+$$
+
+Les polynômes de Tchebychev de première espèce $T_n(x)$ sont donnés par la relation
+
+$$
+T_n(x) = \cos(n \arccos x)
+$$
+
+ou par la relation de récurrence
+
+$$
+T_n(x) = 2\,x\,T_{n-1}(x) - T_{n-2}(x), \qquad T_0(x) = 1, \quad T_1(x) = x
+$$
+
+La coordonnée est alors égale à
+
+$$
+a_0\,T_0(x) + a_1\,T_1(x) + \dots + a_n\,T_n(x)
+$$
+
+Dans la majorité des éphémérides (Soleil, Lune, planètes), on a choisi les polynômes de Tchebychev. Dans la *Connaissance des Temps* pour l’année 2000, par exemple, l’ascension droite et la déclinaison sont fournies sous forme de coefficients : il faut programmer un petit formulaire simple pour calculer les valeurs à tout instant de l’intervalle de validité. Les données à publier sont peu nombreuses, et la précision des valeurs obtenues est la meilleure.
+
+### En savoir plus : approximation de Tchebychev (2)
+
+<span class="tag plus">En savoir plus</span>
+
+**Soleil, Lune, planètes.** Soit $t$ une date julienne appartenant à l’intervalle de temps $[t_0, t_0 + DT]$ et $y$ une coordonnée d’un astre. On calcule $y(t)$ par la formule
+
+$$
+y = a_0 + a_1\,T_1(x) + \dots + a_n\,T_n(x) \qquad (1)
+$$
+
+où $x$, compris entre −1 et +1, se déduit de $t$ par la relation
+
+$$
+x = -1 + \frac{2\,(t - t_0)}{DT} \qquad (2)
+$$
+
+$a_0, a_1, \dots, a_n$ sont les coefficients numériques publiés dans la *Connaissance des Temps*, valables pour l’intervalle $[t_0, t_0 + DT]$ contenant $t$ ; $T_1(x), \dots, T_n(x)$ sont les polynômes de Tchebychev en $x$, que l’on calcule soit par la relation $T_p(x) = \cos(p \arccos x)$ (3), soit par la relation de récurrence $T_{p+1}(x) = 2\,x\,T_p(x) - T_{p-1}(x)$ (4), avec $T_0(x) = 1$ et $T_1(x) = x$.
+
+**Caractéristiques générales.** Les éphémérides de l’année sont publiées corps par corps. Pour chaque corps, un certain nombre de variables sont représentées, pour des intervalles de temps donnés, par des tableaux donnant les coefficients de leurs développements en polynômes de Tchebychev ou sous forme de fonctions mixtes. En haut de chaque page figurent le nom du corps suivi de l’année de l’éphéméride, le type des variables représentées et, éventuellement, les caractéristiques du système de coordonnées ; en bas de chaque page, les unités utilisées.
+
+Les coefficients d’un tableau sont publiés en colonne. Pour chaque tableau, on précise :
+
+- le nom de la variable représentée ;
+- les dates de début et de fin de l’intervalle de temps correspondant au domaine de validité du tableau ;
+- la longueur des intervalles de temps $DT$ (en jours), en haut de chaque page ;
+- les coefficients, notés 0, 1, …, $p$, …, $n$ ;
+- la **valeur de contrôle** du tableau, imprimée en italique en tête de chaque tableau. C’est la valeur $y(t_0)$ de la variable au début de l’intervalle : $y(t_0) = a_0 - a_1 + \dots + (-1)^n a_n$.
+
+La valeur de contrôle permet de vérifier que les coefficients ont été correctement entrés en mémoire sur une calculette ou un calculateur. De plus, l’ensemble des valeurs de contrôle des tableaux d’une même variable donne une idée de l’évolution de cette variable au cours de l’année.
+
+**Calcul d’une coordonnée.** Pour calculer la valeur d’une coordonnée d’un astre à une date $t$ exprimée en UTC, on commence par corriger $t$ de l’écart TT − UTC, afin de se ramener à l’argument des éphémérides (identifié au <Terme id="temps-terrestre">temps terrestre</Terme> TT), puis on cherche, parmi les tableaux représentant la coordonnée, celui qui correspond à l’intervalle $[t_0, t_0 + DT]$ contenant $t$. Il faut insister sur le fait que la représentation, qu’elle soit en polynômes de Tchebychev ou sous forme de fonctions mixtes, n’est pas valable en dehors de cet intervalle.
+
+On calcule ensuite $x$ par la formule (2), puis, à partir des $n + 1$ coefficients du tableau, la coordonnée $y(t)$ par la formule (1), les polynômes de Tchebychev étant calculés par la formule (3) ou par la récurrence (4). Notons que si l’on n’utilise que les $p + 1$ premiers coefficients ($p < n$), on commet sur la représentation de $y$ une erreur au plus égale à la somme des valeurs absolues des $n - p$ coefficients négligés. Pour avoir l’instant de passage du Soleil au méridien origine un jour donné, numéroté $j$ dans le mois, on applique la même méthode en prenant $t = j + 0{,}5$.
+
+### En savoir plus : approximation de Tchebychev (3), exemple de calcul
+
+<span class="tag plus">En savoir plus</span>
+
+**Exemple 1.** Calculer le rayon vecteur héliocentrique de Mars le 5 novembre 2003 à 16 h 51 min 42 s UTC.
+
+<Repli titre="Afficher le calcul">
+On effectue d’abord une correction pour se ramener à l’argument des éphémérides. Pour 2003, la valeur de TT − UTC n’était pas encore connue au moment de la publication, mais on pouvait la prendre égale à 65 s. La date $t$ est donc le 5 novembre 2003 à 16 h 52 min 47 s, argument des éphémérides.
+
+On utilise les coefficients de la *Connaissance des Temps* valables du 0 juillet 0 h au 33 décembre 0 h (c’est-à-dire du 30 juin 2003 au 2 janvier 2004). Le calendrier de l’ouvrage donne les numéros des jours de l’année (JDA) correspondant au 0 juillet (JDA = 181) et au 5 novembre (JDA = 309). On a :
+
+$$
+DT = 186, \qquad t - t_0 = 309 - 181 + 16\ \text{h}\ 52\ \text{min}\ 47\ \text{s} = 128{,}703\,321\,759\ \text{jours}
+$$
+
+On en déduit par la formule (2) :
+
+$$
+x = -1 + \frac{2\,(t - t_0)}{DT} = 0{,}383\,906\,686
+$$
+
+*Algorithme 1.* Les polynômes de Tchebychev sont calculés par la relation (3), $T_p(x) = \cos(p\,\theta)$ où $\theta = \arccos x = 67{,}424\,117\,27°$. On en déduit :
+$T_1(x) = \cos\theta = x = 0{,}383\,906\,686$ ; $T_2(x) = \cos 2\theta = -0{,}705\,231\,314$ ; $T_4(x) = \cos 4\theta = -0{,}005\,297\,589$ ; $T_6(x) = \cos 6\theta = 0{,}712\,703\,365$ ; $T_8(x) = \cos 8\theta = -0{,}999\,943\,871$.
+
+*Algorithme 2.* Les polynômes sont calculés par la relation de récurrence (4), avec $T_0(x) = 1$ et $T_1(x) = x = 0{,}383\,906\,686$ :
+$T_2(x) = 2\,x\,T_1 - T_0 = -0{,}705\,231\,314$ ; $T_3(x) = 2\,x\,T_2 - T_1 = -0{,}925\,392\,718$ ; etc.
+
+Les polynômes de Tchebychev étant déterminés, le rayon vecteur $R$ de Mars se déduit de la formule (1) avec les coefficients $a_0, \dots, a_9$ du tableau :
+
+$$
+R = 1{,}415\,514\,22 + 0{,}035\,889\,20\,T_1 + \dots + 0{,}000\,000\,04\,T_9
+$$
+
+soit finalement $R = 1{,}412\,255\,01$ ua.
+</Repli>
+
+Le widget reprend cet exemple avec un mouvement képlérien de Mars (sans perturbations) : on peut y faire varier le nombre de coefficients et la longueur de l’intervalle, et comparer l’erreur à la borne « somme des coefficients négligés » et à celle d’un polynôme passant par des points équidistants.
+
+<SimulateurTchebychev />
+
+### En savoir plus : approximation par des fonctions mixtes (1)
+
+<span class="tag plus">En savoir plus</span>
+
+Comme nous l’avons vu, l’approximation polynomiale n’est pas la seule possible pour représenter une éphéméride. L’introduction des fonctions mixtes permet de prendre en compte le caractère quasi périodique des fonctions qui apparaissent dans les éphémérides. En effet, une fonction quasi périodique à variations faibles sur un intervalle donné peut être approchée par un développement en polynômes de degré peu élevé, mais on n’a alors pas utilisé le fait que la fonction est quasi périodique sur l’intervalle considéré, ce qui est le cas du mouvement des corps du système solaire.
+
+Voyons sur un exemple comment en tirer parti. Soit la fonction paire $f(x) = \cos x + \cos 2x$. Elle est beaucoup mieux représentée avec la base de fonctions $1, \cos x, \cos 2x, \cos 3x, \dots$ qu’avec la suite de polynômes $1, x^2, x^4, x^6, \dots$, ou toute autre base de polynômes pairs.
+
+Une éphéméride n’est jamais aussi simple dans la réalité, mais on peut toujours l’approcher par une combinaison de fonctions périodiques, dont les périodes proviennent de la nature physique du phénomène (par exemple la période de révolution d’un corps céleste), et de termes séculaires (polynômes du temps), qui témoignent du caractère non rigoureusement périodique du phénomène ou du mouvement décrit.
+
+Ce mode de représentation est très bien adapté aux mouvements des satellites naturels des planètes et des corps à période courte, qui s’écartent peu, sur quelques périodes, d’un mouvement périodique, avec des variations d’amplitude et de fréquence lentes par rapport à la période principale du corps et à ses multiples entiers. Dans la *Connaissance des Temps*, on trouve en particulier l’expression des coordonnées différentielles des satellites naturels des planètes sur des intervalles de temps couvrant une à quelques révolutions, avec des formules faciles à mettre en œuvre par l’utilisateur, de la forme :
+
+$$
+f(t) = a_0 + a_1\,t + b_0 \sin(\nu t + \varphi_0) + b_1\,t \sin(\nu t + \varphi_1) + b_2\,t^2 \sin(\nu t + \varphi_2) + c_0 \sin(2\nu t + \Psi_0)
+$$
+
+où $2\pi/\nu$ est une période proche de la période de révolution du corps, les $a_j, b_j, c_j$ sont des amplitudes et les $\varphi_j$ et $\Psi_0$ des phases. Cette formule découle du choix de la base : les termes mixtes sont de la forme $A\,t^k \sin(p\,\nu t + \Psi)$ ($k$ et $p$ entiers, $A$ amplitude, $\Psi$ phase). Sur un intervalle de temps donné, les valeurs maximales de $k$ et $p$ sont ajustées en fonction de la précision recherchée. Si l’intervalle de représentation est élargi, il faut enrichir la base de termes mixtes en puissances du temps et en multiples de la fréquence de base. Mais si l’intervalle se rétrécit, il faut également modifier la base sous peine de perdre de la précision (ce n’est pas le cas avec la représentation à l’aide de polynômes, dont la précision augmente quand l’intervalle diminue).
+
+### En savoir plus : approximation par des fonctions mixtes (2)
+
+<span class="tag plus">En savoir plus</span>
+
+**Satellites.** Soit $t$ une date julienne appartenant à l’intervalle $[t_0, t_0 + DT]$. On calcule les coordonnées $X$ et $Y$ d’un satellite à la date $t$ par la formule (Chapront et Vu, 1984) :
+
+$$
+X, Y = A_0 + A_1\,u + B_0 \sin(N u + F_0) + B_1\,u \sin(N u + F_1) + B_2\,u^2 \sin(N u + F_2) + C_0 \sin(2 N u + P_0) \qquad (5)
+$$
+
+où $u = t - t_0$ est compté en jours ; $A_0, A_1, B_0, F_0, B_1, F_1, B_2, F_2, C_0, P_0$ sont les coefficients publiés dans la *Connaissance des Temps*, valables pour l’intervalle contenant $t$ ; $N$ est la fréquence associée au satellite. Elle est proche de celle du satellite lui-même, sauf dans le cas d’Hypérion, pour lequel on prend une fréquence proche de celle de Titan, du fait de l’existence d’un très gros terme perturbateur de fréquence plus grande que celle du satellite lui-même.
+
+**Caractéristiques générales.** Comme pour les polynômes de Tchebychev, les éphémérides sont publiées corps par corps, et chaque tableau précise le nom de la variable et son intervalle de validité. Pour les satellites, la fréquence $N$ (en radians par jour) associée au satellite figure en haut de chaque page. Les coefficients sont notés A0, A1, B0, B1, F0, F1, B2, F2, C0, P0 ; pour quelques satellites, certains ne sont pas donnés car ils sont nuls. A0, B0 et C0 sont exprimés en secondes de degré ; A1 et B1 en secondes de degré par jour ; B2 en secondes de degré par jour au carré ; F0, F1, F2 et P0 en radians.
+
+**Calcul d’une coordonnée.** Comme précédemment, on corrige la date UTC de l’écart TT − UTC, on cherche le tableau dont l’intervalle $[t_0, t_0 + DT]$ contient $t$ (la représentation n’est pas valable en dehors), puis on applique la formule (5) avec $u = t - t_0$, en jours.
+
+### En savoir plus : exemple de calcul
+
+<span class="tag plus">En savoir plus</span>
+
+**Exemple 2.** Calculer les coordonnées tangentielles de Téthys (troisième satellite de Saturne) par rapport à la planète, le 4 janvier 2003 à 23 h 29 min 57 s UTC.
+
+<Repli titre="Afficher le calcul">
+On effectue la même correction de 65 s que dans l’exemple 1 pour se ramener à l’argument des éphémérides : la date $t$ est le 4 janvier 2003 à 23 h 31 min 02 s.
+
+On utilise les coefficients de la *Connaissance des Temps* valables du 0 janvier 0 h au 16 janvier 0 h. On a, pour $X$ : A0 = −0,001 000 ; A1 = 0,0 ; B0 = 50,188 200 ; F0 = 2,518 466 ; etc. Et pour $Y$ : A0 = 0,002 100 ; A1 = 0,000 010 ; B0 = 23,773 900 ; F0 = 1,092 443 ; etc.
+
+On applique la formule (5) avec $N = 3{,}3280$ radians par jour, $u$ étant le nombre de jours écoulés entre le 0 janvier à 0 h et le 4 janvier à 23 h 31 min 02 s, soit 4,979 884 jours. On obtient finalement :
+
+$$
+X = 12{,}387'' \qquad Y = -21{,}897''
+$$
+</Repli>
+
+### La précision des éphémérides
+
+Lorsque l’on utilise une éphéméride pour calculer la position d’un corps du système solaire, on est amené à se demander : quelle est la précision de la quantité calculée ? Où se trouvera le corps observé par rapport à la position calculée ? On veut donc connaître la précision de l’éphéméride, ou plutôt son exactitude. Elle est la résultante de trois types de précisions différentes :
+
+- la **précision interne** de la théorie dynamique utilisée pour modéliser le mouvement, qui dépend de l’importance des termes des séries négligés, et qui peut être évaluée par comparaison à une intégration numérique (la précision interne est en général la meilleure) ;
+- la **précision externe** de la théorie, qui dépend de la précision des observations utilisées pour ajuster ses constantes d’intégration, et de la répartition de ces observations dans le temps (c’est la précision externe qui limite la précision globale des éphémérides) ;
+- la **précision de la représentation**, que l’on choisit en ajustant le nombre de coefficients et la longueur des intervalles de validité, ou en interpolant une table (c’est la seule que l’on puisse choisir ; elle ne doit pas dégrader la précision globale).
+
+Voici la précision avec laquelle on pouvait positionner une planète ou un satellite de planète à la date de la source :
+
+| Corps | Précision angulaire | Précision en distance |
+| :-- | --: | --: |
+| Soleil / Terre | 0,3″ | 220 km |
+| Mercure | 0,9″ | 440 km |
+| Vénus | 0,3″ | 70 km |
+| Lune | 0,008″ | 15 m |
+| Mars | 0,4″ | 60 km |
+| Jupiter | 0,5″ | 1 500 km |
+| Satellites galiléens de Jupiter | 0,1″ | 300 km |
+| Saturne | 0,9″ | 5 400 km |
+| Titan | 0,2″ | 1 200 km |
+| Uranus | 0,5″ | 6 550 km |
+| Neptune | 1,0″ | 20 000 km |
+| Pluton | 1,0″ | 20 000 km |
+
+À noter que pour les besoins de l’exploration spatiale, on construit des éphémérides « de dernière minute », plus précises, mais qui se dégradent très rapidement dans le temps.
+
+## Les phénomènes astronomiques
+
+### Qu’est-ce qu’un phénomène astronomique ?
+
+On appelle « phénomène astronomique » une configuration particulière des astres que l’on peut prévoir. Ce phénomène peut être perceptible sans instrument d’observation (éclipse de Lune ou de Soleil, lever d’un astre…). Les éphémérides prévoient ces phénomènes. Dans certains cas (éclipses de Soleil, lever et coucher d’un astre), la visibilité du phénomène est locale, et les paramètres publiés dans l’éphéméride sont généraux : il faut alors des tables, des formules avec coefficients ou des graphiques pour savoir ce qui se passe en un lieu précis.
+
+Les principaux phénomènes donnés sont :
+
+- les levers et couchers des astres ;
+- les éclipses de Soleil et de Lune ;
+- les <Terme id="passage">passages</Terme> de Mercure et de Vénus devant le Soleil ;
+- les phénomènes des satellites de Jupiter et de Saturne.
+
+Le détail des calculs et des prédictions d’éclipses dépasse le cadre de ce chapitre.
+
+### Lever et coucher d’un astre en un lieu donné
+
+Pour calculer l’instant du lever ou du coucher d’un astre dont on connaît les coordonnées équatoriales approchées $\alpha$ et $\delta$ au moment du phénomène, on calcule d’abord l’angle horaire $H$ au moment du lever ou du coucher par la formule
+
+$$
+\cos H = \frac{\sin h_0 - \sin\varphi \sin\delta}{\cos\varphi \cos\delta} \qquad (1)
+$$
+
+où $\varphi$ est la latitude du lieu et $h_0$ un angle petit défini plus loin. Le <Terme id="temps-sideral">temps sidéral</Terme> approché du lever est alors $T = \alpha - H$ (2a), et celui du coucher $T = \alpha + H$ (2b). On calcule ensuite, à partir de $T$, l’instant du phénomène en temps universel.
+
+Si l’astre se déplace rapidement sur la sphère céleste (c’est le cas du Soleil, de certaines planètes et surtout de la Lune), on calcule pour l’instant trouvé des coordonnées $\alpha$ et $\delta$ plus exactes en interpolant les tables, puis l’on recalcule $H$ et $T$ par les formules (1) et (2), d’où l’instant du phénomène en temps universel. Pour la Lune, on est quelquefois amené à effectuer une itération supplémentaire.
+
+Quant à $h_0$, son expression générale est la suivante :
+
+$$
+h_0 = P - R - \tfrac{1}{2}\,d - \eta_1 + \eta_2
+$$
+
+- $P$ est la <Terme id="parallaxe-horizontale">parallaxe</Terme>. On la néglige pour tous les astres sauf pour la Lune, pour laquelle $P = 57'$.
+- $R$ est la <Terme id="refraction-astronomique">réfraction</Terme> à l’horizon. La théorie de la réfraction de Radau conduit à $R = 36'36''$, mais l’on peut utiliser la valeur $R = 34'$ adoptée dans les *Éphémérides nautiques* publiées par le Bureau des longitudes et dans d’autres publications étrangères.
+- $\tfrac{1}{2}d$ est le demi-<Terme id="diametre-apparent">diamètre apparent</Terme> de l’astre. On l’introduit quand on calcule le lever et le coucher du bord supérieur du Soleil et de la Lune, et non de leur centre. On prend, pour le Soleil comme pour la Lune, $\tfrac{1}{2}d = 16'$.
+- Si l’observateur est à une altitude $A$ au-dessus du niveau de la mer, on introduit l’angle $\eta_1$ (dépression de l’horizon) tel que $\cos\eta_1 = a/(a + A)$, où $a$ est le rayon de la Terre ($a = 6\,378\,140$ m). On peut utiliser la formule approchée $\eta_1 = 1'56'' \sqrt{A}$, $A$ étant exprimé en mètres.
+- Si l’horizon est limité par des collines ou des montagnes de hauteur $D$, situées à la distance $l$ de l’observateur, on ajoute à $h_0$ l’angle $\eta_2$ tel que $\tan\eta_2 = D/l$.
+
+On ne cherchera pas à obtenir les instants du lever ou du coucher des astres avec une précision supérieure à la minute : la valeur exacte de la réfraction à l’horizon au moment du phénomène est trop mal connue.
+
+<SimulateurLeverCoucher />
+
+### Calcul d’un coucher ou d’un lever d’un astre
+
+**Exemple.** Coucher de l’étoile Sirius à Bordeaux le 20 avril 2002. (Le widget ci-dessus est réglé sur cet exemple.)
+
+<Repli titre="Afficher le calcul">
+Les coordonnées moyennes de l’étoile pour 2002 sont $\alpha = 6\ \text{h}\ 45\ \text{min}\ 15\ \text{s}$, $\delta = -16°\,43'\,11''$. En faisant les corrections de précession pour le 20 avril, on trouve $\alpha = 6\ \text{h}\ 45\ \text{min}\ 16\ \text{s}$, $\delta = -16°\,43'\,12''$.
+
+Ici $P = 0$, $\tfrac{1}{2}d = 0$, $\eta_1 = 0$ et $\eta_2 = 0$ ; d’où $h_0 = -R = -34'$.
+
+Les coordonnées de Bordeaux sont : longitude $\lambda = 2\ \text{min}\ 7\ \text{s}$ ouest (comptée positivement vers l’ouest dans les éphémérides de la source), latitude $\varphi = +44°\,50'\,7''$.
+
+On déduit de la formule (1) : $\cos H = 0{,}284\,11$, d’où $H = 73{,}494° = 4\ \text{h}\ 53\ \text{min}\ 59\ \text{s}$.
+
+Le temps sidéral local du coucher est $T = \alpha + H = 11\ \text{h}\ 39\ \text{min}\ 15\ \text{s}$. Le temps sidéral de Greenwich correspondant est donc $T_1 = T + \lambda = 11\ \text{h}\ 41\ \text{min}\ 22\ \text{s}$.
+
+Le temps sidéral de Greenwich à 0 h UT le 20 avril 2002 est $T_0 = 13\ \text{h}\ 51\ \text{min}\ 38\ \text{s}$, d’où l’intervalle sidéral $T_1 - T_0 = 21\ \text{h}\ 49\ \text{min}\ 44\ \text{s}$.
+
+En convertissant cet intervalle de temps sidéral en intervalle de temps moyen (en le multipliant par 0,997 27), on trouve que Sirius se couche à Bordeaux le 20 avril 2002 à $t = 21\ \text{h}\ 46\ \text{min}\ 9\ \text{s}$ (UT).
+</Repli>
+
+### Les phénomènes des satellites de Jupiter
+
+Les satellites galiléens présentent des phénomènes particuliers, dus aux positions relatives du Soleil, de Jupiter et de la Terre :
+
+- les **éclipses**, lorsqu’un satellite passe dans l’ombre de Jupiter ;
+- les **<Terme id="occultation">occultations</Terme>**, lorsqu’un satellite passe derrière Jupiter, vu de la Terre ;
+- les **passages**, lorsqu’un satellite passe devant Jupiter, vu de la Terre ;
+- les **passages d’ombre**, lorsque l’ombre d’un satellite passe sur le disque de Jupiter.
+
+Les phénomènes les plus célèbres sont les éclipses, car ils sont les plus faciles à observer : il s’agit de l’extinction ou de la réapparition d’un satellite isolé. Les autres phénomènes nécessitent l’observation simultanée de Jupiter, ce qui dégrade beaucoup le rapport signal sur bruit.
+
+<PhenomenesJupiter>
+Les positions relatives de Jupiter, du Soleil et de la Terre pour lesquelles les satellites galiléens présentent des « phénomènes ». Schéma redessiné d’après les originaux (IMCCE / D. T. Vu et W. Thuillot).
+</PhenomenesJupiter>
+
+Tous ces phénomènes ont été observés visuellement pendant des dizaines d’années, et le grand nombre d’éclipses observées a constitué la base des premières éphémérides. Dès la fin du XIX<sup>e</sup> siècle, les techniques d’observation des éclipses se sont améliorées, et les premières courbes photométriques ont permis d’améliorer la précision de la datation de ces phénomènes. Ensuite sont apparus les enregistreurs photoélectriques ; mais, malgré le progrès qu’ils apportaient, ils ont été très peu utilisés : ils sont arrivés lorsque cessa l’intérêt des astronomes pour ce type de travaux.
+
+## Où se procurer des éphémérides
+
+### Où trouver des éphémérides imprimées ?
+
+Bien que la micro-informatique soit omniprésente pour les calculs astronomiques, les éphémérides imprimées sont encore abondamment diffusées auprès des astronomes professionnels ou amateurs. Pour quelle raison ? Tout d’abord, l’observateur a souvent besoin d’une confirmation ou d’une simple position approchée : il est alors simple d’ouvrir un livre et d’y lire directement une valeur tabulée. On y trouve :
+
+- les heures de lever et de coucher du Soleil et de la Lune (et aussi des planètes principales) ;
+- les positions des corps du système solaire et des étoiles brillantes pour un observateur terrestre ;
+- les éphémérides pour les observations physiques de ces corps.
+
+Ces éphémérides sont en général de faible précision, et des valeurs tabulées suffisent.
+
+Il faut également citer des éphémérides plus spécialisées, dans lesquelles les positions des corps célestes sont données dans un but utilitaire : les *Éphémérides nautiques* françaises et le *Nautical Almanac* anglo-américain sont publiés pour permettre aux marins de faire le point en mer, et pour suppléer une défaillance du système GPS. L’éphéméride imprimée garde ici toute son utilité.
+
+Toutes les éphémérides imprimées ne fournissent pas des données tabulées. Elles peuvent donner des représentations graphiques (pour les satellites de Jupiter) ou des coefficients de polynômes, dans le cas des éphémérides de haute précision, qui nécessitent alors l’emploi d’une calculatrice de poche ou d’un micro-ordinateur. C’est le cas de la *Connaissance des Temps* depuis 1980 : elle est utilisée pour la programmation manuelle des télescopes, ou plus simplement pour les tests et les contrôles de programmes plus complexes.
+
+Voici la liste des principales éphémérides imprimées publiées à la date de la source :
+
+- par l’Institut de mécanique céleste et de calcul des éphémérides (IMCCE) et le Bureau des longitudes : le *Guide des données astronomiques*, la *Connaissance des Temps*, les *Éphémérides nautiques* ;
+- par la Société astronomique de France : des *Éphémérides astronomiques* ;
+- par le H. M. Nautical Almanac Office (Grande-Bretagne) et l’US Naval Observatory (États-Unis) : l’*Astronomical Almanac* et le *Nautical Almanac* ;
+- par l’Institut d’astronomie appliquée de Saint-Pétersbourg (Russie) : les *Éphémérides des petites planètes* ;
+- par l’Astronomisches Rechen-Institut de Heidelberg (Allemagne) : les *Apparent Places of Fundamental Stars*.
+
+### Où trouver des éphémérides sur Internet ?
+
+On trouve sur Internet de nombreux sites fournissant des éphémérides. Là encore, la précision des positions calculées n’est indiquée que sur les sites professionnels. Les données disponibles sont riches et abondantes, et les interfaces interactives en général faciles d’utilisation. Attention à l’interprétation des données obtenues !
+
+- Institut de mécanique céleste et de calcul des éphémérides (Paris, France) : [www.imcce.fr](https://www.imcce.fr/) ;
+- Jet Propulsion Laboratory (Pasadena, Californie, États-Unis) : [ssd.jpl.nasa.gov](https://ssd.jpl.nasa.gov/) ;
+- U.S. Naval Observatory (Washington, États-Unis) : [aa.usno.navy.mil](https://aa.usno.navy.mil/) ;
+- H. M. Nautical Almanac Office (Grande-Bretagne) : la source indiquait le site [www.ast.cam.ac.uk](https://www.ast.cam.ac.uk/), qui est celui de l’Institut d’astronomie de Cambridge ; le HMNAO dépend aujourd’hui du UK Hydrographic Office ;
+- Minor Planet Center (Cambridge, Massachusetts, États-Unis), pour les éphémérides d’astéroïdes et de comètes exclusivement : [minorplanetcenter.net](https://minorplanetcenter.net/).
+
+### Comment faire ses propres éphémérides ?
+
+Fabriquer ses propres éphémérides pour quelques corps du système solaire est un exercice très formateur. Il faut pour cela consulter les explications de base nécessaires, soit sur les sites Internet qui fournissent des éphémérides (et souvent aussi des outils pour en fabriquer soi-même, par exemple pour étendre leur intervalle de validité), soit dans des ouvrages spécialisés. Citons :
+
+- *Introduction aux éphémérides astronomiques*, Bureau des longitudes, EDP Sciences (en français) ;
+- *Explanatory Supplement to the Astronomical Almanac*, U.S. Naval Observatory et H. M. Nautical Almanac Office (en anglais).
+
+Les widgets de ce chapitre en sont de petits exemples : les configurations des satellites de Jupiter sont calculées par une théorie simplifiée tirée des *Astronomical Algorithms* de Jean Meeus.
+
+### Testez-vous
+
+<Quiz questions={[
+  { question: "Pour pointer un télescope vers une planète, quelles coordonnées faut-il utiliser ?", choix: ["les coordonnées géométriques", "les coordonnées apparentes", "les coordonnées astrométriques"], reponse: 1, explication: "Les coordonnées apparentes tiennent compte du temps de lumière et de l’aberration annuelle, dans le repère vrai de la date : c’est là que l’on voit l’astre. Les coordonnées astrométriques servent à comparer une position à un catalogue d’étoiles." },
+  { question: "Dans une table, l’interpolation linéaire suffit lorsque :", choix: ["les différences premières sont petites", "les différences secondes sont inférieures à 4 unités du dernier ordre", "le facteur d’interpolation n vaut 0,5"], reponse: 1, explication: "Ce sont les différences secondes qui mesurent la courbure de la fonction. Au-delà de 4 unités, on utilise la formule de Bessel, qui en tient compte." },
+  { question: "Pourquoi les éphémérides modernes utilisent-elles des coefficients de Tchebychev plutôt que des tables ?", choix: ["pour publier beaucoup moins de données, avec une précision meilleure et uniforme", "parce que les polynômes de Tchebychev sont exacts", "parce qu’ils restent valables en dehors de leur intervalle"], reponse: 0, explication: "Quelques coefficients par intervalle remplacent des milliers de valeurs tabulées, avec une erreur répartie régulièrement. Mais la représentation n’est valable qu’à l’intérieur de son intervalle." },
+  { question: "Si l’on néglige les derniers coefficients d’un développement de Tchebychev, l’erreur commise est au plus :", choix: ["égale au dernier coefficient conservé", "la somme des valeurs absolues des coefficients négligés", "nulle, si l’on reste dans l’intervalle"], reponse: 1, explication: "Comme |Tₖ(x)| ≤ 1 sur [−1, 1], chaque terme négligé contribue au plus de la valeur absolue de son coefficient." },
+  { question: "Au lever ou au coucher, la réfraction (environ 34′) fait que l’astre :", choix: ["se lève plus tôt et se couche plus tard", "se lève plus tard et se couche plus tôt", "ne change pas d’horaire"], reponse: 0, explication: "La réfraction relève les astres : on les voit encore quand ils sont géométriquement 34′ sous l’horizon. C’est pourquoi h₀ contient le terme −R." },
+  { question: "Lorsqu’un satellite de Jupiter passe derrière la planète, vu de la Terre, on parle :", choix: ["d’éclipse", "d’occultation", "de passage"], reponse: 1, explication: "Une éclipse a lieu quand le satellite entre dans l’ombre de Jupiter ; un passage, quand il passe devant le disque. L’occultation est la disparition derrière la planète." },
+]} />

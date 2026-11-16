@@ -1,0 +1,23 @@
+---
+/** Repère orthonormé direct de l’espace et projections d’un point A (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, ind, type V3 } from '../../lib/projection';
+const v = new Vue(185, 205, 150, 32, 20);
+const A: V3 = [0.8, 0.95, 0.8], Ap: V3 = [A[0], A[1], 0];
+const AX: V3 = [A[0], 0, 0], AY: V3 = [0, A[1], 0], AZ: V3 = [0, 0, A[2]], O: V3 = [0, 0, 0];
+const rouge = { couleur: 'var(--ko)', epaisseur: 2.6, fleche: 'fin' as const };
+let s = '';
+s += v.ligne(O, [1.35, 0, 0], { fleche: 'fin', epaisseur: 1.2 }) + v.ligne(O, [0, 1.4, 0], { fleche: 'fin', epaisseur: 1.2 }) + v.ligne(O, [0, 0, 1.15], { fleche: 'fin', epaisseur: 1.2 });
+s += v.texte([1.35, 0, 0], 'x', { dx: -16, dy: 4 }) + v.texte([0, 1.4, 0], 'y', { dx: -4, dy: 22 }) + v.texte([0, 0, 1.15], 'z', { dx: 10, dy: 6 });
+for (const [p, q] of [[A, Ap], [Ap, AX], [Ap, AY], [A, AZ]] as [V3, V3][]) s += v.ligne(p, q, { tirets: '5 4', epaisseur: 1 });
+s += v.ligne(O, Ap, { epaisseur: 1 }) + v.ligne(O, A, { epaisseur: 1.2, fleche: 'fin' });
+s += v.ligne(O, [0.22, 0, 0], rouge) + v.ligne(O, [0, 0.22, 0], rouge) + v.ligne(O, [0, 0, 0.22], rouge);
+s += [A, Ap, AX, AY, AZ, O].map((p) => v.point(p, 3.2)).join('');
+s += v.texte(O, 'O', { dx: -20, dy: -4, italique: true, taille: 17 }) + v.texte(A, 'A', { dx: 8, dy: -6, italique: true, taille: 17 }) + v.texte(Ap, 'A′', { dx: 8, dy: 16, italique: true, taille: 17 });
+s += v.texte(AX, `A${ind('X')}`, { dx: -30, dy: 4, italique: true, brut: true }) + v.texte(AY, `A${ind('Y')}`, { dx: -6, dy: -10, italique: true, brut: true }) + v.texte(AZ, `A${ind('Z')}`, { dx: -30, dy: 4, italique: true, brut: true });
+s += v.texte([A[0] / 2, 0, 0], 'u¹', { dx: -22, dy: -2, italique: true }) + v.texte([0, A[1] / 2 + 0.2, 0], 'u²', { dy: -8, italique: true }) + v.texte([0, 0, A[2] / 2 + 0.1], 'u³', { dx: -26, italique: true });
+s += v.texte([0.22, 0, 0], `e${ind('1')}`, { dx: 2, dy: 16, italique: true, gras: true, couleur: 'var(--ko)', brut: true });
+s += v.texte([0, 0.22, 0], `e${ind('2')}`, { dx: -4, dy: -8, italique: true, gras: true, couleur: 'var(--ko)', brut: true });
+s += v.texte([0, 0, 0.22], `e${ind('3')}`, { dx: -26, dy: 0, italique: true, gras: true, couleur: 'var(--ko)', brut: true });
+---
+<Figure titre="Repère orthonormé direct Oxyz : le point A se projette en A′ sur le plan Oxy, puis en A_X, A_Y et A_Z sur les axes" largeur={420} hauteur={330} svg={s}><slot /></Figure>

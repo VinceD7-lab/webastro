@@ -1,0 +1,289 @@
+---
+title: La mesure du temps
+slug: mesure-temps
+numero: 6
+resume: Temps solaire, temps sidéral, temps atomique.
+source: https://media4.obspm.fr/public/ressources_lu/pages_mesure-temps/introduction-mesure-temps.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Quiz from '../../components/Quiz.astro';
+import Frise from '../../components/Frise.astro';
+import Personne from '../../components/Personne.astro';
+import Precession from '../../components/reperes/Precession.astro';
+import UnJourUnAn from '../../components/temps/UnJourUnAn.astro';
+import DefinitionJour from '../../components/temps/DefinitionJour.astro';
+import EquationTemps from '../../components/temps/EquationTemps.astro';
+import AnneesQuatre from '../../components/temps/AnneesQuatre.astro';
+import SimulateurJourSideral from '../../components/SimulateurJourSideral.astro';
+import SimulateurEquationTemps from '../../components/SimulateurEquationTemps.astro';
+import SimulateurFuseaux from '../../components/SimulateurFuseaux.astro';
+import SimulateurEchellesTemps from '../../components/SimulateurEchellesTemps.astro';
+
+## Introduction
+
+Nos méthodes de mesure du temps reposent sur ce que l’on a d’abord cru parfait et immuable : le mouvement de la Terre. Très tôt, les civilisations ont eu besoin de mesurer le temps qui s’écoule : les êtres humains ont besoin de repères communs pour se rencontrer. Il est donc nécessaire de mesurer les durées par rapport à un étalon de base, et de dater les événements qui se produisent au cours de l’écoulement du temps. L’utilisation des mouvements célestes comme horloge a été l’idée la plus naturelle, ces mouvements paraissant de prime abord immuables, réguliers et uniformes. L’augmentation de la précision de la mesure du temps va montrer qu’il n’en est rien, et la recherche d’un temps vraiment uniforme va rendre obsolètes les vieilles définitions. Notre rythme de vie, lié aux jours et aux saisons, nous fait cependant conserver nos unités et nos échelles de temps anciennes.
+
+<Frise evenements={[
+  { date: "≈ 1500 av. J.-C.", titre: "Cadran solaire égyptien", texte: "L’un des plus anciens cadrans qui nous soient parvenus." },
+  { date: "1687", titre: "Newton", texte: "Les astronomes doivent corriger le temps vrai de l’équation du temps (<i>Principia</i>)." },
+  { date: "1754", titre: "Kant", texte: "Premiers doutes sur l’uniformité de la rotation de la Terre (Lalande en 1771)." },
+  { date: "1911", titre: "Loi du 9 mars", texte: "L’heure légale française est le temps moyen de Paris retardé de 9 min 21 s." },
+  { date: "1952-1960", titre: "Temps des éphémérides", texte: "Fondé sur la longitude du Soleil (Newcomb) ; seconde définie en 1960 par l’année tropique de 1900." },
+  { date: "1955", titre: "Essen et Parry", texte: "Premier étalon de fréquence à césium." },
+  { date: "1967", titre: "Seconde atomique", texte: "Définition du temps atomique international ; la seconde est liée à l’atome de césium 133." },
+  { date: "1978", titre: "Décret du 9 août", texte: "En France, l’heure légale se déduit du temps universel coordonné par un nombre entier d’heures." },
+  { date: "1977-1991", titre: "Temps terrestre", texte: "TT prolonge le temps des éphémérides depuis le 1<sup>er</sup> janvier 1977 ; nom adopté en 1991." },
+]} />
+
+## Le temps astronomique
+
+### Les mouvements de la Terre
+
+Les mouvements de la Terre autour de son axe ou autour du Soleil semblent immuables, réguliers, uniformes : ils paraissent parfaits pour concrétiser une échelle de temps qui doit être, elle aussi, immuable, régulière et uniforme. Ainsi, la rotation de la Terre autour de son axe définit le jour, et la révolution de la Terre autour du Soleil définit l’année.
+
+<UnJourUnAn>
+Un jour, un an : rotation de la Terre autour de son axe, révolution autour du Soleil. Schéma redessiné d’après l’original (ASM / Jean-Eudes Arlot et Gilles Bessou).
+</UnJourUnAn>
+
+Pour définir parfaitement le mouvement de la Terre, il faut connaître :
+
+- le mouvement de l’axe de la Terre par rapport à l’« extérieur » (c’est-à-dire par rapport à un référentiel inertiel) : c’est ce mouvement qui définit le mouvement de l’équateur céleste et la modification des coordonnées (<Terme id="precession">précession</Terme> et <Terme id="nutation">nutation</Terme>) ;
+- le mouvement de l’axe de rotation de la Terre par rapport à la Terre elle-même : il est très petit, puisque le pôle reste dans un cercle d’une vingtaine de mètres, mais il est imprévisible ;
+- le mouvement de la Terre autour de son axe de rotation : c’est évidemment le plus important, car il définit la notion de jour. Il s’exprime par la variation d’un angle, le <Terme id="temps-sideral">temps sidéral</Terme>, et l’on verra qu’il n’est pas uniforme : la Terre ralentit. Mais avant de s’en apercevoir, il va falloir résoudre d’autres problèmes.
+
+### Définition du jour
+
+Si l’on considère une direction fixe dans l’espace, il faut 23 h 56 min 4 s à un observateur pour se retrouver dans la même direction après un tour complet de la Terre autour de son axe. Mais ce n’est pas cette durée qui est la plus facile à percevoir : on a beaucoup plus l’impression que la Terre a accompli un tour si c’est le Soleil qui revient à la même position. C’est ce retour du Soleil dans la même direction qui définit le jour, lequel dure en moyenne 24 heures. En effet, la Terre s’est déplacée sur son orbite, et le Soleil ne correspond pas à une direction fixe.
+
+Le jour n’est pas, a priori, une simple unité de temps pour compter des durées : c’est plutôt un intervalle de temps centré sur une période de « jour » et encadré par des périodes de « nuit ». Nous allons donc définir le jour comme la durée qui sépare deux passages consécutifs du Soleil à son point culminant, c’est-à-dire au <Terme id="meridien">méridien</Terme> du lieu. Mais une telle durée est variable : pourquoi ?
+
+<DefinitionJour>
+Définition du jour à partir de la rotation de la Terre autour de son axe. Schéma redessiné d’après l’original (ASM / Jean-Eudes Arlot et Gilles Bessou, image NASA), l’angle δ étant très exagéré.
+</DefinitionJour>
+
+<SimulateurJourSideral />
+
+Tout d’abord, et nous le verrons (voir les [lois de Kepler](../kepler/)), l’orbite apparente du Soleil autour de la Terre (en fait, l’orbite réelle de la Terre autour du Soleil) n’est pas un cercle mais une ellipse : la vitesse apparente du Soleil sur la sphère céleste varie donc selon sa position sur sa trajectoire. Le Soleil passe alors au méridien soit en avance quand il va plus vite, soit en retard quand il ralentit, par rapport à une position moyenne. Pour que nos jours aient la même durée, et donc que nos heures soient régulières (que midi n’arrive pas un peu en avance ou un peu en retard), on construit une position moyenne théorique du Soleil sur l’année, le **Soleil moyen**, par opposition au **Soleil vrai**. Il définit le <Terme id="temps-solaire-moyen">temps moyen</Terme>, échelle de temps qui a été en usage jusque dans les années 1970.
+
+La définition officielle de cette échelle de temps était : « l’heure légale en France est le temps moyen de Paris retardé de 9 min 21 s et augmenté de douze heures (c’est la définition du temps universel internationalement reconnu), et aussi augmenté de deux heures en été et d’une heure en hiver (c’est l’heure d’été ou l’heure d’hiver) ».
+
+- Le retard de 9 min 21 s nous met à l’heure du méridien international (Greenwich).
+- L’avance de douze heures sert à faire commencer le jour à minuit (c’est plus pratique, car le temps moyen fait débuter le jour à midi, au moment du passage du Soleil au méridien).
+- Enfin, le décalage d’une heure ou de deux heures donne l’heure d’hiver ou l’heure d’été.
+
+Les fuseaux horaires permettent un décalage similaire pour les pays situés loin du méridien international.
+
+### Temps vrai, temps moyen
+
+C’est cette différence entre le Soleil moyen et le Soleil vrai qui nous fait dire en janvier : « tiens, les jours rallongent plus le soir que le matin ». En fait, c’est le midi vrai qui se déplace et arrive de plus en plus tard par rapport au midi moyen. Cet écart entre le midi moyen et le midi vrai est évidemment fondamental lorsque l’on construit un cadran solaire, qui donne le <Terme id="temps-solaire-vrai">temps vrai</Terme> du lieu. Cette différence est appelée « <Terme id="equation-du-temps">équation du temps</Terme> ». Elle atteint environ 16 minutes au maximum, début novembre, et environ −14 minutes au minimum, à la mi-février.
+
+L’équation du temps est en fait la résultante de deux effets :
+
+- l’**équation du centre**, due à l’excentricité de l’orbite terrestre (la trajectoire de la Terre est une ellipse que l’on veut ramener à un cercle sur la sphère céleste) ;
+- la **réduction à l’équateur**, due à l’obliquité de l’écliptique (la Terre ne tourne pas dans son plan équatorial autour du Soleil) : on mesure le passage du Soleil au méridien du lieu par rapport au plan équatorial terrestre, dans lequel il faut donc le ramener.
+
+Plus simplement, disons que la Terre tourne autour de son axe dans le plan de l’équateur, et autour du Soleil dans le plan de l’écliptique. C’est l’avance (ou le retard) du Soleil par rapport à un mouvement uniforme dans l’écliptique qui doit se projeter sur l’équateur.
+
+<EquationTemps>
+Équation du temps (en minutes) pour une année ordinaire, valeurs recalculées. Schéma redessiné d’après l’original (IMCCE / BDL, année 1999).
+</EquationTemps>
+
+L’équation du temps se « concrétise » dans le ciel : si l’on photographie le Soleil à la même heure (de temps moyen), de dix jours en dix jours pendant un an, il décrit une courbe en forme de huit, l’**analemme**. Le widget ci-dessous la trace, et montre l’effet de chacune des deux causes.
+
+<SimulateurEquationTemps />
+
+### Les échelles de temps
+
+Du fait de l’augmentation de la précision dans la mesure du temps, les échelles utilisées ont rapidement évolué.
+
+La rotation diurne de la Terre autour de son axe a longtemps semblé suffisamment uniforme pour servir de base à l’échelle de temps utilisée par les astronomes, appelée **temps universel**. Dans cette échelle, la seconde est définie comme égale à 1/86 400 jour solaire moyen. Mais on s’est aperçu que la Terre ralentissait, en constatant par exemple que la position observée de la Lune s’écartait peu à peu de celle que donnaient les calculs théoriques. L’erreur ne provenait pas de ces calculs, mais du fait que le temps universel n’était pas une échelle de temps uniforme.
+
+Cela a conduit les astronomes à construire une autre échelle de temps, fondée sur le mouvement orbital (révolution) de la Terre autour du Soleil. Cette nouvelle échelle, légalement en usage entre 1960 et 1967, s’appelle le **temps des éphémérides**. Elle est fondée sur l’observation de la longitude du Soleil dans le ciel au cours de l’année. L’équation qui définit numériquement la longitude du Soleil a été donnée par <Personne id="newcomb">Newcomb</Personne> et a été adoptée officiellement en 1952 par l’Union astronomique internationale : c’est un polynôme du second degré du temps. Si donc on observe la longitude du Soleil, on en déduit aisément l’instant correspondant dans l’échelle de temps des éphémérides. En 1960, la onzième Conférence générale des poids et mesures décida que la seconde est la fraction 1/31 556 925,9747 de l’<Terme id="annee-tropique">année tropique</Terme> pour le 0 janvier 1900 à 12 heures du temps des éphémérides.
+
+La durée de l’année n’est cependant pas vraiment stable non plus, et l’on a été amené à changer à nouveau d’échelle de temps. On utilise actuellement, depuis 1967, une échelle construite différemment, une échelle physique et non plus astronomique : on fabrique, à l’aide d’horloges atomiques (qui mesurent les fréquences des atomes), une « seconde » particulièrement stable. On ajoute alors ces secondes les unes derrière les autres pour fabriquer une échelle de temps uniforme : le <Terme id="temps-atomique-international">temps atomique international</Terme>, indépendant des mouvements célestes. C’est une moyenne des indications des horloges atomiques réparties dans le monde. Les effets relativistes montrent que cette seconde dépend du repère où l’on se place ([voir la relativité](../gravitation/)) ; mais on arrive là à un niveau de précision très élevé, et les solutions pour utiliser ces échelles de temps sont complexes.
+
+L’utilisation du temps atomique international, très stable, entraîne un décalage avec la rotation de la Terre : il faut recaler cette échelle régulièrement pour que midi reste à midi. C’est pour cela que l’on annonce de temps en temps qu’une seconde va être ajoutée, le 31 décembre ou le 30 juin (plus rarement le 31 mars ou le 30 septembre), selon les variations de la rotation de la Terre, pour que l’échelle de temps atomique utilisée ne s’écarte pas de plus d’une seconde du temps astronomique qu’est le temps universel. Cette échelle de temps atomique modifiée par l’ajout régulier d’une seconde s’appelle le <Terme id="utc">temps universel coordonné</Terme>. L’échelle de temps stable et uniforme employée pour les calculs astronomiques est maintenant le <Terme id="temps-terrestre">temps terrestre</Terme>, dont la réalisation pratique est liée au temps atomique international, et qui prolonge le temps des éphémérides (voir aussi le chapitre sur la [mécanique céleste](../mecanique-celeste/)).
+
+### La précession et la nutation
+
+Le ralentissement de la rotation terrestre nous a montré le caractère irrégulier de cette rotation. De plus, l’axe de rotation ne reste pas fixe au cours du temps : les perturbations gravitationnelles de la Lune, du Soleil et des planètes entraînent différents mouvements de cet axe. D’abord un mouvement oscillant « périodique », rapide et de petite amplitude, autour d’une position moyenne : c’est la nutation. Ensuite un mouvement lent, « séculaire » : tout en restant incliné à peu près de 23° 26′ sur l’écliptique (le plan orbital de la Terre), l’axe effectue une rotation complète en 26 000 ans. C’est la précession : dans 13 000 ans, l’étoile polaire aura changé, et c’est l’étoile Véga vers laquelle pointera l’axe de rotation de la Terre ; 13 000 ans plus tard, il sera à nouveau dirigé vers notre étoile polaire.
+
+La précession entraîne le déplacement rétrograde du point γ (équinoxe) le long de l’équateur céleste : il fera un tour en 26 000 ans. Les constellations vont donc sembler changer de place le long du zodiaque. Pour conserver les saisons à leur place chaque année, nous devons donc considérer un équinoxe mobile.
+
+<Precession>
+Le principe de la précession, due au changement de direction de l’axe de rotation de la Terre. Schéma redessiné d’après l’original (ASM / Jean-Eudes Arlot et Gilles Bessou).
+</Precession>
+
+L’axe de rotation de la Terre subit aussi de petites variations périodiques de sa direction : c’est la nutation.
+
+### Les implications de la précession
+
+Ce mouvement de précession implique que l’équinoxe, ou <Terme id="point-vernal">point vernal</Terme>, effectue une rotation sur notre sphère céleste en 26 000 ans : l’origine des ascensions droites que nous avons choisie sur la sphère céleste est mobile ! Il ne serait guère pratique de mesurer ainsi les mouvements des étoiles sur la sphère céleste. Le problème est résolu par le choix d’un équinoxe à une date donnée. Aujourd’hui, le point vernal origine est celui du début de l’année 2000 : tous les catalogues d’étoiles utilisent cette référence et l’utiliseront encore pendant des années. Notons que les observations sur le ciel peuvent, dans certains cas, se faire par rapport au point vernal du jour de l’observation, et qu’une correction est alors faite pour se ramener à un repère commun, celui de 2000.
+
+Les positions dans un repère de la date sont dites coordonnées « vraies de la date », et celles dans un repère 2000 sont dites « moyennes J2000 ». Dans le premier cas, on utilise un axe affecté de la nutation et de la précession ; dans le deuxième cas, on élimine la nutation (coordonnées moyennes) en prenant l’axe « moyen » du début de l’année 2000. (Pour les repères de coordonnées, voir le chapitre [Introduction à la notion de repère](../reperes/).)
+
+La précession va aussi compliquer la définition de l’année par rapport à « un tour » effectué par la Terre autour du Soleil.
+
+### Définition de l’année
+
+L’année semble facile à définir : c’est la durée nécessaire à la Terre pour faire un tour complet autour du Soleil. En fait, ce n’est pas si simple. L’année intervient dans notre calendrier, et le fait que la Terre ait accompli un tour complet (360°) n’est pas un critère fondamental.
+
+- Si l’on prend une direction fixe dans l’espace, la Terre met 365 j 6 h 9 min 10 s pour revenir dans cette même direction. On appelle cette durée l’<Terme id="annee-siderale">année sidérale</Terme>.
+- Si l’on considère la direction du point vernal de la date (équinoxe de printemps), la Terre met 365 j 5 h 48 min 45 s pour revenir dans la direction de ce point. C’est une durée différente de l’année sidérale, puisque le point vernal a bougé pendant que la Terre tournait. On appelle cette durée l’<Terme id="annee-tropique">année tropique</Terme>.
+- Si l’on considère le point de l’orbite de la Terre le plus près du Soleil (le périhélie, actuellement atteint vers le 3 janvier), puisque l’orbite de la Terre est une ellipse, la Terre met 365 j 6 h 13 min 53 s pour y revenir. On appelle cette durée l’<Terme id="annee-anomalistique">année anomalistique</Terme>.
+- Si l’on considère la direction du nœud de l’orbite lunaire, le Soleil met 346 j 14 h 53 min pour y revenir. On appelle cette durée l’<Terme id="annee-draconitique">année draconitique</Terme>.
+
+<AnneesQuatre>
+Les différentes façons de mesurer une année. L’année sidérale, qui mesure la durée mise par la Terre pour faire 360° autour du Soleil, n’est pas l’année la plus couramment utilisée. C’est l’année tropique, qui garantit le retour des saisons à la même date, qui est la plus utilisée. Schémas redessinés d’après les originaux (ASM / Jean-Eudes Arlot et Gilles Bessou), décalages exagérés.
+</AnneesQuatre>
+
+On voit que l’on a le choix pour définir une année. Ce choix est dicté par des considérations sociales, culturelles et religieuses. Notre calendrier (grégorien) a adopté l’année tropique parce qu’elle fait revenir les saisons à la même date chaque année (calendrier solaire) : voir le chapitre sur les [calendriers](../calendriers/). Le calendrier chinois, luni-solaire, se règle lui aussi sur la position du Soleil dans le zodiaque. L’année draconitique ne sert que pour déterminer la périodicité des éclipses de Soleil. Les calendriers lunaires (comme le calendrier musulman) privilégient une bonne approximation des mois sur les lunaisons : ils sont indépendants du mouvement de la Terre autour du Soleil.
+
+## L’heure
+
+### Qu’est-ce que l’heure ?
+
+L’heure nous permet de mesurer l’écoulement du temps au cours de la journée. Elle mesure une durée depuis le début du jour, contrairement aux numéros des jours, des mois, des années, des siècles, des millénaires, qui indiquent un numéro d’ordre dans une chronologie.
+
+La seule heure naturelle que nous pouvons percevoir est l’heure donnée par le Soleil, liée à l’alternance jour-nuit : le Soleil nous indique le midi (c’est le moment où il est au plus haut dans le ciel), d’où nous déduisons le « minuit ». Par convention, nous décomptons 24 heures au cours d’une journée, de midi à midi ou de minuit à minuit. Pendant des siècles, l’heure du Soleil fut la seule accessible, grâce aux cadrans solaires. On définit ainsi le temps solaire vrai en un lieu comme l’angle horaire du Soleil en ce lieu pour un instant donné. C’est une notion hybride, qui traduit à la fois le mouvement de la Terre autour de son axe et son mouvement de révolution autour du Soleil, et qui ne permet pas de déterminer des heures de longueur fixe.
+
+### Histoire de l’heure
+
+Dès l’aube de l’humanité, l’homme a cherché à mesurer le temps pour prévoir le retour des saisons froides ou chaudes, afin, par exemple, d’assurer sa subsistance. C’est l’alternance des jours et des nuits, donc le mouvement apparent du Soleil dans le ciel, qui s’impose à lui. Ce sont donc des considérations pratiques qui ont guidé les premières recherches sur le temps. Mais le concept de temps est aussi une question scientifique et philosophique de la plus haute importance. Cette quête fondamentale de connaissances conduit aujourd’hui les scientifiques à des recherches en physique de très haut niveau.
+
+Historiquement, on peut dire que la mesure du temps est essentiellement de nature astronomique. Elle ne deviendra l’affaire des physiciens que beaucoup plus tard, dans le courant du vingtième siècle.
+
+Tous les phénomènes périodiques peuvent être utilisés pour définir une échelle de temps. Une idée vient donc naturellement en regardant le ciel : utiliser l’alternance des jours et des nuits, donc le mouvement du Soleil, comme phénomène de base pour construire une échelle de temps. L’utilisation du mouvement du Soleil est le principe de fonctionnement des cadrans solaires. Un des premiers cadrans qui nous soit parvenu est un cadran solaire égyptien qui date d’environ 1500 ans avant Jésus-Christ, mais l’art des cadrans solaires, la gnomonique, ne connaîtra son apogée que vers les XVI<sup>e</sup> et XVII<sup>e</sup> siècles.
+
+Le temps donné par les cadrans solaires est ce que l’on appelle, en astronomie, le temps solaire vrai d’un lieu. C’est donc un temps local, qui n’est pas uniforme à cause de la non-uniformité du mouvement du Soleil dans le ciel. Cela tient au fait que le Soleil vrai se déplace sur une orbite elliptique suivant les lois de Kepler, dans le plan de l’écliptique. Ce temps fut d’un usage très courant jusqu’au XVIII<sup>e</sup> siècle. Le développement rapide des moyens de communication rendit cependant obligatoire l’adoption d’un temps solaire moyen. Ce temps solaire moyen est donné par un Soleil moyen (fictif) se déplaçant sur une orbite circulaire, à vitesse constante, dans le plan de l’équateur céleste. Il est à l’origine de la première définition astronomique de la seconde, jusqu’en 1960 : c’était la 86 400<sup>e</sup> partie du jour solaire moyen. La différence entre temps solaire moyen et temps solaire vrai s’appelle l’équation du temps.
+
+Les variations du temps solaire vrai par rapport au temps solaire moyen sont de nature essentiellement géométrique. <Personne id="newton">Newton</Personne> est probablement le premier à avoir pensé à la non-uniformité du mouvement de la Terre, puisqu’il mentionne explicitement dans son livre des *Principes* (1687) que les astronomes doivent corriger le temps vrai fourni par l’observation du Soleil de l’équation du temps. Il ajoute également : « il se peut qu’il n’existe aucun mouvement uniforme par lequel le temps puisse être mesuré avec précision ». <Personne id="kant">Kant</Personne> en 1754, puis <Personne id="lalande">Lalande</Personne> en 1771, émettront des doutes quant à l’uniformité du mouvement de rotation de la Terre, et par voie de conséquence de celui du Soleil dans le ciel. On sait aujourd’hui que la rotation de la Terre n’est pas uniforme : le frottement des marées océaniques sur l’écorce terrestre et les variations saisonnières d’origine météorologique sont des causes maintenant bien connues de non-uniformité de la rotation terrestre.
+
+### Une heure pour tous
+
+L’heure solaire présente cependant plusieurs inconvénients. Tout d’abord, elle est locale, c’est-à-dire qu’elle dépend du lieu où l’on se trouve. Ensuite, elle n’est pas uniforme, du fait de l’excentricité de l’orbite terrestre. Ce dernier inconvénient a été résolu en utilisant un temps moyen, résultant d’une moyenne sur une année et dont on connaît l’écart au temps solaire vrai par l’équation du temps. Il reste encore le problème d’une heure qui dépend du lieu.
+
+Ce problème a été résolu au XIX<sup>e</sup> siècle, sous l’impulsion des compagnies de chemins de fer : l’horloge d’une gare n’indiquait plus l’heure locale, mais l’heure de Paris. On a trouvé préférable d’utiliser la même heure partout, l’heure de Paris, définie par le temps civil de Paris, lui-même défini comme le temps moyen de Paris augmenté de 12 heures. Cette stipulation vient du fait que le temps moyen fait commencer le jour à midi (c’est le seul instant observable), ce qui n’est pas pratique dans la vie de tous les jours…
+
+### L’heure légale en France
+
+Selon la loi du 9 mars 1911, en vigueur jusqu’en 1978, l’heure légale en France était l’heure du temps moyen de Paris retardée de 9 minutes 21 secondes. Cette définition voulait signifier en fait que l’heure en France était le temps universel. La loi de 1911 a été remplacée par le décret du 9 août 1978, qui stipule que « le temps légal est obtenu en ajoutant ou en retranchant un nombre entier d’heures au temps universel coordonné ». Un décret fixe ce nombre pour chaque partie du territoire de la République française en fonction des fuseaux horaires. Il peut l’accroître ou le diminuer pendant une partie de l’année. Ce nouveau décret prévoit donc l’usage d’une heure d’été, apparue pour la première fois en 1916. C’est cette heure qui est diffusée par l’horloge parlante, que l’on peut appeler par téléphone au 36 99 (numéro indiqué par la source d’origine).
+
+### Le temps universel
+
+Le principe d’un temps unique pour un pays, réglé sur le temps moyen de l’une des villes, pose à nouveau le problème de coordonner une heure dans le monde entier. S’il est possible d’imposer l’heure de Paris dans toute la France (l’écart au temps solaire vrai ne dépasse pas 30 minutes environ), il sera plus difficile de l’imposer au reste du monde, du fait du décalage au temps solaire vrai, qui ira grandissant en s’éloignant du lieu de référence. Cela a amené les États à se mettre d’accord pour définir un temps universel, référence pour tous, et des temps locaux qui ne différeraient que d’un nombre entier d’heures, par la création de « fuseaux horaires ».
+
+Le <Terme id="temps-universel">temps universel</Terme> est donc une échelle de temps universelle, comme son nom l’indique. Par convention internationale, le temps universel est le temps moyen de Greenwich, augmenté de 12 heures (pour faire commencer le jour à minuit et non pas à midi).
+
+### En savoir plus : les échelles de temps
+
+<span class="tag plus">En savoir plus</span>
+
+**Le temps atomique international (TAI)** est une échelle scientifique que les astronomes utilisent pour l’interprétation dynamique des mouvements des astres naturels et artificiels. Aucun signal horaire ne le diffuse directement, mais on verra plus loin, à propos du temps universel coordonné, comment on peut dater les observations en TAI, l’exactitude relative étant de 10 à 20 nanosecondes.
+
+**Le temps universel UT1** est nécessaire pour fixer la position de la Terre dans son mouvement de rotation. Il sert pour la navigation et la géodésie astronomiques, pour la navigation spatiale. En astronomie, il faut le connaître pour interpréter les éclipses, les occultations, les mesures de périodes de pulsars. En géophysique, il est, par comparaison au TAI, un témoin des irrégularités de la rotation terrestre. La précision ultime avec laquelle on peut l’obtenir est de 0,01 ms, mais cela demande d’avoir accès au TAI avec une précision au moins aussi bonne, et aux publications du Service international de la rotation terrestre (IERS). On l’obtient cependant directement à 0,1 s près par les signaux horaires du système UTC.
+
+**Le temps universel coordonné (UTC)**<sup>(1)</sup> n’est autre que le TAI, mais décalé d’un nombre entier de secondes, de façon à se conformer approximativement à UT1. Les signaux horaires radio émis en haute fréquence, essentiellement destinés aux navigateurs, diffusent UTC ; si l’on tient compte du temps de propagation, les incertitudes peuvent être réduites à 1 ms environ. Mais il est maintenant bien plus pratique de faire appel aux émissions des satellites du « Global Positioning System » (GPS) : avec des récepteurs appropriés, on obtient en permanence et sans aucune correction UTC à 1 µs près environ. Si l’on a besoin d’une exactitude encore supérieure, il faut faire appel aux publications du Bureau international des poids et mesures (BIPM), qui fournissent des corrections au temps du GPS : les incertitudes sont alors réduites à 10 ou 20 ns. Ces méthodes donnent accès au TAI, après correction d’un nombre entier de secondes qu’il faut connaître. D’après les accords internationaux en vigueur, UTC ne doit pas s’écarter de plus de 0,9 s de UT1. Le tableau suivant donne la différence entre TAI et UTC depuis 1983 (état de la source d’origine, arrêté à 2017).
+
+| Intervalle de validité | TAI − UTC | TT − UTC |
+| :-- | --: | --: |
+| 1<sup>er</sup> juillet 1983 – 1<sup>er</sup> juillet 1985 | 22 s | 54,184 s |
+| 1<sup>er</sup> juillet 1985 – 1<sup>er</sup> janvier 1988 | 23 s | 55,184 s |
+| 1<sup>er</sup> janvier 1988 – 1<sup>er</sup> janvier 1990 | 24 s | 56,184 s |
+| 1<sup>er</sup> janvier 1990 – 1<sup>er</sup> janvier 1991 | 25 s | 57,184 s |
+| 1<sup>er</sup> janvier 1991 – 1<sup>er</sup> juillet 1992 | 26 s | 58,184 s |
+| 1<sup>er</sup> juillet 1992 – 1<sup>er</sup> juillet 1993 | 27 s | 59,184 s |
+| 1<sup>er</sup> juillet 1993 – 1<sup>er</sup> juillet 1994 | 28 s | 60,184 s |
+| 1<sup>er</sup> juillet 1994 – 1<sup>er</sup> janvier 1996 | 29 s | 61,184 s |
+| 1<sup>er</sup> janvier 1996 – 1<sup>er</sup> juillet 1997 | 30 s | 62,184 s |
+| 1<sup>er</sup> juillet 1997 – 1<sup>er</sup> janvier 1999 | 31 s | 63,184 s |
+| 1<sup>er</sup> janvier 1999 – 1<sup>er</sup> janvier 2006 | 32 s | 64,184 s |
+| 1<sup>er</sup> janvier 2006 – 1<sup>er</sup> janvier 2009 | 33 s | 65,184 s |
+| 1<sup>er</sup> janvier 2009 – 1<sup>er</sup> juillet 2012 | 34 s | 66,184 s |
+| 1<sup>er</sup> juillet 2012 – 1<sup>er</sup> juillet 2015 | 35 s | 67,184 s |
+| 1<sup>er</sup> juillet 2015 – 1<sup>er</sup> janvier 2017 | 36 s | 68,184 s |
+| depuis le 1<sup>er</sup> janvier 2017 | 37 s | 69,184 s |
+
+Les temps en usage, transmis par exemple par les horloges parlantes et les stations de radiodiffusion des divers pays, dérivent de UTC par addition d’un nombre entier d’heures. UTC est donc la seule échelle de temps mondiale directement accessible aux observateurs, et c’est celle dans laquelle doivent être datés les événements scientifiques, en particulier les observations astronomiques. La plupart des émissions de signaux horaires radio diffusent, suivant un code simple, uniformisé et audible, une correction appelée DUT1, qui permet de corriger UTC pour avoir UT1 avec une erreur maximale de 0,1 s. Les utilisateurs qui veulent connaître UT1 avec une précision encore meilleure doivent faire appel aux circulaires de l’IERS, qui donnent des tables des valeurs de UT1 − UTC.
+
+**Le temps des éphémérides (TE)** fut la meilleure représentation du temps uniforme avant l’apparition du temps atomique. Il reste, de ce fait, indispensable pour interpréter les observations anciennes. Pour les travaux sur les données récentes, il est remplacé par des échelles de temps liées au temps atomique, dont la définition prend en compte les effets de la relativité générale. Ainsi, les éphémérides géocentriques sont exprimées dans une échelle qui est en pratique TAI + 32,184 s. Cette échelle, qui prolonge le TE depuis le 1<sup>er</sup> janvier 1977, a reçu le nom de **temps terrestre**, TT. En 2018, on a approximativement TT − UTC = 69,2 s : c’est la valeur utilisée dans l’édition de 2018 du *Guide des données astronomiques*, à laquelle la source d’origine renvoie pour les différences entre échelles.
+
+**Le temps dynamique barycentrique (TDB)** est une échelle de temps-coordonnée recommandée par l’UAI en 1976 pour les éphémérides et les théories dynamiques rapportées au barycentre du système solaire. TDB diffère du temps terrestre TT par des termes périodiques et des termes de Poisson. En 1991, l’UAI a recommandé de remplacer TDB par le temps-coordonnée barycentrique TCB.
+
+<SimulateurEchellesTemps />
+
+<Encadre type="plus" titre="À propos de UT et de GMT">
+(1) Lorsqu’il n’y a pas lieu de distinguer entre UTC et UT1, c’est-à-dire lorsqu’une précision d’une seconde suffit, la notation abrégée UT est admise. L’usage des initiales GMT (ou TMG), qui prête à confusion, est fautif : l’Union astronomique internationale a instamment demandé que GMT soit remplacé par les désignations appropriées, UT1, UTC ou UT. Elle a aussi recommandé les désignations TAI, UT1, UTC, UT dans toutes les langues.
+</Encadre>
+
+### Les fuseaux horaires
+
+Chaque pays définit son heure par l’écart au temps universel. Cet écart est déterminé de façon que l’heure adoptée respecte le cycle journalier lié au lever du Soleil, au midi et au coucher du Soleil. Cependant, pour faciliter les changements d’heure pour les voyageurs, les accords internationaux prévoient d’adopter un écart au temps universel égal à un nombre entier d’heures. Pour cela, on définit 24 zones autour du globe, appelées « <Terme id="fuseau-horaire">fuseaux horaires</Terme> ». Chaque pays se rattache ainsi au fuseau le mieux adapté, et définit son heure légale ou standard comme TU (temps universel) ± N heures (où N est un nombre entier). Cela ne l’empêche pas d’ajouter ou de retrancher une heure pour définir une heure d’été ou autre. Les pays très étendus en longitude adoptent plusieurs heures légales (par exemple aux États-Unis, il y a 7 heures légales : Atlantique, Est, Centre, Montagne, Ouest, Alaska et Hawaï, avec deux variantes : l’heure standard, applicable en hiver, et l’heure « de la lumière du jour », qui correspond à notre heure d’été puisqu’on l’applique en été en ajoutant une heure à l’heure standard).
+
+Remarquons que certains territoires, comme le Groenland ou l’Antarctique, n’ont pas d’heure légale propre : le temps universel y est donc utilisé. Remarquons aussi que tous les pays n’ont pas adopté un décalage d’un nombre entier d’heures avec le temps universel : l’Inde, par exemple, a adopté 5 h 30. Les pays adoptant une heure d’été ajoutent une heure au décalage de leur fuseau pour leur période d’été. Le widget ci-dessous schématise la répartition des heures légales selon les fuseaux (la carte d’origine, qui donnait les décalages pays par pays au 1<sup>er</sup> juin 2000, n’est pas reprise).
+
+### La ligne de changement de date
+
+L’existence de fuseaux horaires entraîne l’existence d’une « ligne de changement de date ». Examinons en effet l’écart des heures locales au temps universel. En allant vers l’est, le Soleil se lève plus tôt, et donc, pour obtenir les heures locales, on ajoute une heure, puis deux, puis trois au temps universel en se déplaçant vers l’est. En allant vers l’ouest, ce sera le contraire : on retirera des heures au temps universel pour que midi reste à 12 heures. En effet, s’il est midi en France, les pays situés à l’est de la France sur une même latitude verront le Soleil vers la France, c’est-à-dire vers l’ouest : c’est donc l’après-midi, il y sera plus tard qu’en France, et l’on ajoutera une ou plusieurs heures à l’heure française pour obtenir l’heure locale.
+
+Donc, en allant vers l’est, on ajoute des heures : on arrive à la ligne de changement de date quand on a ajouté douze heures. S’il est midi en temps universel, il sera minuit le soir du même jour sur le dernier fuseau vers l’est, que l’on notera FE. En allant vers l’ouest, on retranchera des heures : il sera 0 heure du même jour en arrivant sur le dernier fuseau vers l’ouest, que l’on notera FO. Les deux fuseaux concernés sont en fait côte à côte : une heure plus tard, il sera 1 heure du même jour sur le fuseau FO, et 1 heure du lendemain sur le fuseau FE, qui vient de passer minuit. Le passage de la ligne de changement de date fait donc effectivement passer d’un jour à l’autre à une même heure, ou plutôt à un même moment de la journée. Notons cependant que tout le monde est à la même heure et à la même date en temps universel, ce qui permet de s’y retrouver.
+
+<SimulateurFuseaux />
+
+## L’échelle de temps en physique
+
+### Une seconde « fabriquée »
+
+C’est en 1955 que le premier étalon de fréquence fut construit par <Personne id="essen">L. Essen</Personne> et J. Parry, qui travaillaient au National Physical Laboratory de Londres. Ces premiers travaux ouvrirent la voie à une nouvelle définition de la seconde, qui vit le jour en 1967 lors de la treizième Conférence générale des poids et mesures. La <Terme id="seconde-si">seconde</Terme> est la durée de 9 192 631 770 périodes de la radiation correspondant à la transition entre les deux niveaux hyperfins F = 3 et F = 4 de l’état fondamental 6S<sub>1/2</sub> de l’atome de césium 133. Malgré une complexité apparente au moins aussi grande que celle de la définition de la seconde de temps des éphémérides, cette définition offre l’avantage d’une bien meilleure accessibilité.
+
+### Un étalon primaire de fréquence
+
+La mécanique quantique nous apprend que les atomes peuvent se trouver dans différents états, ou niveaux d’énergie, qui sont quantifiés : les valeurs de l’énergie des atomes sont discrètes et non continues. Le niveau d’énergie la plus basse est appelé le niveau fondamental. Le niveau fondamental se décompose lui-même en deux niveaux hyperfins, notés respectivement F = 3 et F = 4. On sait également, depuis <Personne id="planck">Max Planck</Personne>, que pour faire passer un atome d’un niveau d’énergie à un autre, il faut lui apporter une énergie, sous forme de rayonnement électromagnétique, correspondant à la différence d’énergie des deux niveaux considérés. Des mesures réalisées entre 1955 et 1958 ont montré que l’atome de césium 133 pouvait passer du niveau hyperfin F = 3 au niveau hyperfin F = 4 lorsqu’il était soumis à un rayonnement micro-onde de fréquence 9 192 631 770 Hz. C’est cette valeur qui est à la base de la définition de la seconde atomique.
+
+Un appareil électronique, un compteur de cycles, va donc compter 9 192 631 770 cycles pendant une durée d’une seconde. L’appareil qui réalise ainsi la définition de la seconde atomique s’appelle un **étalon primaire de fréquence**. Il en existe actuellement différents types : les étalons primaires de fréquence à déflexion magnétique, à pompage optique et les fontaines atomiques. L’appareil qui compte les secondes et qui les accumule au cours du temps est une **horloge atomique**.
+
+### En savoir plus : les fontaines atomiques
+
+<span class="tag plus">En savoir plus</span>
+
+Les fontaines atomiques sont les derniers développements de la technique des étalons de fréquence. Elles utilisent la technique du refroidissement des atomes, qui a valu son prix Nobel à <Personne id="cohentannoudji">C. Cohen-Tannoudji</Personne> en 1997. En effet, quel que soit l’étalon considéré, le nombre d’atomes qui subit l’interaction micro-onde est d’autant mieux déterminé que la durée d’interaction de ces atomes dans la cavité est plus grande. Afin d’augmenter ce temps d’interaction, les atomes sont piégés, confinés dans six faisceaux laser concourants, afin de réduire le plus possible leur vitesse d’agitation thermique. La physique statistique nous enseigne en effet que la température d’un gaz est proportionnelle à l’énergie d’agitation des particules qui le composent : si la vitesse est très faible, la température correspondante est très basse, d’où le nom de la technique utilisée.
+
+Une fois les atomes confinés, ils sont lancés en direction de la cavité micro-onde, comme dans les étalons classiques, à la seule différence que la cavité est cette fois verticale. La verticalité de la cavité s’impose à cause de la faible vitesse des atomes : s’ils effectuaient un vol balistique horizontal, ils « tomberaient vers le bas ». Pour des raisons techniques (homogénéité du champ magnétique…), la cavité micro-onde n’est pas réalisée en un seul morceau de longueur D à l’intérieur duquel aurait lieu, de façon continue, l’interaction. Dans le cas des étalons à déflexion ou à pompage, une cavité dite de Ramsey est utilisée : l’interaction a lieu en chacune de ses extrémités, séparées par une distance D. Dans le cas de la fontaine atomique, la cavité est encore un peu différente : il n’y a qu’une seule zone dans laquelle l’interaction micro-onde a lieu, mais deux fois de suite, une fois lorsque les atomes vont vers le haut et une fois lorsqu’ils retombent. La préparation et la détection des atomes de césium se font comme dans le cas d’un étalon à pompage optique classique. La meilleure fontaine atomique en fonctionnement au moment de la rédaction de la source, FO1, se trouvait au Laboratoire primaire du temps et des fréquences, laboratoire du Bureau national de métrologie, à l’Observatoire de Paris.
+
+### Calcul du Temps atomique international TAI
+
+Les horloges atomiques à césium sont des étalons primaires de fréquence très particuliers. Elles génèrent la seconde du Système international comme dans le cas d’un étalon classique, mais elles les accumulent également, de façon à produire des minutes et des heures. La finalité de ces instruments est différente de celle des étalons : alors que ces derniers doivent avoir une très bonne exactitude, c’est-à-dire une différence la plus faible possible entre la définition de la seconde du SI et la seconde réalisée par l’instrument, les horloges doivent avoir une excellente stabilité à long terme, c’est-à-dire que les variations de la seconde produite doivent être les plus faibles possibles autour d’une valeur moyenne (qui n’est pas forcément très proche de la seconde du SI).
+
+Les principales horloges atomiques commerciales à césium sont du premier type étudié : ce sont des instruments à déflexion magnétique. D’autres horloges atomiques n’utilisent pas l’atome de césium : il existe des horloges à rubidium et des masers à hydrogène. (Les horloges à quartz, très stables à court terme, ne sont pas des horloges atomiques ; elles servent d’oscillateurs dans les horloges atomiques.) Ce sont les masers à hydrogène, avec les horloges à césium, qui sont le plus utilisés dans le calcul du temps atomique international.
+
+La 14<sup>e</sup> Conférence générale des poids et mesures (CGPM) a décidé que le temps atomique international est la coordonnée de repérage temporel établie sur la base des indications d’horloges atomiques fonctionnant dans divers établissements, conformément à la définition de la seconde, unité de temps du Système international d’unités. C’est le Bureau international des poids et mesures qui est en charge du calcul du TAI. Il collecte les données d’environ 500 horloges (en 2016, date de la source) réparties dans plus de 70 laboratoires. Le calcul du TAI est effectué à l’aide d’un algorithme, ALGOS, qui effectue une moyenne pondérée des lectures des horloges, la finalité étant d’obtenir une très bonne stabilité à long terme. L’exactitude de l’échelle de temps est assurée par des comparaisons régulières entre son intervalle unitaire et l’intervalle unitaire obtenu par les différents étalons primaires de fréquence répartis dans le monde.
+
+Ce mode de calcul permet d’obtenir une autre des propriétés attendues des échelles de temps : la pérennité. Une horloge qui cesse de fonctionner peut très facilement être remplacée par une autre, sans que le comportement global du TAI en soit affecté. À la date de la source, l’instabilité du TAI est estimée à environ $4 \times 10^{-15}$ à 10 jours, $4{,}3 \times 10^{-15}$ à 40 jours, $4{,}5 \times 10^{-15}$ à 160 jours et $10^{-14}$ au-delà de 3 ans. Ces estimations sont effectuées à l’aide d’un estimateur statistique dénommé variance d’Allan.
+
+### Comparaison d’horloges à distance
+
+Il existe de nombreux organismes dans le monde qui possèdent des horloges atomiques ou des étalons primaires de fréquence. Bien sûr, chacun de ces organismes souhaite comparer ses propres instruments à ceux des autres, à des fins d’évaluation et d’amélioration de leurs qualités métrologiques, ou simplement pour participer au calcul du temps atomique international, TAI. La méthode la plus classique pour comparer des horloges distantes consiste à employer les satellites du Global Positioning System, GPS.
+
+Le GPS est un système militaire de radionavigation constitué d’un ensemble de satellites en orbite à 20 000 km autour de la Terre. Chaque station équipée d’une des horloges à comparer reçoit les signaux d’un satellite du GPS. Les temps d’arrivée des signaux sont datés grâce à l’horloge de la station réceptrice, alors que les temps d’émission de ces signaux par un satellite quelconque sont datés dans l’échelle de temps de l’horloge embarquée par ce satellite. Un algorithme permet de faire la correspondance entre l’échelle de temps du satellite et le temps du GPS. En faisant une simple différence des observations effectuées aux mêmes instants dans les deux stations, le temps du GPS disparaît, et il est ainsi possible d’obtenir la différence de lecture des horloges des deux stations.
+
+### En savoir plus : la métrologie du temps
+
+<span class="tag plus">En savoir plus</span>
+
+Toutes les études entreprises en métrologie du temps ont bien sûr des applications. Dans le domaine de la recherche fondamentale, on peut citer les tentatives de raccordement des unités du SI à la définition de la seconde, car c’est l’unité que l’on sait, de loin, le mieux réaliser (incertitude relative de l’ordre de $10^{-15}$). Certaines constantes de la physique peuvent être déterminées par la seule mesure de la fréquence de phénomènes physiques ; on peut alors obtenir leur valeur avec une très faible incertitude : la constante de Rydberg, le facteur de Landé de l’électron et la constante de structure fine en sont quelques exemples. La métrologie du temps a également un impact sur la physique atomique, par le biais de la vérification de la linéarité de la mécanique quantique (équation de Schrödinger) et par sa contribution à la connaissance de certaines propriétés atomiques et moléculaires.
+
+La mesure du temps intervient également dans les tests des modèles de structure de l’espace-temps et de la gravitation, par l’utilisation directe ou indirecte des étalons atomiques de temps. La finalité de ces tests est la discrimination des différentes théories de la gravitation, la relativité générale d’Einstein n’étant qu’une théorie parmi d’autres ([voir le chapitre sur la gravitation](../gravitation/)). La métrologie du temps trouve aussi sa place dans bon nombre d’applications de positionnement, de géodésie ou de navigation : le système GPS en est un exemple ; le GLObal NAvigation Satellite System (GLONASS) ainsi que les systèmes DORIS (Détermination d’orbite et radiopositionnement intégrés par satellite) et PRARE (Precise Range and Range-rate Equipment) en sont d’autres. La technique de radio-interférométrie à très longue base, dite VLBI (Very Long Baseline Interferometry), trouve des applications dans l’étude de la rotation de la Terre et dans la formation des systèmes de référence céleste et terrestre.
+
+Les mesures VLBI font appel à la stabilité de fréquence des masers à hydrogène présents dans les stations d’observation : c’est le domaine de la métrologie du temps. Les pulsars millisecondes sont des objets dont l’observation a montré que leur stabilité de fréquence pouvait peut-être rivaliser avec la stabilité des meilleures échelles de temps atomique (TAI, TT(BIPM)…). Des études de très longue haleine sont en cours pour connaître la réponse à cette question. La métrologie du temps est doublement présente dans ces recherches : premièrement, parce que les temps d’arrivée des impulsions radio émises par ces astres sont datés par rapport à une horloge atomique présente dans la station d’observation ; deuxièmement, parce qu’il faut raccorder cette horloge aux meilleures échelles de temps atomique, à des fins de comparaison.
+
+### Testez-vous
+
+<Quiz questions={[
+  { question: "Un jour sidéral (retour d’une étoile au méridien) dure environ :", choix: ["23 h 56 min", "24 h 00 min", "24 h 04 min"], reponse: 0, explication: "Après un tour complet de la Terre sur elle-même (23 h 56 min 4 s), le Soleil n’est pas encore revenu au méridien : la Terre a avancé sur son orbite d’environ 1°, qu’il faut compenser par 3 min 56 s de rotation de plus. Le jour solaire moyen dure donc 24 h." },
+  { question: "Quelles sont les deux causes de l’équation du temps ?", choix: ["l’excentricité de l’orbite de la Terre", "l’obliquité de l’écliptique", "le ralentissement de la rotation de la Terre", "la précession des équinoxes"], reponse: [0, 1], explication: "L’équation du temps est la somme de l’équation du centre (excentricité) et de la réduction à l’équateur (obliquité). Elle atteint environ +16 min début novembre et −14 min à la mi-février. Le ralentissement de la rotation et la précession n’y jouent aucun rôle appréciable à l’échelle d’une année." },
+  { question: "Quelle est l’année qui garantit le retour des saisons à la même date, et sur laquelle est fondé notre calendrier ?", choix: ["l’année sidérale", "l’année tropique", "l’année anomalistique", "l’année draconitique"], reponse: 1, explication: "L’année tropique (365 j 5 h 48 min 45 s) est mesurée par rapport au point vernal, repère des saisons. Elle est un peu plus courte que l’année sidérale (365 j 6 h 9 min 10 s) à cause de la précession." },
+  { question: "Le temps universel coordonné (UTC) diffère du temps atomique international (TAI) :", choix: ["d’un nombre entier de secondes", "de quelques microsecondes seulement", "de 0,9 s au maximum"], reponse: 0, explication: "UTC est le TAI décalé d’un nombre entier de secondes (37 s depuis 2017), ajusté par des secondes intercalaires pour ne pas s’écarter de plus de 0,9 s du temps universel UT1, lié à la rotation de la Terre." },
+  { question: "Il est midi en temps universel. Quelle heure est-il, à peu près, sur le dernier fuseau vers l’est (UTC + 12) ?", choix: ["minuit, le même jour", "minuit, le lendemain", "midi, le lendemain"], reponse: 0, explication: "On ajoute douze heures : il est minuit le soir du même jour. Sur le fuseau voisin à l’ouest de la ligne de changement de date (UTC − 12), il est 0 h du même jour : une heure plus tard, la date y change aussi." },
+  { question: "Sur quel phénomène la seconde du Système international est-elle définie depuis 1967 ?", choix: ["la rotation de la Terre", "la révolution de la Terre autour du Soleil", "une transition de l’atome de césium 133"], reponse: 2, explication: "La seconde est la durée de 9 192 631 770 périodes de la radiation associée à la transition entre les deux niveaux hyperfins de l’état fondamental du césium 133. Elle remplace les définitions astronomiques (1/86 400 jour solaire moyen, puis fraction de l’année tropique 1900)." },
+]} />

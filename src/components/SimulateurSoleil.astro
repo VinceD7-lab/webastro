@@ -1,0 +1,104 @@
+---
+/**
+ * Simulation « position du Soleil sur l’écliptique » : à une date donnée, longitude écliptique λ,
+ * ascension droite α et déclinaison δ du Soleil (latitude supposée nulle).
+ * Le bouton « Envoyer » transmet α et δ au simulateur de la sphère locale (événement « reperes:astre »).
+ */
+---
+<div class="sim" data-soleil-sim data-pagefind-ignore>
+  <svg viewBox="0 0 600 470" role="img" aria-label="Sphère céleste : équateur, écliptique incliné de ε, pôles P et K, et position du Soleil">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label class="date"><span>Date (0 h TU)</span> <input data-date type="date" /></label>
+    <label>Jour de l’année <input data-jour type="range" min="0" max="365" step="1" /></label>
+    <div class="presets" role="group" aria-label="Actions">
+      <button class="tool" data-auj type="button">Aujourd’hui</button>
+      <button class="tool" data-play type="button" aria-pressed="false">Faire défiler l’année</button>
+      <button class="tool" data-envoi type="button">Envoyer α et δ à la sphère locale</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-lambda>–</b><span>longitude écliptique λ</span></div>
+    <div><b data-alpha>–</b><span>ascension droite α</span></div>
+    <div><b data-delta>–</b><span>déclinaison δ</span></div>
+    <div><b data-saison>–</b><span>saison (hémisphère nord)</span></div>
+  </div>
+  <p class="small" data-msg aria-live="polite"></p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 240px}
+  input[type=range]{flex:1;accent-color:var(--brass)}
+  input[type=date]{font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.3rem .5rem}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  [data-msg]{margin:.6rem 0 0;min-height:1.4em}
+</style>
+
+<script>
+  import { Vue, comb, mul, unit, slerp, type V3 } from '../lib/projection';
+  import { RAD, jourJulien, soleil, fmtHMS, fmtDMS } from '../lib/reperes';
+
+  const JOUR = 86400000;
+  const versChamp = (t: number) => new Date(t).toISOString().slice(0, 10);
+  const depuisChamp = (s: string) => { const m = s.match(/^(\d+)-(\d+)-(\d+)/); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : Date.now(); };
+  const minuit = (t: number) => { const d = new Date(t); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); };
+
+  document.querySelectorAll<HTMLElement>('[data-soleil-sim]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const date = q<HTMLInputElement>('[data-date]'), jour = q<HTMLInputElement>('[data-jour]'), dessin = q<SVGGElement>('[data-dessin]');
+    let t = minuit(Date.now());
+    const v = new Vue(300, 240, 180, 28, 16);
+
+    function maj(depuisCurseur = false) {
+      const an = new Date(t).getUTCFullYear(), debut = Date.UTC(an, 0, 1);
+      if (depuisCurseur) t = debut + parseInt(jour.value, 10) * JOUR; else jour.value = String(Math.round((t - debut) / JOUR));
+      date.value = versChamp(t);
+      const so = soleil(jourJulien(new Date(t))), e = so.eps * RAD, l = so.lambda * RAD;
+      // Repère équatorial : X vers γ, Z vers le pôle céleste nord P ; K pôle de l’écliptique.
+      const X: V3 = [1, 0, 0], Z: V3 = [0, 0, 1], K: V3 = [0, -Math.sin(e), Math.cos(e)], Ye: V3 = [0, Math.cos(e), Math.sin(e)];
+      const S = comb([Math.cos(l), X], [Math.sin(l), Ye]), pied = Math.hypot(S[0], S[1]) > 1e-9 ? unit([S[0], S[1], 0]) : X;
+      let s = v.contour({ remplir: 'var(--surface)' });
+      s += v.cercle(Z, 0, { epaisseur: 1.3 }) + v.cercle(K, 0, { epaisseur: 1.6, couleur: 'var(--orbit)' });
+      s += v.ligne(mul(Z, -1.15), mul(Z, 1.25), { tirets: '5 4', epaisseur: 0.9, fleche: 'fin' }) + v.ligne(mul(K, -1.15), mul(K, 1.25), { tirets: '5 4', epaisseur: 0.9, fleche: 'fin', couleur: 'var(--orbit)' });
+      s += v.ligne([0, 0, 0], mul(X, 1.35), { epaisseur: 1, fleche: 'fin' });
+      s += v.arc(X, S, { couleur: 'var(--brass)', epaisseur: 2.4, fleche: 'fin' }, 1.0, so.lambda > 180);
+      s += v.arc(X, pied, { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' }, 0.97, so.alpha > 180);
+      s += v.arc(pied, S, { couleur: 'var(--ko)', epaisseur: 2.2, fleche: 'fin' });
+      s += v.arc(Z, K, { epaisseur: 1 }, 1.25);
+      s += v.point(X, 4) + v.point(Z, 3.5) + v.point(K, 3.5, 'var(--orbit)');
+      s += `<circle cx="${v.xy(S)[0].toFixed(1)}" cy="${v.xy(S)[1].toFixed(1)}" r="10" fill="var(--sun)" stroke="var(--ink)" stroke-width=".8"${v.devant(S) ? '' : ' opacity=".55"'}/>`;
+      s += v.texte(X, 'γ', { dx: -18, dy: 18, taille: 18 }) + v.texte(Z, 'P', { dx: 8, dy: -6 }) + v.texte(K, 'K', { dx: -18, dy: -4, couleur: 'var(--orbit)' });
+      s += v.texte(mul(slerp(Z, K, 0.5), 1.25), 'ε', { dy: -8, ancre: 'middle', taille: 17 });
+      s += v.texte(S, 'Soleil', { dx: 14, dy: -8 });
+      s += `<text x="300" y="462" font-size="14" text-anchor="middle"><tspan fill="var(--orbit)">— écliptique</tspan><tspan fill="var(--ink)" dx="12">— équateur</tspan><tspan fill="var(--brass)" dx="12">— longitude λ</tspan><tspan fill="var(--ko)" dx="12">— ascension droite α, déclinaison δ</tspan></text>`;
+      dessin.innerHTML = s;
+      q('[data-lambda]').textContent = fmtDMS(so.lambda).replace(/ \d\d″$/, '');
+      q('[data-alpha]').textContent = fmtHMS(so.alpha / 15).replace(/ \d\d s$/, '');
+      q('[data-delta]').textContent = fmtDMS(so.delta, 0, true).replace(/ \d\d″$/, '');
+      q('[data-saison]').textContent = ['printemps', 'été', 'automne', 'hiver'][Math.floor(so.lambda / 90)];
+      return so;
+    }
+
+    let enCours = false, dernier = 0;
+    const bouton = q<HTMLButtonElement>('[data-play]');
+    function boucle(ts: number) { if (!enCours) return; if (dernier) { t += (ts - dernier) * JOUR / 55; maj(); } dernier = ts; requestAnimationFrame(boucle); }
+    const jouer = (x: boolean) => { enCours = x; dernier = 0; bouton.textContent = x ? 'Pause' : 'Faire défiler l’année'; bouton.setAttribute('aria-pressed', String(x)); if (x) requestAnimationFrame(boucle); };
+    bouton.addEventListener('click', () => jouer(!enCours));
+    date.addEventListener('input', () => { t = depuisChamp(date.value); maj(); });
+    jour.addEventListener('input', () => maj(true));
+    q('[data-auj]').addEventListener('click', () => { t = minuit(Date.now()); maj(); });
+    q('[data-envoi]').addEventListener('click', () => {
+      const so = maj(), cible = document.querySelector('[data-sphere]');
+      document.dispatchEvent(new CustomEvent('reperes:astre', { detail: { alpha: so.alpha, delta: so.delta, date: minuit(t) + 12 * 3600000 } }));
+      q('[data-msg]').textContent = cible ? 'α et δ ont été transmis au simulateur de la sphère locale (section « Les repères locaux »), à midi TU de cette date.' : '';
+    });
+    maj();
+  });
+</script>

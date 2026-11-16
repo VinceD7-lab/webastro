@@ -1,0 +1,106 @@
+---
+/**
+ * Période d’un satellite selon son altitude (3ᵉ loi de Kepler), avec la rotation de la Terre pour comparaison :
+ * à 35 786 km, le satellite reste à la verticale du même point de l’équateur.
+ */
+---
+<div class="sim" data-periodes data-pagefind-ignore>
+  <svg viewBox="0 0 600 400" role="img" aria-label="Satellite en orbite circulaire autour de la Terre, vue du pôle Nord ; distances en échelle logarithmique">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <line data-visee stroke="var(--brass)" stroke-width="1.2" stroke-dasharray="4 4"></line>
+    <circle data-sol r="5" fill="var(--brass)" stroke="var(--surface)" stroke-width="1.5"></circle>
+    <circle data-sat r="7" fill="var(--ko)" stroke="var(--surface)" stroke-width="2"></circle>
+  </svg>
+  <div class="controls">
+    <label><span>Altitude</span> <input data-alt type="range" min="2.301" max="5.602" step="any" /> <output data-alt-out></output></label>
+    <button class="tool" data-pause type="button" aria-pressed="false">Pause</button>
+    <div class="presets" role="group" aria-label="Exemples de satellites">
+      <button class="tool" type="button" data-pre="420">Station spatiale</button>
+      <button class="tool" type="button" data-pre="20200">GPS</button>
+      <button class="tool" type="button" data-pre="35786">Géostationnaire</button>
+      <button class="tool" type="button" data-pre="378022">Lune</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-periode>–</b><span>période de révolution</span></div>
+    <div><b data-vit>–</b><span>vitesse sur l’orbite</span></div>
+    <div><b data-tours>–</b><span>tours par jour sidéral (rotation de la Terre)</span></div>
+  </div>
+  <p class="note">Vue depuis le pôle Nord ; distances au centre en échelle logarithmique. Le point doré tourne avec la Terre ; une seconde à l’écran représente une heure.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:7em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { periode, vitesseCirculaire, fmtDuree, fmtKm, fmtVitesse, JOUR_SIDERAL, RAYON_TERRE } from '../lib/mecanique';
+  import { texte2D } from '../lib/projection';
+  import { terre } from '../lib/dessin';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = [300, 200], RT = 34, RMAX = 185, LMAX = Math.log10((RAYON_TERRE + 400_000) / RAYON_TERRE);
+  /** Rayon à l’écran d’une orbite de rayon r (km), en échelle logarithmique à partir de la surface. */
+  const ecran = (r: number) => RT + ((RMAX - RT) * Math.log10(r / RAYON_TERRE)) / LMAX;
+  const nb = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  document.querySelectorAll<HTMLElement>('[data-periodes]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const alt = q<HTMLInputElement>('[data-alt]'), sat = q('[data-sat]'), sol = q('[data-sol]'), visee = q('[data-visee]');
+    const pause = q<HTMLButtonElement>('[data-pause]');
+    let t = 0, avant = 0, enPause = reduit, T = 1, rpx = 100;
+    alt.value = String(Math.log10(35_786));
+
+    function fond() {
+      let s = '';
+      const refs: [number, string][] = [[420, 'station'], [20_200, 'GPS'], [35_786, 'géostationnaire'], [378_022, 'Lune']];
+      for (const [h, n] of refs) {
+        const r = ecran(RAYON_TERRE + h);
+        s += `<circle cx="${C[0]}" cy="${C[1]}" r="${r.toFixed(1)}" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 4"/>`;
+        s += texte2D([C[0] + r * 0.72 + 4, C[1] + r * 0.69 + 12], n, { taille: 11.5, couleur: 'var(--ink-soft)' });
+      }
+      s += `<circle data-orbite cx="${C[0]}" cy="${C[1]}" r="${rpx.toFixed(1)}" fill="none" stroke="var(--orbit)" stroke-width="2"/>`;
+      s += terre(C as [number, number], RT);
+      q('[data-fond]').innerHTML = s;
+    }
+    function place() {
+      // Sens direct (vu du pôle Nord) : angle croissant vers le haut de l’écran.
+      const a = (2 * Math.PI * t) / T, b = (2 * Math.PI * t) / JOUR_SIDERAL;
+      const xs = C[0] + rpx * Math.cos(a), ys = C[1] - rpx * Math.sin(a), xg = C[0] + RT * Math.cos(b), yg = C[1] - RT * Math.sin(b);
+      sat.setAttribute('cx', xs.toFixed(1)); sat.setAttribute('cy', ys.toFixed(1));
+      sol.setAttribute('cx', xg.toFixed(1)); sol.setAttribute('cy', yg.toFixed(1));
+      visee.setAttribute('x1', String(C[0])); visee.setAttribute('y1', String(C[1]));
+      visee.setAttribute('x2', (C[0] + (RMAX + 8) * Math.cos(b)).toFixed(1)); visee.setAttribute('y2', (C[1] - (RMAX + 8) * Math.sin(b)).toFixed(1));
+    }
+    function maj() {
+      const h = 10 ** parseFloat(alt.value), r = RAYON_TERRE + h;
+      T = periode(r); rpx = ecran(r);
+      fond(); place();
+      q('[data-alt-out]').textContent = fmtKm(h);
+      q('[data-periode]').textContent = fmtDuree(T);
+      q('[data-vit]').textContent = fmtVitesse(vitesseCirculaire(r));
+      const n = JOUR_SIDERAL / T;
+      q('[data-tours]').textContent = Math.abs(n - 1) < 0.005 ? '1 : géostationnaire' : nb(n, n < 1 ? 3 : 1);
+    }
+    function boucle(now: number) {
+      if (!enPause && avant) t += Math.min(0.1, (now - avant) / 1000) * 3600;
+      avant = now; place(); requestAnimationFrame(boucle);
+    }
+    alt.addEventListener('input', maj);
+    pause.addEventListener('click', () => { enPause = !enPause; pause.setAttribute('aria-pressed', String(enPause)); pause.textContent = enPause ? 'Reprendre' : 'Pause'; });
+    if (reduit) { pause.setAttribute('aria-pressed', 'true'); pause.textContent = 'Reprendre'; }
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((b) => b.addEventListener('click', () => { alt.value = String(Math.log10(+b.dataset.pre!)); maj(); }));
+    maj();
+    requestAnimationFrame(boucle);
+  });
+</script>

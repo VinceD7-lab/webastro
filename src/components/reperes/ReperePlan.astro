@@ -1,0 +1,32 @@
+---
+/** Repère du plan quelconque, normé ou orthonormé, et coordonnées d’un point A (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { trait2D, texte2D, point2D, ind, type P2 } from '../../lib/projection';
+interface Props { type?: 'quelconque' | 'norme' | 'orthonorme' }
+const { type = 'quelconque' } = Astro.props;
+const angle = type === 'orthonorme' ? 90 : 72, L1 = 48, L2 = type === 'quelconque' ? 70 : 48;
+const O: P2 = [170, 215], r = (angle * Math.PI) / 180;
+const e1: P2 = [L1, 0], e2: P2 = [L2 * Math.cos(r), -L2 * Math.sin(r)];
+const pt = (a: number, b: number): P2 => [O[0] + a * e1[0] + b * e2[0], O[1] + a * e1[1] + b * e2[1]];
+const u1 = 3, u2 = type === 'quelconque' ? 2 : 2.9;
+const A = pt(u1, u2), AX = pt(u1, 0), AY = pt(0, u2);
+let s = '';
+s += trait2D(pt(-2.4, 0), pt(5.2, 0), { fleche: 'fin', epaisseur: 1.2 });
+s += trait2D(pt(0, type === 'quelconque' ? -1.6 : -2.3), pt(0, type === 'quelconque' ? 2.75 : 3.9), { fleche: 'fin', epaisseur: 1.2 });
+s += texte2D(pt(5.2, 0), 'x', { dx: 4, dy: 18, taille: 16 });
+s += texte2D(pt(0, type === 'quelconque' ? 2.75 : 3.9), 'y', { dx: 10, dy: 6, taille: 16 });
+s += trait2D(A, AX, { tirets: '5 4', epaisseur: 1 }) + trait2D(A, AY, { tirets: '5 4', epaisseur: 1 });
+s += trait2D(O, A, { fleche: 'fin', epaisseur: 1.2 });
+s += trait2D(O, pt(1, 0), { couleur: 'var(--ko)', epaisseur: 2.6, fleche: 'fin' }) + trait2D(O, pt(0, 1), { couleur: 'var(--ko)', epaisseur: 2.6, fleche: 'fin' });
+s += [O, A, AX, AY].map((p) => point2D(p, 3.4)).join('');
+s += texte2D(O, 'O', { dx: -18, dy: 18, italique: true, taille: 17 });
+s += texte2D(A, 'A', { dx: 8, dy: -8, italique: true, taille: 17 });
+s += texte2D(AX, `A${ind('X')}`, { dx: 4, dy: -8, italique: true, brut: true });
+s += texte2D(AY, `A${ind('Y')}`, { dx: 6, dy: -6, italique: true, brut: true });
+s += texte2D(AX, 'u¹', { dx: -6, dy: 22, italique: true, ancre: 'end' });
+s += texte2D(AY, 'u²', { dx: -10, dy: 6, italique: true, ancre: 'end' });
+s += texte2D(pt(0.5, 0), `e${ind('1')}`, { dy: 22, italique: true, gras: true, couleur: 'var(--ko)', brut: true });
+s += texte2D(pt(0, 0.6), `e${ind('2')}`, { dx: -30, italique: true, gras: true, couleur: 'var(--ko)', brut: true });
+const titres = { quelconque: 'Repère quelconque : vecteurs de longueurs différentes et non perpendiculaires', norme: 'Repère normé : vecteurs de même longueur, non perpendiculaires', orthonorme: 'Repère orthonormé : vecteurs perpendiculaires et de même longueur' };
+---
+<Figure titre={`${titres[type]}. Le point A se projette en A_X et A_Y parallèlement aux axes.`} largeur={440} hauteur={330} svg={s}><slot /></Figure>

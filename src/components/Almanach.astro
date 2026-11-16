@@ -1,0 +1,47 @@
+---
+import { url } from '../lib/url';
+---
+<aside class="almanach" aria-labelledby="alm-titre" data-almanach>
+  <h2 id="alm-titre">Le temps, en ce moment</h2>
+  <p class="sub">Calculé en direct dans votre navigateur, à partir de votre horloge.</p>
+  <dl>
+    <dt>Jour julien</dt><dd class="big" data-a="jd">–</dd>
+    <dt>Date grégorienne</dt><dd data-a="greg">–</dd>
+    <dt>Temps universel</dt><dd data-a="ut">–</dd>
+    <dt>Calendrier julien</dt><dd data-a="jul">–</dd>
+    <dt>Temps sidéral à Greenwich</dt><dd data-a="gmst">–</dd>
+    <dt>Âge de la Lune</dt><dd data-a="lune">–</dd>
+  </dl>
+  <p class="note">L’âge de la Lune est une valeur moyenne, à ±1 jour près. <a href={url('/cours/calendriers/#convertisseur-de-dates')}>Convertir une autre date</a></p>
+</aside>
+
+<style>
+  .almanach{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.4rem 1.5rem 1.2rem}
+  h2{font-size:1.55rem;margin-bottom:.2rem}
+  .sub{font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem}
+  dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.55rem 1.2rem;font-size:.98rem}
+  dt{color:var(--ink-soft)}
+  dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+  dd.big{font-family:var(--display);font-size:1.55rem;line-height:1.1;color:var(--brass)}
+  .note{font-size:.82rem;color:var(--ink-soft);margin:1rem 0 0;border-top:1px solid var(--rule);padding-top:.7rem}
+</style>
+
+<script>
+  import { depuisJD, MOIS } from '../lib/calendriers';
+  const fmt = (x: number, d: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const phases = ['nouvelle lune', 'premier croissant', 'premier quartier', 'gibbeuse croissante', 'pleine lune', 'gibbeuse décroissante', 'dernier quartier', 'dernier croissant', 'nouvelle lune'];
+  const set = (k: string, v: string) => { const el = document.querySelector(`[data-almanach] [data-a="${k}"]`); if (el) el.textContent = v; };
+  function tick() {
+    const now = new Date(), jd = now.getTime() / 86400000 + 2440587.5;
+    set('jd', fmt(jd, 5));
+    set('greg', now.toLocaleDateString('fr-FR', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
+    set('ut', now.toLocaleTimeString('fr-FR', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    const j = depuisJD(jd, false); set('jul', `${j[2]} ${MOIS[j[1] - 1]} ${j[0]}`);
+    let g = (18.697374558 + 24.06570982441908 * (jd - 2451545.0)) % 24; if (g < 0) g += 24;
+    const h = Math.floor(g), mi = Math.floor((g - h) * 60), s = Math.floor(((g - h) * 60 - mi) * 60);
+    set('gmst', `${h} h ${String(mi).padStart(2, '0')} min ${String(s).padStart(2, '0')} s`);
+    const P = 29.530588853, age = (((jd - 2451550.1) % P) + P) % P;
+    set('lune', `${fmt(age, 1)} j, ${phases[Math.min(8, Math.floor((age + 1.845) / 3.691))]}`);
+  }
+  if (document.querySelector('[data-almanach]')) { tick(); setInterval(tick, 1000); }
+</script>

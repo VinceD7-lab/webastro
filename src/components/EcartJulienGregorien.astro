@@ -1,0 +1,30 @@
+---
+/** Graphique calculé à la construction : avance du grégorien sur le julien, de l’an 0 à 2500. */
+import { versJD } from '../lib/calendriers';
+const L = 48, R = 606, T = 20, B = 244, X0 = 0, X1 = 2500, Y0 = -3, Y1 = 17;
+const X = (v: number) => L + ((v - X0) / (X1 - X0)) * (R - L);
+const Y = (v: number) => B - ((v - Y0) / (Y1 - Y0)) * (B - T);
+let d = '', prev: number | null = null;
+for (let y = X0; y <= X1; y++) {
+  const g = versJD(y, 3, 1, false) - versJD(y, 3, 1, true);
+  if (prev === null) d = `M${X(y)},${Y(g)}`;
+  else if (g !== prev) d += ` L${X(y)},${Y(prev)} L${X(y)},${Y(g)}`;
+  prev = g;
+}
+d += ` L${X(X1)},${Y(prev!)}`;
+const annee = new Date().getFullYear();
+const ecart = versJD(annee, 3, 1, false) - versJD(annee, 3, 1, true);
+const reperes = [[1582, 10, '1582 : 10 jours'], [annee, ecart, `${annee} : ${ecart} jours`]] as const;
+---
+<figure>
+  <svg viewBox="0 0 640 280" role="img" aria-labelledby="ecart-t">
+    <title id="ecart-t">Nombre de jours d’avance du calendrier grégorien sur le calendrier julien, de l’an 0 à l’an 2500</title>
+    <g font-family="Literata Variable, Georgia, serif" font-size="13" fill="var(--ink-soft)">
+      {[0, 5, 10, 15].map((v) => <><line x1={L} x2={R} y1={Y(v)} y2={Y(v)} stroke="var(--rule)" /><text x={L - 8} y={Y(v) + 4} text-anchor="end">{v} j</text></>)}
+      {[0, 500, 1000, 1500, 2000, 2500].map((t) => <text x={X(t)} y={B + 22} text-anchor="middle">{t}</text>)}
+    </g>
+    <path d={d} fill="none" stroke="var(--orbit)" stroke-width="2.5" />
+    {reperes.map(([x, y, txt]) => <><circle cx={X(x)} cy={Y(y)} r="5" fill="var(--brass)" /><text x={X(x) - 10} y={Y(y) - 10} text-anchor="end" font-family="Literata Variable, Georgia, serif" font-size="14" fill="var(--ink)">{txt}</text></>)}
+  </svg>
+  <figcaption><slot /></figcaption>
+</figure>

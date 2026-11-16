@@ -1,0 +1,27 @@
+---
+/**
+ * Uranus, Neptune et les orbites calculées par Le Verrier et Adams (redessiné d’après CNRS).
+ * Positions de 1800 à 1850 calculées sur des orbites circulaires (longitudes moyennes J2000) ; orbites de Le Verrier
+ * (a = 36,15 ua, e = 0,108, périhélie à 285°) et d’Adams (a = 37,25 ua, e = 0,121, périhélie à 299°).
+ */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, point2D, type P2 } from '../../lib/projection';
+const S: P2 = [290, 225], k = 4.7;
+const xy = (r: number, lon: number): P2 => [S[0] + r * k * Math.cos((lon * Math.PI) / 180), S[1] - r * k * Math.sin((lon * Math.PI) / 180)];
+const lonU = (t: number) => 313.232 + 4.284669983 * (t - 2000), lonN = (t: number) => 304.88 + 2.184862002 * (t - 2000);
+const conique = (a: number, e: number, w: number) => { const p: P2[] = []; for (let l = 0; l <= 360; l += 3) p.push(xy((a * (1 - e * e)) / (1 + e * Math.cos(((l - w) * Math.PI) / 180)), l)); return chemin(p, true); };
+let s = trait2D([S[0] - 210, S[1]], [S[0] + 210, S[1]], { couleur: 'var(--rule)', epaisseur: 0.8 }) + trait2D([S[0], 15], [S[0], 435], { couleur: 'var(--rule)', epaisseur: 0.8 });
+s += `<path d="${conique(36.15, 0.1076, 284.75)}" fill="none" stroke="var(--ko)" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+s += `<path d="${conique(37.25, 0.1206, 299.2)}" fill="none" stroke="var(--brass)" stroke-width="1.4" stroke-dasharray="2 4"/>`;
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="${30.07 * k}" fill="none" stroke="var(--orbit)" stroke-width="2"/>`;
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="${19.19 * k}" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`;
+for (let t = 1800; t <= 1850; t += 10) {
+  const u = xy(19.19, lonU(t)), n = xy(30.07, lonN(t));
+  s += point2D(u, 4) + texte2D(u, String(t), { dx: -14, dy: -8, taille: 11.5 });
+  s += point2D(n, 4, 'var(--orbit)') + texte2D(n, String(t), { dx: 8, dy: 4, taille: 11.5, couleur: 'var(--orbit)' });
+}
+s += `<circle cx="${S[0]}" cy="${S[1]}" r="7" fill="var(--sun)" stroke="var(--ink)"/>`;
+const leg: [string, string, string][] = [['var(--ink)', '', 'orbite d’Uranus'], ['var(--orbit)', '', 'orbite réelle de Neptune'], ['var(--ko)', '6 4', 'orbite calculée par Le Verrier'], ['var(--brass)', '2 4', 'orbite calculée par Adams']];
+leg.forEach(([c, d, n], i) => { const y = 380 + i * 18; s += trait2D([440, y], [470, y], { couleur: c, epaisseur: 2, tirets: d || undefined }) + texte2D([476, y + 4], n, { taille: 12 }); });
+---
+<Figure titre="Positions d’Uranus et de Neptune de 1800 à 1850, et orbites de la planète inconnue calculées par Le Verrier et par Adams" largeur={640} hauteur={450} svg={s}><slot /></Figure>

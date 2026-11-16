@@ -1,0 +1,18 @@
+---
+/** Tableau des mois d’un calendrier. */
+import { HIJRI, INDIEN } from '../lib/calendriers';
+interface Props { calendrier: 'musulman' | 'israelite' | 'indien' }
+const { calendrier } = Astro.props;
+const tables = {
+  musulman: { entetes: ['', 'Mois', 'Jours'], lignes: HIJRI.map((n, i) => [i + 1, n, i === 11 ? '29 ou 30' : i % 2 ? '29' : '30']) },
+  israelite: { entetes: ['', 'Mois', 'Jours'], lignes: [[1, 'Tisseri', '30'], [2, 'Hesvan', '29 ou 30'], [3, 'Kislev', '29 ou 30'], [4, 'Tébeth', '29'], [5, 'Schébat', '30'], [6, 'Adar', '29 ou 30'], ['–', 'Véadar (années embolismiques)', '29'], [7, 'Nissan', '30'], [8, 'Iyar', '29'], [9, 'Sivan', '30'], [10, 'Tamouz', '29'], [11, 'Ab', '30'], [12, 'Elloul', '29']] },
+  indien: { entetes: ['', 'Mois', 'Jours', 'Début (grégorien)'], lignes: INDIEN.map((n, i) => [i + 1, n, i === 0 ? '30 ou 31*' : i < 6 ? '31' : '30', ['22 mars*', '21 avril', '22 mai', '22 juin', '23 juillet', '23 août', '23 septembre', '23 octobre', '22 novembre', '22 décembre', '21 janvier', '20 février'][i]]) },
+}[calendrier];
+---
+<div class="table-wrap">
+  <table class="compact">
+    {calendrier === 'indien' && <caption>* 31 jours et début le 21 mars les années bissextiles.</caption>}
+    <thead><tr>{tables.entetes.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+    <tbody>{tables.lignes.map((l) => <tr>{l.map((c) => <td>{c}</td>)}</tr>)}</tbody>
+  </table>
+</div>

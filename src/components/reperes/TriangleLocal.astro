@@ -1,0 +1,38 @@
+---
+/** Triangle sphérique local : pôle céleste P, zénith Z et astre A (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, add, dot, slerp, portions, type V3 } from '../../lib/projection';
+// Repère du monde : X vers l’ouest, Y vers le sud, Z vers le zénith.
+const R = Math.PI / 180, phi = 48 * R;
+const v = new Vue(300, 318, 240, 14, 20);
+const [g, dr] = v.limbe([0, 0, 1]);
+const O: V3 = [0, 0, 0], Z: V3 = [0, 0, 1], S: V3 = [0, 1, 0], N: V3 = [0, -1, 0], W: V3 = [1, 0, 0];
+const P: V3 = [0, -Math.cos(phi), Math.sin(phi)];
+const a = 64 * R, h = 42 * R;
+const A: V3 = [Math.cos(h) * Math.sin(a), Math.cos(h) * Math.cos(a), Math.sin(h)];
+const M = unit([A[0], A[1], 0]), Mp = unit(add(A, mul(P, -dot(A, P))));
+const rouge = { couleur: 'var(--ko)', epaisseur: 2.2 };
+const T = (p: V3, s: string, o: object = {}) => v.texte(p, s, { taille: 16, ...o });
+let s = `<path d="M${v.cx - v.R},${v.cy} A${v.R},${v.R} 0 0 1 ${v.cx + v.R},${v.cy}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+s += v.cercle(Z, 0, { epaisseur: 1.5 });
+s += v.ligne(g, dr, { tirets: '5 4', epaisseur: 0.8 }) + v.point(N, 3.5) + v.point(S, 3.5) + v.point(W, 3.5);
+s += v.ligne(O, mul(Z, 1.25), { tirets: '5 4', epaisseur: 1, fleche: 'fin' }) + v.ligne(O, mul(P, 1.32), { tirets: '5 4', epaisseur: 1, fleche: 'fin' });
+s += v.arc(N, Z, { epaisseur: 1.5 }) + v.arc(Z, S, { epaisseur: 1.5 });
+for (const p of portions(v.pointsCercle(P, 0, 0, 360, 360), (q) => q[2] >= 0)) s += v.courbe(p, { epaisseur: 1.5 });
+s += v.arc(Z, P, rouge) + v.arc(P, A, rouge) + v.arc(Z, A, rouge);
+s += v.arc(A, M, { couleur: 'var(--orbit)', epaisseur: 2.2 }) + v.arc(A, Mp, { couleur: 'var(--ok)', epaisseur: 2.2 });
+s += v.angle(Z, P, A, 0.1) + v.angle(Z, A, S, 0.15) + v.angle(P, Z, A, 0.12) + v.angle(A, Z, P, 0.12);
+s += v.etoile(A, 8) + v.point(Z, 3.5) + v.point(P, 3.5) + v.point(M, 3.5) + v.point(Mp, 3.5);
+s += T(Z, 'Z', { dy: -10, ancre: 'middle' }) + T(P, 'P', { dx: -18, dy: 4 }) + T(A, 'A', { dx: 10, dy: -2 });
+s += T(mul(Z, 1.25), 'zénith', { dx: 8, dy: 4, taille: 14 }) + T(mul(P, 1.32), 'pôle céleste nord', { dx: 10, dy: -2, taille: 14 });
+s += T(N, 'nord', { dx: -8, dy: 5, ancre: 'end', taille: 14 }) + T(S, 'sud', { dx: 8, dy: 5, taille: 14 }) + T(W, 'ouest', { dy: 22, ancre: 'middle', taille: 14 });
+s += T(M, 'M', { dy: 22, ancre: 'middle' }) + T(Mp, 'M′', { dx: 8, dy: 14 });
+s += T(slerp(Z, P, 0.5), 'π/2 − φ', { dy: -10, ancre: 'middle', couleur: 'var(--ko)', taille: 15 });
+s += T(slerp(P, A, 0.5), 'π/2 − δ', { dx: -4, dy: -8, ancre: 'end', couleur: 'var(--ko)', taille: 15 });
+s += T(slerp(Z, A, 0.5), 'z = π/2 − h', { dx: 10, dy: 0, couleur: 'var(--ko)', taille: 15 });
+s += T(slerp(A, M, 0.5), 'h', { dx: -14, dy: 4, couleur: 'var(--orbit)', italique: true }) + T(slerp(A, Mp, 0.5), 'δ', { dx: 6, dy: -4, couleur: 'var(--ok)' });
+s += v.texte(v.dansAngle(Z, P, A, 0.2), 'π − a', { ancre: 'middle', dy: 18, taille: 13 }) + v.texte(v.dansAngle(Z, A, S, 0.24), 'a', { ancre: 'middle', dy: 4, italique: true, taille: 15 });
+s += v.texte(v.dansAngle(P, Z, A, 0.2), 'H', { ancre: 'middle', dy: 6, italique: true, taille: 15 }) + v.texte(v.dansAngle(A, Z, P, 0.2), 'S', { ancre: 'middle', dy: 6, italique: true, taille: 15 });
+s += T(slerp(W, S, 0.35), 'horizon', { dy: 22, taille: 14 }) + T(slerp(Z, S, 0.72), 'méridien', { dx: 12, taille: 14, rotation: 52 }) + T(Mp, 'équateur', { dx: 16, dy: -30, taille: 14, rotation: -55 });
+---
+<Figure titre="Triangle sphérique local formé par le pôle céleste P, le zénith Z et l’astre A : ses côtés valent π/2 − φ, π/2 − δ et la distance zénithale z ; ses angles sont l’angle horaire H, π − a et l’angle à l’astre S" largeur={600} hauteur={440} svg={s}><slot /></Figure>

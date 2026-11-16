@@ -1,0 +1,37 @@
+---
+/** Repère local (alt-azimutal) : azimut a compté depuis le sud vers l’ouest, hauteur h et distance zénithale z (redessiné d’après ASM, P. Rocher). */
+import Figure from './Figure.astro';
+import { Vue, mul, unit, slerp, comb, type V3 } from '../../lib/projection';
+// Repère du monde : X vers l’ouest, Y vers le sud, Z vers le zénith ; latitude 45°.
+const R = Math.PI / 180, phi = 45 * R;
+const v = new Vue(300, 275, 190, 22, 14);
+const O: V3 = [0, 0, 0], W: V3 = [1, 0, 0], E: V3 = [-1, 0, 0], S: V3 = [0, 1, 0], N: V3 = [0, -1, 0], Z: V3 = [0, 0, 1];
+const P: V3 = [0, -Math.cos(phi), Math.sin(phi)], Q: V3 = [0, Math.sin(phi), Math.cos(phi)];
+const a = 36 * R, h = 34 * R;
+const astre: V3 = [Math.cos(h) * Math.sin(a), Math.cos(h) * Math.cos(a), Math.sin(h)], pied = unit([astre[0], astre[1], 0]);
+const T = (p: V3, s: string, o: object = {}) => v.texte(p, s, { taille: 16, ...o });
+let s = v.contour();
+s += v.cercle(Z, 0, { epaisseur: 1.3 }) + v.cercle(P, 0, { epaisseur: 1, couleur: 'var(--ink-soft)' }) + v.cercle(W, 0, { epaisseur: 1 });
+s += v.arc(Z, pied, { epaisseur: 1 });
+s += v.ligne(O, mul(Z, 1.3), { fleche: 'fin', epaisseur: 1.3 }) + v.ligne(O, mul(S, 1.45), { fleche: 'fin', epaisseur: 1.3 }) + v.ligne(O, mul(W, 1.45), { fleche: 'fin', epaisseur: 1.3 });
+s += v.ligne(O, mul(P, 1.38), { fleche: 'fin', epaisseur: 1.1 }) + v.ligne(O, mul(Q, 1.3), { fleche: 'fin', epaisseur: 1.1 });
+s += v.ligne(O, E, { tirets: '5 4', epaisseur: 1 }) + v.ligne(O, N, { tirets: '5 4', epaisseur: 1 });
+s += v.ligne(O, astre, { epaisseur: 1.1, couleur: 'var(--ko)' }) + v.ligne(O, pied, { epaisseur: 1.1, couleur: 'var(--orbit)' });
+s += v.arc(S, pied, { couleur: 'var(--orbit)', epaisseur: 2.4, fleche: 'fin' });
+s += v.arc(pied, astre, { couleur: 'var(--ko)', epaisseur: 2.4, fleche: 'fin' });
+s += v.arc(Z, astre, { couleur: 'var(--ok)', epaisseur: 2.2, fleche: 'fin' }, 1.04);
+s += v.arc(Z, P, { epaisseur: 1 }, 1.12);
+s += v.point(astre, 4.5) + v.point(Z, 3.5) + v.point(P, 3.2) + v.point(S, 3) + v.point(W, 3) + v.point(E, 3) + v.point(N, 3);
+s += T(mul(Z, 1.3), 'z (zénith)', { dx: 10, dy: 6, italique: true }) + T(mul(P, 1.38), 'z′', { dx: -20, dy: 0, italique: true, taille: 17 }) + T(mul(P, 1.38), 'pôle céleste nord', { dx: 10, dy: -4, taille: 14 });
+s += T(mul(S, 1.45), 'x', { dx: 4, dy: 18, italique: true, taille: 17 }) + T(mul(W, 1.45), 'y', { dx: 8, dy: 8, italique: true, taille: 17 }) + T(mul(Q, 1.3), 'x′', { dx: 6, dy: 4, italique: true, taille: 17 });
+s += T(S, 'sud', { dx: 8, dy: -8, taille: 14 }) + T(N, 'nord', { dx: -8, dy: 4, ancre: 'end', taille: 14 }) + T(W, 'ouest', { dx: -48, dy: 6, taille: 14 }) + T(E, 'est', { dx: -10, dy: -6, ancre: 'end', taille: 14 });
+s += T(slerp(Z, P, 0.5), 'π/2 − φ', { dx: 8, dy: 22, taille: 14 });
+s += T(astre, 'astre', { dx: 8, dy: -6 });
+s += T(slerp(S, pied, 0.5), 'a', { dx: 4, dy: 22, italique: true, couleur: 'var(--orbit)', taille: 18 });
+s += T(slerp(pied, astre, 0.5), 'h', { dx: -18, dy: 4, italique: true, couleur: 'var(--ko)', taille: 18 });
+s += T(slerp(Z, astre, 0.45), 'z', { dx: 8, dy: 0, italique: true, couleur: 'var(--ok)', taille: 18 });
+s += T(slerp(S, W, 0.7), 'plan horizontal', { dx: 0, dy: 24, taille: 14 });
+s += T(comb([Math.cos(2.2), Q], [Math.sin(2.2), W]), 'équateur', { dx: -8, dy: 18, ancre: 'end', taille: 14 });
+s += T(slerp(Z, S, 0.55), 'méridien du lieu', { dx: 14, dy: -6, taille: 14 });
+---
+<Figure titre="Repère local : l’azimut a se compte sur l’horizon depuis le sud vers l’ouest, la hauteur h depuis l’horizon vers le zénith, la distance zénithale z = 90° − h depuis le zénith" largeur={600} hauteur={530} svg={s}><slot /></Figure>

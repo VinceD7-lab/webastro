@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Almanach from '../components/Almanach.astro';
+import { chapitres } from '../data/chapitres';
+import { url } from '../lib/url';
+const premier = chapitres.find((c) => c.slug);
+---
+<BaseLayout title="Accueil">
+  <section class="hero">
+    <svg class="hero-orbits" viewBox="0 0 900 600" aria-hidden="true" fill="none" stroke="var(--rule)">
+      <ellipse cx="450" cy="300" rx="120" ry="116" />
+      <ellipse cx="465" cy="300" rx="215" ry="205" />
+      <ellipse cx="480" cy="300" rx="320" ry="300" stroke-dasharray="2 6" />
+      <ellipse cx="520" cy="300" rx="430" ry="280" stroke="var(--brass)" stroke-opacity=".5" />
+      <circle cx="490" cy="300" r="7" fill="var(--sun)" stroke="none" />
+    </svg>
+    <div class="hero-inner">
+      <div>
+        <p class="source">D’après les ressources libres de l’Observatoire de Paris, collection « Lumières sur l’Univers »</p>
+        <h1>Mécanique céleste, <span>Temps et Calendriers</span></h1>
+        <p class="author">Un cours de Jean-Eudes Arlot</p>
+        <p class="lede">Le Soleil et la Lune rythment nos journées, nos mois et nos années. Ce cours montre comment la mesure du temps et les calendriers découlent de leurs mouvements apparents, puis comment la mécanique céleste explique ce qui se passe réellement, des premières observations jusqu’à la compréhension du système solaire.</p>
+        <div class="actions">
+          <a class="btn" href="#plan">Voir le plan du cours</a>
+          {premier && <a class="btn ghost" href={url(`/cours/${premier.slug}/`)}>Commencer la lecture</a>}
+        </div>
+      </div>
+      <Almanach />
+    </div>
+  </section>
+
+  <section id="plan" class="plan">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Plan du cours</h2>
+        <p>Huit chapitres, du repérage des astres jusqu’aux éphémérides. Les chapitres marqués « à lire ici » sont disponibles sur ce site&#8239;; les autres renvoient vers le site d’origine en attendant leur migration.</p>
+      </div>
+      <div class="prereq">
+        <h3>Prérequis</h3>
+        <ul>
+          <li>Niveau physique de terminale scientifique pour le corps du cours.</li>
+          <li>Niveau licence scientifique pour les parties marquées <span class="tag hist">Histoire</span> et <span class="tag plus">En savoir plus</span>.</li>
+        </ul>
+      </div>
+      <ol class="chapters">
+        {chapitres.map((c) => (
+          <li class={c.slug ? 'local' : undefined}>
+            <a href={c.slug ? url(`/cours/${c.slug}/`) : c.source}>
+              <span class="n">{c.numero}</span>
+              <span class="t">{c.titre}{c.slug && <span class="badge">à lire ici</span>}</span>
+              <span class="d">{c.resume}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--rule)}
+  .hero-orbits{position:absolute;right:-12%;top:50%;transform:translateY(-50%);width:min(900px,120vw);opacity:.5;pointer-events:none}
+  .hero-inner{position:relative;max-width:1180px;margin:0 auto;padding:clamp(3rem,8vw,6.5rem) 1.25rem clamp(3rem,6vw,5rem);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(2rem,5vw,4.5rem);align-items:end}
+  .source{font-size:.95rem;color:var(--ink-soft);margin-bottom:1.4rem}
+  h1{font-size:clamp(2.9rem,7.4vw,5.6rem);font-weight:500;line-height:.98;margin-bottom:1.5rem}
+  h1 span{display:block;font-style:italic;color:var(--brass)}
+  .author{font-size:1.05rem;color:var(--ink-soft);margin-bottom:1.3rem}
+  .lede{max-width:58ch;font-size:1.15rem}
+  .actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+  .plan{padding:clamp(3rem,7vw,5rem) 0}
+  .section-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:2rem}
+  .section-head h2{font-size:clamp(2.1rem,4.5vw,3rem);font-weight:500}
+  .section-head p{margin:0;color:var(--ink-soft);max-width:46ch}
+  .prereq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:2rem;padding:1.4rem 0;margin-bottom:2.2rem;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .prereq h3{font-size:1.5rem}
+  .prereq ul{margin:0;padding-left:1.1rem}
+  .chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:2.5rem}
+  .chapters li{border-top:1px solid var(--rule)}
+  .chapters a{display:grid;grid-template-columns:3rem 1fr;gap:.2rem 1rem;padding:1.1rem .25rem 1.25rem;color:var(--ink);text-decoration:none}
+  .n{grid-row:span 2;font-family:var(--display);font-size:2.3rem;line-height:1;color:var(--brass)}
+  .t{font-family:var(--display);font-size:1.45rem;font-weight:600;line-height:1.15}
+  .d{font-size:.95rem;color:var(--ink-soft);line-height:1.55}
+  .chapters a:hover .t{color:var(--orbit)}
+  .badge{font-family:var(--text);font-size:.72rem;font-weight:400;margin-left:.6rem;padding:.1rem .5rem;border-radius:999px;background:var(--brass);color:var(--bg);vertical-align:middle;white-space:nowrap}
+  @media (max-width:900px){ .hero-inner{grid-template-columns:1fr} .prereq{grid-template-columns:1fr;gap:.8rem} }
+</style>

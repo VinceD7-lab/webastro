@@ -1,0 +1,18 @@
+---
+/** Frise chronologique verticale. */
+interface Props { evenements: { date: string; titre: string; texte: string }[] }
+const { evenements } = Astro.props;
+---
+<ol class="frise">
+  {evenements.map((e) => (
+    <li><span class="when" set:html={e.date} /><span class="what"><b>{e.titre}.</b> <Fragment set:html={e.texte} /></span></li>
+  ))}
+</ol>
+<style>
+  .frise{list-style:none;margin:1.6rem 0;padding:0;border-left:2px solid var(--rule)}
+  .frise li{position:relative;display:grid;grid-template-columns:11rem 1fr;gap:1rem;padding:.55rem 0 .55rem 1.2rem}
+  .frise li::before{content:"";position:absolute;left:-6px;top:1.05rem;width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--brass)}
+  .when{font-size:.92rem;color:var(--brass);font-variant-numeric:tabular-nums}
+  .what{font-size:1rem;line-height:1.55}
+  @media (max-width:640px){ .frise li{grid-template-columns:1fr;gap:0} }
+</style>

@@ -1,0 +1,106 @@
+---
+/**
+ * Lever et coucher d’un astre en un lieu donné, par la méthode de la source : cos H, temps sidéral, conversion en temps
+ * universel, avec le détail des termes de h₀ (réfraction, demi-diamètre, altitude de l’observateur, relief).
+ */
+---
+<div class="sim" data-lever-coucher data-pagefind-ignore>
+  <div class="grille">
+    <label><span>Lieu</span>
+      <select data-lieu>
+        <option value="44.83528,-0.52917" selected>Bordeaux</option><option value="48.8566,2.3522">Paris</option>
+        <option value="43.2965,5.3698">Marseille</option><option value="-33.9249,18.4241">Le Cap</option>
+        <option value="69.6492,18.9553">Tromsø</option><option value="-21.1151,55.5364">Saint-Denis (La Réunion)</option>
+      </select>
+    </label>
+    <label><span>Date</span> <input data-date type="date" value="2002-04-20" /></label>
+    <label><span>Astre</span>
+      <select data-astre>
+        <option value="soleil">Soleil (bord supérieur)</option><option value="sirius" selected>Sirius</option>
+        <option value="vega">Véga</option><option value="betelgeuse">Bételgeuse</option><option value="canopus">Canopus</option>
+      </select>
+    </label>
+    <label><span>Événement</span>
+      <select data-ev><option value="lever">lever</option><option value="coucher" selected>coucher</option></select>
+    </label>
+    <label><span>Réfraction</span>
+      <select data-refr><option value="34">34′ (nautique)</option><option value="36.6">36′36″ (Radau)</option></select>
+    </label>
+    <label><span>Altitude A de l’observateur (m)</span> <input data-alt type="number" min="0" max="9000" step="10" value="0" /></label>
+    <label><span>Relief : hauteur D (m)</span> <input data-d type="number" min="0" max="5000" step="10" value="0" /></label>
+    <label><span>Relief : distance l (km)</span> <input data-l type="number" min="0.1" max="500" step="0.1" value="10" /></label>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-h0>–</b><span>h<sub>0</sub> = P − R − d/2 − η<sub>1</sub> + η<sub>2</sub></span></div>
+    <div><b data-cosh>–</b><span>cos H</span></div>
+    <div><b data-H>–</b><span>angle horaire H</span></div>
+    <div><b data-ut>–</b><span>instant de l’événement (UT)</span></div>
+  </div>
+  <p class="note" data-detail></p>
+  <p class="note">Positions des étoiles : coordonnées J2000, sans correction de précession (erreur de l’ordre de la minute de temps). Pour Sirius, les coordonnées de la date de l’exemple de la source (20 avril 2002) sont utilisées pour l’année 2002. Inutile de viser mieux que la minute : la réfraction réelle à l’horizon est mal connue.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem 1.2rem;font-size:.95rem}
+  .grille label{display:flex;flex-direction:column;gap:.25rem}
+  .grille span{color:var(--ink-soft);font-size:.88rem}
+  input[type=date]{font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.35rem .5rem}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-top:1rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { h0, leverCoucher, leverCoucherSoleil } from '../lib/ephemerides';
+  import { jourJulien, tempsSideralGreenwich, fmtDMS, fmtHMS, mod360 } from '../lib/reperes';
+  import { nbFr as nb } from '../lib/relativite';
+
+  /** α, δ en degrés. */
+  const ETOILES: Record<string, [number, number, string]> = {
+    sirius: [(6 + 45 / 60 + 8.9 / 3600) * 15, -(16 + 42 / 60 + 58 / 3600), 'Sirius'],
+    vega: [(18 + 36 / 60 + 56.3 / 3600) * 15, 38 + 47 / 60 + 1 / 3600, 'Véga'],
+    betelgeuse: [(5 + 55 / 60 + 10.3 / 3600) * 15, 7 + 24 / 60 + 25 / 3600, 'Bételgeuse'],
+    canopus: [(6 + 23 / 60 + 57.1 / 3600) * 15, -(52 + 41 / 60 + 44 / 3600), 'Canopus'],
+  };
+  /** Sirius à la date de l’exemple de la source (20 avril 2002). */
+  const SIRIUS_2002: [number, number] = [(6 + 45 / 60 + 16 / 3600) * 15, -(16 + 43 / 60 + 12 / 3600)];
+
+  document.querySelectorAll<HTMLElement>('[data-lever-coucher]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const champs = ['lieu', 'date', 'astre', 'ev', 'refr', 'alt', 'd', 'l'].map((k) => q<HTMLInputElement>(`[data-${k}]`));
+    const [lieu, date, astre, ev, refr, alt, dd, ll] = champs;
+
+    function maj() {
+      if (!date.value) return;
+      const [phi, L] = lieu.value.split(',').map(Number), soleilChoisi = astre.value === 'soleil', lever = ev.value === 'lever';
+      const [a, m, j] = date.value.split('-').map(Number), jd0 = jourJulien(new Date(Date.UTC(a, m - 1, j)));
+      const t = h0({ refraction: +refr.value, demiDiametre: soleilChoisi ? 16 : 0, parallaxe: 0, altitude: Math.max(0, +alt.value), reliefD: Math.max(0, +dd.value), reliefL: Math.max(0.1, +ll.value) * 1000 });
+      let alpha: number, delta: number, res;
+      if (soleilChoisi) { res = leverCoucherSoleil(jd0, phi, L, t.h0, lever); alpha = res.alpha; delta = res.delta; }
+      else {
+        [alpha, delta] = astre.value === 'sirius' && a === 2002 ? SIRIUS_2002 : ETOILES[astre.value];
+        res = leverCoucher(jd0, alpha, delta, phi, L, t.h0, lever);
+      }
+      q('[data-h0]').textContent = fmtDMS(t.h0, 0, true);
+      q('[data-cosh]').textContent = nb(res.cosH, 5).replace('-', '−');
+      const nom = soleilChoisi ? 'Le Soleil' : ETOILES[astre.value][2];
+      if (res.etat !== 'ok') {
+        q('[data-H]').textContent = '–';
+        q('[data-ut]').textContent = res.etat === 'circumpolaire' ? 'ne se couche pas' : 'ne se lève pas';
+        q('[data-detail]').textContent = `${nom} est ${res.etat === 'circumpolaire' ? 'circumpolaire' : 'toujours sous l’horizon'} ce jour-là en ce lieu : |cos H| > 1.`;
+        return;
+      }
+      q('[data-H]').textContent = `${nb(res.H, 3)}° = ${fmtHMS(res.H / 15)}`;
+      q('[data-ut]').textContent = fmtHMS(res.ut);
+      const T1 = mod360(res.T - L), T0 = tempsSideralGreenwich(jd0);
+      q('[data-detail]').textContent = `Calcul : α = ${fmtHMS(alpha / 15)}, δ = ${fmtDMS(delta, 0, true)} ; temps sidéral local de l’événement T = α ${lever ? '−' : '+'} H = ${fmtHMS(res.T / 15)} ; `
+        + `temps sidéral de Greenwich T1 = ${fmtHMS(T1 / 15)} ; à 0 h UT, T0 = ${fmtHMS(T0 / 15)} ; intervalle sidéral T1 − T0 = ${fmtHMS(mod360(T1 - T0) / 15)}, `
+        + `soit ${fmtHMS(res.ut)} de temps moyen.` + (t.eta1 ? ` Dépression de l’horizon η1 = ${fmtDMS(t.eta1, 0)}.` : '') + (t.eta2 ? ` Relief η2 = ${fmtDMS(t.eta2, 0)}.` : '');
+    }
+    for (const c of champs) c.addEventListener('input', maj);
+    maj();
+  });
+</script>

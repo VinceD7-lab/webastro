@@ -1,0 +1,1083 @@
+---
+title: Introduction à la notion de repère
+slug: reperes
+numero: 1
+resume: La sphère céleste et les systèmes de coordonnées pour situer un astre.
+auteur: Patrick Rocher, Jean-Eudes Arlot et Damien Guillaume
+source: https://media4.obspm.fr/public/ressources_lu/pages_defrepere/introduction-sphere-celeste.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Repli from '../../components/Repli.astro';
+import Quiz from '../../components/Quiz.astro';
+import SimulateurSphereCeleste from '../../components/SimulateurSphereCeleste.astro';
+import SimulateurSoleil from '../../components/SimulateurSoleil.astro';
+import VouteCeleste from '../../components/reperes/VouteCeleste.astro';
+import SphereObservateur from '../../components/reperes/SphereObservateur.astro';
+import Regle from '../../components/reperes/Regle.astro';
+import ReperePlan from '../../components/reperes/ReperePlan.astro';
+import Translation from '../../components/reperes/Translation.astro';
+import Repere3D from '../../components/reperes/Repere3D.astro';
+import RepereCeleste from '../../components/reperes/RepereCeleste.astro';
+import DeuxReperes from '../../components/reperes/DeuxReperes.astro';
+import TriangleSpherique from '../../components/reperes/TriangleSpherique.astro';
+import TrianglePolaire from '../../components/reperes/TrianglePolaire.astro';
+import Precession from '../../components/reperes/Precession.astro';
+import RepereGalactique from '../../components/reperes/RepereGalactique.astro';
+import CoordonneesGeo from '../../components/reperes/CoordonneesGeo.astro';
+import TempsSideral from '../../components/reperes/TempsSideral.astro';
+import CoordonneesHoraires from '../../components/reperes/CoordonneesHoraires.astro';
+import CoordonneesLocales from '../../components/reperes/CoordonneesLocales.astro';
+import TriangleLocal from '../../components/reperes/TriangleLocal.astro';
+import SphereLocale from '../../components/reperes/SphereLocale.astro';
+import CoupeMeridienne from '../../components/reperes/CoupeMeridienne.astro';
+import ZenithDeclinaison from '../../components/reperes/ZenithDeclinaison.astro';
+
+## Introduction
+
+> Comment se repérer dans le ciel ?
+
+Depuis le sol, on voit une voûte constellée de points brillants : les étoiles, et quelques-uns qui se déplacent par rapport aux autres, les planètes. Nous n’avons pas la sensation de bouger nous-mêmes. L’idée d’une Terre immobile au centre de l’Univers s’impose donc naturellement. À la réflexion, les choses sont moins simples.
+
+<VouteCeleste>
+Sous la voûte céleste, rien n’indique que la Terre tourne. Illustration redessinée d’après l’original (ASM, Gilles Bessou).
+</VouteCeleste>
+
+Les étoiles et les planètes ne restent pas fixes sur la voûte céleste. Leurs mouvements apparents ont trois origines :
+
+- la rotation de la Terre sur elle-même, qui produit le **mouvement diurne** ;
+- la révolution de la Terre autour du Soleil, qui produit le **mouvement apparent annuel** du Soleil et des planètes ;
+- le **mouvement propre** des astres, insignifiant pour les étoiles mais régulier et facile à détecter pour les planètes.
+
+L’astronomie de position (l’astrométrie) et la mécanique céleste permettent de démêler ces mouvements qui se superposent. Pour cela, il faut d’abord savoir dire *où* se trouve un astre : c’est le rôle des repères.
+
+## La voûte céleste
+
+### La sphère locale
+
+Notre perception du ciel est celle d’une sphère : étoiles et planètes semblent toutes à la même distance. Notre vision du relief, qui repose sur nos deux yeux, s’arrête à quelques dizaines de mètres. Au-delà, nous ne percevons plus de distances, seulement des angles.
+
+Chacun de nous est donc le centre d’une sphère sur laquelle il voit les corps célestes : la <Terme id="sphere-celeste">sphère céleste</Terme> locale. On y mesure des angles ; c’est ensuite, avec un modèle d’Univers, qu’on en déduit les distances.
+
+Sur la sphère locale, deux angles suffisent à repérer un astre :
+
+- l’**azimut**, mesuré dans le plan de l’<Terme id="horizon">horizon</Terme>, de 0° à 360° à partir du sud et positivement vers l’ouest. Le sud a donc un azimut de 0°, l’ouest de 90°, le nord de 180° et le nord-ouest de 135°. Attention : les géomètres comptent l’azimut à partir du nord, pas les astronomes ;
+- la **hauteur**, mesurée verticalement depuis l’horizon (0°) jusqu’au <Terme id="zenith">zénith</Terme> (90°), le point situé à la verticale de l’observateur.
+
+<SphereObservateur>
+La sphère céleste locale, définie par le plan de l’horizon H et le zénith Z ; l’observateur est en O. Les points de même hauteur forment un petit cercle, l’<Terme id="almicantarat">almicantarat</Terme> (a). Schéma redessiné d’après l’original (ASM, J.-E. Arlot et D. Guillaume).
+</SphereObservateur>
+
+Ce repère dépend de l’observateur et change d’un lieu à l’autre. Comment des observateurs situés en des endroits différents peuvent-ils alors comparer leurs mesures, alors qu’ils ne voient pas les mêmes étoiles ? Il faut construire un repère commun, avec un plan de référence (l’équateur, on verra pourquoi) et un méridien origine.
+
+### Exercice : des directions communes
+
+**1.** Chaque observateur est au centre de sa sphère locale, définie par le zénith du lieu, le plan horizontal et la direction nord-sud. Comment des observateurs situés en des lieux différents peuvent-ils comparer leurs mesures de position ? Quelles directions fixes sont communes à tous ?
+
+<Repli titre="Indice">
+Cherchez des directions qui ne dépendent pas du lieu d’observation.
+</Repli>
+
+<Repli>
+Le zénith et l’horizon dépendent du lieu, mais l’axe de rotation de la Terre est le même pour tous : sa direction sur le ciel définit le <Terme id="pole-celeste">pôle céleste</Terme>, et le plan qui lui est perpendiculaire définit l’<Terme id="equateur-celeste">équateur céleste</Terme>. Il reste à choisir une origine sur l’équateur : ce sera le <Terme id="point-vernal">point vernal</Terme>, lié au mouvement annuel du Soleil.
+</Repli>
+
+### Le mouvement diurne
+
+Toutes les étoiles semblent tourner, sur de petits cercles, autour d’un point proche de l’étoile Polaire. C’est l’effet de la rotation de la Terre. L’équateur terrestre, projeté sur le ciel, dessine un équateur céleste facile à repérer, d’où le **repère céleste équatorial**. Dans ce repère, tous les corps célestes sauf la Lune ont des coordonnées qui changent à peine au cours d’une nuit et très peu d’un jour à l’autre.
+
+Repérée par rapport à une direction fixe (une étoile), la rotation complète de la Terre (360°) dure 23 h 56 min 4 s. Repérée par rapport au Soleil, elle dure 24 h : pendant un tour, la Terre a avancé sur son orbite et doit tourner un peu plus pour ramener le Soleil dans la même direction.
+
+### Le mouvement annuel
+
+Au cours de l’année, les étoiles restent fixes les unes par rapport aux autres. Mais le Soleil, la Lune et les planètes se déplacent parmi elles, dans une bande du ciel centrée sur l’<Terme id="ecliptique">écliptique</Terme>. Le plan de l’écliptique sert à définir le **repère céleste écliptique**.
+
+## Les repères, outils mathématiques
+
+### La notion de repère cartésien
+
+Nous observons dans un espace à trois dimensions : pour étudier un mouvement, il faut positionner les corps dans un repère de dimension trois. Cette partie rappelle les notions de repère et les méthodes pour passer d’un repère à un autre. On laisse de côté l’espace-temps de la relativité, où le temps devient une quatrième dimension.
+
+<Regle>
+Axe gradué. L’unité de mesure est la longueur du vecteur $\vec{i}$, appelé pour cela vecteur unitaire. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</Regle>
+
+Sur cet axe, $\overrightarrow{OA} = 3{,}8\,\vec{i}$ et $\overrightarrow{OB} = -2{,}5\,\vec{i}$. Chaque point de l’axe a une coordonnée et, inversement, chaque nombre réel correspond à un point. Cette bijection entre la droite et l’ensemble des réels est ce qui rend possible la géométrie analytique.
+
+<Encadre type="retenir" titre="Nota bene">
+En mathématiques, le mot « espace » n’a pas son sens courant : le plan est un espace de dimension 2, l’espace usuel un espace de dimension 3. Le langage courant n’a pas de mot pour les espaces de dimension 4 ou plus.
+</Encadre>
+
+### Se positionner dans le plan
+
+Pour se repérer dans le plan, il faut un repère de même dimension : deux vecteurs $\vec{e}_1$ et $\vec{e}_2$ de même origine O, non colinéaires (les droites qui les portent ne sont ni confondues ni parallèles).
+
+On projette le point A sur l’axe de $\vec{e}_1$ parallèlement à $\vec{e}_2$, et sur l’axe de $\vec{e}_2$ parallèlement à $\vec{e}_1$. Les coordonnées $u^1$ et $u^2$ de A sont les abscisses de ces projections :
+
+$$
+\overrightarrow{OA} = u^1\,\vec{e}_1 + u^2\,\vec{e}_2
+$$
+
+Les $u^i$ sont les coordonnées contravariantes du vecteur (ou projections parallèles), souvent notées $(x, y)$.
+
+<ReperePlan type="quelconque">
+Repère direct quelconque. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</ReperePlan>
+
+Le repère est **orthogonal** si les deux vecteurs sont perpendiculaires, **normé** s’ils ont la même longueur, **orthonormé** s’ils sont à la fois perpendiculaires et de même longueur. L’axe Ox est l’axe des abscisses, Oy celui des ordonnées. Si l’on passe de Ox à Oy par une rotation dans le sens inverse des aiguilles d’une montre (sens trigonométrique, ou <Terme id="sens-direct">sens direct</Terme>), le repère est **direct** ; sinon, il est indirect.
+
+<ReperePlan type="norme">
+Repère normé : les deux vecteurs ont la même longueur mais ne sont pas perpendiculaires.
+</ReperePlan>
+
+<ReperePlan type="orthonorme">
+Repère orthonormé : les deux vecteurs sont perpendiculaires et de même longueur.
+</ReperePlan>
+
+### Translation et rotation de repère
+
+On trace un repère cartésien chaque fois qu’on dessine un graphique, et il est souvent utile de le déplacer sans changer l’orientation de ses axes : c’est une **translation**. Pour un point A du plan, deux cas se présentent :
+
+- A est lié au repère : il se déplace avec lui et garde les mêmes coordonnées ;
+- A n’est pas lié au repère : il reste en place, et ses coordonnées dans le repère déplacé changent.
+
+<Translation variante={1}>
+Point A lié au repère translaté : ses coordonnées ne changent pas. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</Translation>
+
+<Translation variante={2}>
+Point A non lié au repère translaté : ses coordonnées deviennent $u'^1$ et $u'^2$.
+</Translation>
+
+On peut aussi faire tourner le repère autour de son origine O. Là encore, les points liés au repère tournent avec lui et gardent leurs coordonnées ; les autres restent en place et leurs coordonnées changent.
+
+### Coordonnées polaires
+
+Un point A du plan peut aussi être repéré par sa distance $r = \lVert\overrightarrow{OA}\rVert$ à l’origine et par l’angle $\theta$ entre la direction OA et l’un des axes, en général Ox. L’angle est compté positivement dans le sens direct. On passe des coordonnées cartésiennes $(x, y)$ aux coordonnées polaires $(r, \theta)$ par :
+
+$$
+r = \sqrt{x^2 + y^2}, \qquad \sin\theta = \frac{y}{r}, \qquad \cos\theta = \frac{x}{r}
+$$
+
+Les deux dernières relations peuvent être remplacées par $\tan\theta = y/x$, mais il faut alors choisir le bon angle $\theta$ selon les signes de $x$ et de $y$. Inversement :
+
+$$
+x = r\cos\theta, \qquad y = r\sin\theta
+$$
+
+### Exercice : coordonnées polaires dans le plan
+
+**1.** Dans un repère orthonormé, le point A a pour coordonnées cartésiennes $x = -3$ et $y = 4$. Calculez ses coordonnées polaires, l’angle étant donné en degrés.
+
+<Repli titre="Indice">
+Utilisez les formules du cours, et attention à l’unité d’angle de votre calculatrice.
+</Repli>
+
+<Repli>
+$r = \sqrt{9 + 16} = 5$. Puis $\cos\theta = -3/5 = -0{,}6$ et $\sin\theta = 4/5 = 0{,}8$ : le cosinus est négatif et le sinus positif, donc $\theta$ est dans le deuxième quadrant. $\theta = 126{,}87°$, soit 126° 52′ 12″.
+
+Piège classique : la calculatrice donne $\arctan(4/(-3)) = -53{,}13°$, qui est le mauvais angle. Il faut lui ajouter 180°.
+</Repli>
+
+### Se positionner dans l’espace
+
+Pour se repérer dans l’espace, on ajoute une troisième dimension. Tout ce qui précède se transpose : la figure montre un repère orthonormé direct, dont le troisième axe est Oz.
+
+<Repere3D>
+Repère orthonormé direct. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</Repere3D>
+
+Le point A se projette orthogonalement en A′ sur le plan Oxy, puis A′ se projette en $A_X$ sur Ox et en $A_Y$ sur Oy ; A se projette aussi en $A_Z$ sur Oz. Les coordonnées $u^1$, $u^2$, $u^3$ de A, souvent notées $(x, y, z)$, vérifient :
+
+$$
+\overrightarrow{OA} = u^1\,\vec{e}_1 + u^2\,\vec{e}_2 + u^3\,\vec{e}_3
+$$
+
+<Encadre type="plus" titre="Coordonnées polaires dans l’espace">
+On peut remplacer $(x, y, z)$ par deux angles et une distance : $\theta$, angle entre la projection OA′ et l’axe Ox ; $\varphi$, angle entre OA et sa projection OA′ ; et $r$, distance de O à A. On passe des coordonnées polaires aux coordonnées cartésiennes par :
+
+$$
+x = r\cos\varphi\,\cos\theta, \qquad y = r\cos\varphi\,\sin\theta, \qquad z = r\sin\varphi
+$$
+
+et inversement :
+
+$$
+r = \sqrt{x^2 + y^2 + z^2}, \qquad \varphi = \arcsin\frac{z}{r}, \qquad \cos\theta = \frac{x}{\sqrt{x^2 + y^2}}, \qquad \sin\theta = \frac{y}{\sqrt{x^2 + y^2}}
+$$
+</Encadre>
+
+### Exercice : coordonnées polaires dans l’espace
+
+**1.** Le 18 janvier, les coordonnées cartésiennes géocentriques de la Lune sont $x = -245\,622$ km, $y = -247\,804$ km et $z = -122\,804$ km. Calculez ses coordonnées polaires $(\theta, \varphi, r)$, les angles étant donnés en degrés, minutes et secondes d’arc.
+
+<Repli titre="Indice">
+Faites attention aux signes de $x$ et de $y$ pour déterminer le bon angle $\theta$.
+</Repli>
+
+<Repli>
+$r = \sqrt{x^2 + y^2 + z^2} \approx 369\,889$ km.
+
+$\varphi = \arcsin(z/r) = \arcsin(-0{,}332\,0) = -19{,}390\,4°$, soit −19° 23′ 25″.
+
+$x$ et $y$ sont tous deux négatifs : $\theta$ est dans le troisième quadrant. $\arctan(y/x) = 45{,}253°$, d’où $\theta = 180° + 45{,}253° = 225{,}253\,4°$, soit 225° 15′ 12″.
+</Repli>
+
+### Les unités angulaires
+
+Le poids des traditions est fort : la normalisation des unités n’est pas toujours suivie d’effet. Les pays anglo-saxons utilisent encore le mille plus souvent que le mètre, et les cartographes français mesurent parfois latitudes et longitudes en grades. Les angles plans se mesurent avec quatre systèmes d’unités.
+
+- **Le <Terme id="radian">radian</Terme>**, avec ses fractions décimales. C’est l’unité à utiliser dans les calculs : quand on dérive ou intègre une fonction trigonométrique, l’angle doit être en radians.
+- **Le degré sexagésimal**, très ancien, hérité d’une époque où l’on maîtrisait mal les fractions. Un degré vaut 60 minutes (′), une minute 60 secondes (″). Les anciens divisaient encore la seconde en 60 tierces (‴), puis en quartes : les symboles ′, ″, ‴ correspondent aux chiffres romains I, II, III mis en exposant. On utilise aujourd’hui les fractions décimales de la seconde.
+- **L’heure sexagésimale** : une heure vaut 60 minutes (min), une minute 60 secondes (s), puis on passe aux fractions décimales. Elle reste très utilisée en astronomie. Attention, c’est ici une unité d’angle, pas de temps.
+- **Le grade centésimal** : un grade vaut 100 minutes centésimales, une minute 100 secondes centésimales. Avantage : 23 gr 35′ 25″ s’écrit directement 23,3525 gr, et 0,233525 est le rapport de l’angle à l’angle droit.
+
+Ces unités sont liées par :
+
+$$
+\pi \text{ rad} = 180° = 12 \text{ h} = 200 \text{ gr}
+$$
+
+### Exercice : conversion des unités
+
+**1.** Convertissez un radian dans chacune des autres unités, en utilisant leurs subdivisions (par exemple h, min et s).
+
+<Repli>
+- $1 \text{ rad} = 180°/\pi = 57{,}295\,78°$, soit 57° 17′ 44,8″ ;
+- $1 \text{ rad} = 12 \text{ h}/\pi = 3{,}819\,72$ h, soit 3 h 49 min 11,0 s ;
+- $1 \text{ rad} = 200 \text{ gr}/\pi = 63{,}661\,98$ gr, soit 63 gr 66′ 19,8″ (minutes et secondes centésimales).
+</Repli>
+
+## Les repères fixes de l’astronomie
+
+Voici les repères astronomiques classiques. Depuis quelques années, la précision croissante des observations a imposé de nouveaux repères célestes et terrestres, présentés brièvement à la fin du chapitre.
+
+### Les repères quasi fixes
+
+Historiquement, deux plans fondamentaux se sont imposés.
+
+- **Le plan de l’écliptique**, plan de l’orbite apparente du Soleil vue de la Terre ; plus rigoureusement, plan de l’orbite du barycentre Terre-Lune. Son nom vient des éclipses : elles ne sont possibles que lorsque la Lune est proche de ce plan. Le Soleil, la Lune et les planètes en restent toujours très proches, et le repère écliptique sert à étudier le mouvement des objets du système solaire.
+- **Le plan de l’équateur terrestre**, qui définit le repère céleste équatorial, repère principal des astrophysiciens. Les étoiles y ont des coordonnées fixes.
+
+Ces plans n’étant pas tout à fait fixes, chaque repère est défini à un instant donné, par exemple le 1er janvier 2000 à 12 h, l’**époque J2000**. Et comme l’astronome ne mesure que des angles, on se limite souvent à des coordonnées polaires sur une sphère de rayon unité, la sphère céleste.
+
+### Le repère écliptique
+
+Le repère écliptique J2000 a pour plan de base Oxy l’orbite osculatrice du barycentre Terre-Lune autour du Soleil. L’axe Oz, perpendiculaire à ce plan et appelé **pôle de l’écliptique**, est orienté de sorte que le barycentre tourne dans le sens direct. Les deux coordonnées polaires sont :
+
+- la **longitude écliptique** $\lambda$, de 0° à 360° à partir de l’axe Ox ;
+- la **latitude écliptique** $\beta$, de −90° à +90° à partir du plan de l’écliptique.
+
+Les grands cercles passant par les deux pôles de l’écliptique sont les méridiens écliptiques ; les petits cercles parallèles à l’écliptique sont les parallèles écliptiques.
+
+<RepereCeleste plan="ecliptique">
+Repère écliptique. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</RepereCeleste>
+
+### Exercice : observer les planètes
+
+**1.** Toutes les planètes sont, comme le Soleil, dans l’écliptique ou très près de lui. Dans l’hémisphère nord, quand peut-on observer les planètes extérieures (Mars, Jupiter, Saturne, Uranus, Neptune) au plus haut dans le ciel nocturne ?
+
+<Repli titre="Indice">
+Dans l’hémisphère nord, le Soleil culmine au plus haut au solstice d’été et au plus bas au solstice d’hiver. Le Soleil est toujours sur l’écliptique, et l’écliptique est toujours présent dans le ciel, de jour comme de nuit.
+</Repli>
+
+<Repli>
+Une planète extérieure est le mieux placée vers minuit lorsqu’elle est à l’opposition, c’est-à-dire du côté opposé au Soleil sur l’écliptique. La moitié de l’écliptique visible de nuit est celle que le Soleil occupera six mois plus tard. En hiver, la nuit montre donc la partie de l’écliptique où se trouve le Soleil en été, la plus haute dans le ciel. Les oppositions de décembre-janvier sont ainsi les plus favorables : la planète culmine aussi haut que le Soleil en juin. À l’inverse, une opposition en été la laisse basse sur l’horizon.
+</Repli>
+
+### Le repère équatorial
+
+Le repère équatorial J2000 a pour plan de base Oxy l’équateur céleste, plan parallèle à l’équateur terrestre passant par le centre du repère. L’axe Oz, appelé **pôle céleste nord**, est orienté de sorte que la Terre tourne autour de lui dans le sens direct, d’ouest en est. Les deux coordonnées polaires sont :
+
+- l’<Terme id="ascension-droite">ascension droite</Terme> $\alpha$, comptée en heures de 0 h à 24 h à partir de l’axe Ox ;
+- la <Terme id="declinaison">déclinaison</Terme> $\delta$, comptée de −90° à +90° à partir de l’équateur céleste.
+
+On utilise parfois, à la place de la déclinaison, la **distance polaire** $p$, angle compté de 0° à 180° depuis le pôle céleste nord.
+
+<RepereCeleste plan="equateur">
+Repère céleste équatorial. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</RepereCeleste>
+
+<Encadre type="def" titre="L’origine commune : le point vernal">
+L’axe de rotation de la Terre n’est pas perpendiculaire à son orbite : l’équateur et l’écliptique ne sont pas parallèles. Leur intersection, la **droite des équinoxes**, fournit un axe Ox commun aux deux repères. On l’oriente vers l’équinoxe où le Soleil passe des déclinaisons négatives aux déclinaisons positives : l’**équinoxe de printemps**, ou <Terme id="point-vernal">point vernal</Terme>, noté γ (lettre proche du symbole du Bélier ♈). La direction opposée est l’équinoxe d’automne, notée Ω (proche du symbole de la Balance ♎).
+</Encadre>
+
+La direction de l’équinoxe de printemps est unique ; elle ne dépend pas de l’hémisphère, contrairement à ce qu’on lit parfois. C’est le début de la saison qui change : quand le Soleil passe au point vernal, le printemps commence dans l’hémisphère nord et l’automne dans l’hémisphère sud.
+
+### Changement de repère
+
+Les deux repères ont le même axe Ox : on passe de l’un à l’autre par une rotation autour de cet axe. L’angle de rotation est l’angle entre l’écliptique et l’équateur, l’<Terme id="obliquite">obliquité de l’écliptique</Terme> $\varepsilon$, proche de 23° 26′ 21″ à l’époque J2000. C’est aussi l’angle entre l’axe de rotation de la Terre et le pôle de l’écliptique.
+
+<DeuxReperes>
+Les repères écliptique et équatorial. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</DeuxReperes>
+
+Quelques définitions complémentaires :
+
+- le **colure des équinoxes** est le grand cercle qui passe par les pôles célestes et les équinoxes ;
+- la **droite des solstices** est la droite du plan de l’écliptique perpendiculaire à la droite des équinoxes ;
+- le **colure des solstices** est le grand cercle qui passe par les pôles célestes et les points solsticiaux ; il passe aussi par les pôles de l’écliptique.
+
+Les deux colures découpent l’équateur et l’écliptique en quatre secteurs de 90°. Selon l’origine du repère, on parle de coordonnées **barycentriques** (barycentre du système solaire), **héliocentriques** (centre du Soleil), **géocentriques** (centre de la Terre), **topocentriques** (lieu à la surface de la Terre) ou **sélénocentriques** (centre de la Lune).
+
+### Formulaire de trigonométrie sphérique
+
+<span class="tag plus">Niveau licence</span>
+
+Les changements de repère en coordonnées polaires font appel à la trigonométrie sphérique. Un triangle sphérique ABC est formé de trois arcs de grands cercles. Il a trois angles aux sommets A, B, C et trois côtés a, b, c, qui sont eux aussi des angles : les longueurs angulaires des arcs.
+
+<TriangleSpherique>
+Triangle sphérique. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</TriangleSpherique>
+
+Entre ces six angles, on a les relations suivantes :
+
+$$
+\frac{\sin a}{\sin A} = \frac{\sin b}{\sin B} = \frac{\sin c}{\sin C}
+$$
+
+$$
+\begin{aligned}
+\cos a &= \cos b\,\cos c + \sin b\,\sin c\,\cos A \\
+\cos b &= \cos a\,\cos c + \sin a\,\sin c\,\cos B \\
+\cos c &= \cos a\,\cos b + \sin a\,\sin b\,\cos C
+\end{aligned}
+$$
+
+<Repli titre="Les six formules des « cinq éléments »">
+$$
+\begin{aligned}
+\sin a\,\cos B &= \cos b\,\sin c - \sin b\,\cos c\,\cos A \\
+\sin a\,\cos C &= \cos c\,\sin b - \sin c\,\cos b\,\cos A \\
+\sin b\,\cos A &= \cos a\,\sin c - \sin a\,\cos c\,\cos B \\
+\sin b\,\cos C &= \cos c\,\sin a - \sin c\,\cos a\,\cos B \\
+\sin c\,\cos A &= \cos a\,\sin b - \sin a\,\cos b\,\cos C \\
+\sin c\,\cos B &= \cos b\,\sin a - \sin b\,\cos a\,\cos C
+\end{aligned}
+$$
+</Repli>
+
+Inutile de les apprendre par cœur : il suffit de savoir qu’elles existent et de s’y reporter au moment du calcul.
+
+### Relations entre coordonnées écliptiques et équatoriales
+
+<span class="tag plus">Niveau licence</span>
+
+Traçons les deux repères sur la sphère céleste, avec un astre quelconque A. Le pôle de l’écliptique $P_E$, le pôle céleste nord P et l’astre A forment un triangle sphérique dont on connaît cinq des six éléments :
+
+- l’arc $P_E P$ vaut l’obliquité $\varepsilon$ ;
+- l’arc $P_E A$ vaut $\pi/2 - \beta$, complément de la latitude écliptique ;
+- l’arc $PA$ vaut $\pi/2 - \delta$, la distance polaire ;
+- l’angle en $P_E$ vaut $\pi/2 - \lambda$ ;
+- l’angle en P vaut $\pi/2 + \alpha$ : 90° entre les deux colures, plus l’ascension droite.
+
+<TrianglePolaire>
+Triangle sphérique formé par les pôles des deux repères et l’astre. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</TrianglePolaire>
+
+Les formules de trigonométrie sphérique donnent :
+
+$$
+\begin{cases}
+\dfrac{\sin(\pi/2 - \delta)}{\sin(\pi/2 - \lambda)} = \dfrac{\sin(\pi/2 - \beta)}{\sin(\pi/2 + \alpha)} \\[2ex]
+\cos(\pi/2 - \delta) = \cos(\pi/2 - \beta)\,\cos\varepsilon + \sin(\pi/2 - \beta)\,\sin\varepsilon\,\cos(\pi/2 - \lambda) \\[1ex]
+\sin(\pi/2 - \delta)\,\cos(\pi/2 + \alpha) = \cos(\pi/2 - \beta)\,\sin\varepsilon - \sin(\pi/2 - \beta)\,\cos\varepsilon\,\cos(\pi/2 - \lambda)
+\end{cases}
+$$
+
+ce qui donne, après simplification, le **système (1)**, de l’écliptique vers l’équateur :
+
+$$
+\begin{cases}
+\cos\delta\,\cos\alpha = \cos\beta\,\cos\lambda \\
+\sin\delta = \sin\beta\,\cos\varepsilon + \cos\beta\,\sin\varepsilon\,\sin\lambda \\
+\cos\delta\,\sin\alpha = -\sin\beta\,\sin\varepsilon + \cos\beta\,\cos\varepsilon\,\sin\lambda
+\end{cases}
+$$
+
+La déclinaison s’obtient par la deuxième relation (l’arc sinus suffit, puisque $\delta$ est compris entre −90° et +90°). L’ascension droite s’obtient par la première et la troisième : connaître à la fois son sinus et son cosinus permet de la placer sans ambiguïté entre 0° et 360°. On convertit enfin $\alpha$ en heures et $\delta$ en degrés sexagésimaux.
+
+Le **système (2)** fait le chemin inverse, de l’équateur vers l’écliptique :
+
+$$
+\begin{cases}
+\cos\beta\,\cos\lambda = \cos\alpha\,\cos\delta \\
+\sin\beta = \sin\delta\,\cos\varepsilon - \cos\delta\,\sin\varepsilon\,\sin\alpha \\
+\cos\beta\,\sin\lambda = \sin\delta\,\sin\varepsilon + \cos\delta\,\cos\varepsilon\,\sin\alpha
+\end{cases}
+$$
+
+#### Exercice : coordonnées équatoriales du Soleil
+
+On suppose la latitude du Soleil nulle ($\sin\beta = 0$, $\cos\beta = 1$), ce qui simplifie le système (1).
+
+**1.** Le 1er janvier 2012 à 0 h UTC, la longitude apparente du Soleil vaut $\lambda$ = 279° 57′ 30″ et l’obliquité $\varepsilon$ = 23° 26′ 12,7″. Calculez l’ascension droite (en heures, minutes, secondes) et la déclinaison (en degrés, minutes, secondes) du Soleil.
+
+<Repli titre="Indice">
+Avec une latitude nulle, le système (1) devient $\sin\delta = \sin\varepsilon\,\sin\lambda$ et $\tan\alpha = \cos\varepsilon\,\tan\lambda$. Attention à l’unité d’angle de la calculatrice.
+</Repli>
+
+<Repli>
+$\sin\delta = \sin(23{,}436\,86°)\,\sin(279{,}958\,33°) = -0{,}391\,7$, d’où $\delta = -23{,}063\,2°$, soit **−23° 03′ 47″**.
+
+$\tan\alpha = \cos\varepsilon\,\tan\lambda$. Comme $\cos\delta\,\cos\alpha = \cos\lambda > 0$ et $\cos\delta\,\sin\alpha = \cos\varepsilon\,\sin\lambda < 0$, $\alpha$ est dans le quatrième quadrant, comme $\lambda$ : $\alpha = 280{,}833\,4°$. Divisé par 15, cela donne $\alpha$ = **18 h 43 min 20 s**.
+</Repli>
+
+### Position du Soleil sur l’écliptique
+
+Le simulateur ci-dessous montre le mouvement apparent du Soleil sur l’écliptique. Il affiche l’inclinaison $\varepsilon$ de l’écliptique sur l’équateur, la longitude écliptique $\lambda$ du Soleil et ses coordonnées équatoriales $\alpha$ et $\delta$. P est le pôle Nord céleste, K le pôle Nord de l’écliptique. La latitude du Soleil est supposée nulle. En réalité elle est très faible et varie : l’écliptique est défini par le mouvement du barycentre Terre-Lune, alors que les coordonnées du Soleil sont calculées depuis le centre de la Terre.
+
+<SimulateurSoleil />
+
+Les coordonnées équatoriales du Soleil varient peu en une journée : le simulateur donne donc les coordonnées du Soleil pour un jour donné. Le bouton « Envoyer » les transmet au [simulateur de la sphère locale](#simulations).
+
+#### Exercice : variation journalière de la longitude du Soleil
+
+**1.** Placez-vous le 5 janvier 2012 et notez la longitude du Soleil. Avancez d’un jour et refaites la mesure. Recommencez les 5 et 6 juillet 2012. Que peut-on en déduire ?
+
+<Repli>
+Du 5 au 6 janvier, la longitude augmente d’environ 1° 01′ ; du 5 au 6 juillet, d’environ 0° 57′ seulement. Le Soleil avance plus vite sur l’écliptique en janvier, parce que la Terre est alors près de son périhélie et va plus vite sur son orbite : c’est la [deuxième loi de Kepler](../kepler/#deuxième-loi-les-aires). L’ascension droite varie elle aussi de façon inégale (environ 4 min 23 s par jour en janvier, 4 min 07 s en juillet).
+</Repli>
+
+**2.** L’équinoxe de printemps est le jour où la longitude du Soleil passe par 0°, l’équinoxe d’automne celui où elle vaut 180°. Les solstices d’été et d’hiver correspondent à 90° et 270°. Trouvez les dates des saisons pour une année de votre choix.
+
+<Repli>
+Pour 2026, le simulateur donne le 20 mars, le 21 juin, le 23 septembre et le 21 décembre. Il est précis à quelques minutes près, ce qui suffit pour trouver le jour, sauf quand l’instant tombe tout près de minuit.
+</Repli>
+
+### Les mouvements du repère équatorial
+
+L’axe de rotation de la Terre n’a pas une direction constante. On décompose son mouvement en deux parties :
+
+- la **précession**, composante circulaire : l’axe décrit un cône dans le sens rétrograde, à raison d’environ 50″ par an (un tour en 26 000 ans environ). La droite des équinoxes tourne à la même vitesse, toujours dans le sens rétrograde : c’est la <Terme id="precession">précession des équinoxes</Terme> ;
+- la **nutation**, faite de multiples variations périodiques, qui agit aussi sur l’obliquité de l’écliptique.
+
+<Precession>
+Précession des équinoxes : en $t_1$ puis en $t_2$, l’axe du pôle et la droite des équinoxes ont tourné d’un même angle P. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</Precession>
+
+On définit donc, pour une date donnée, des repères **moyens de la date**, dans lesquels la position de l’équinoxe est corrigée de la précession, et des repères **vrais de la date**, corrigés de la précession et de la nutation.
+
+On mesure ainsi l’importance de connaître le mouvement de l’axe de rotation terrestre. On voit aussi que le repère écliptique dépend de la théorie du mouvement du barycentre Terre-Lune, et qu’une origine tournante comme l’équinoxe n’est pas forcément judicieuse, puisqu’elle dépend de la théorie de la précession utilisée.
+
+### La médiation
+
+La médiation est une notation hybride, à cheval sur les repères écliptique et équatorial. Le cercle horaire de l’astre A coupe l’équateur céleste en H et l’écliptique en $M_A$, le **point de médiation** de A. La médiation de l’astre est l’arc $m_A = \gamma M_A$ de l’écliptique. M est la projection de l’astre sur l’écliptique, à la longitude $\lambda$.
+
+On utilise parfois le couple médiation-déclinaison à la place du couple ascension droite-déclinaison. Ces coordonnées ne sont pas orthogonales, mais on les trouve notamment sur des instruments anciens comme l’astrolabe.
+
+<TrianglePolaire variante="mediation">
+La médiation d’un astre. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</TrianglePolaire>
+
+### Le repère galactique
+
+Les astronomes utilisent aussi un repère lié au plan de notre Galaxie, le repère galactique. Soit $P_G(\alpha_0, \delta_0)$ la direction du pôle galactique dans le repère équatorial J2000 et $G(\alpha_G, \delta_G)$ celle du centre galactique. La longitude et la latitude galactiques sont définies dans le repère direct construit sur le plan galactique et son pôle ; l’origine des longitudes est la direction du centre galactique. On note $l_0$ l’arc AG, où A est le nœud du plan galactique sur l’équateur. L’ascension droite de A vaut $\alpha_0 + \pi/2$, et l’inclinaison du plan galactique sur l’équateur vaut $\pi/2 - \delta_0$.
+
+Le plan galactique passe par le centre de la Terre et est perpendiculaire à la direction du pôle galactique. C’est donc un repère géocentrique J2000, défini par rapport au repère équatorial J2000.
+
+<RepereGalactique>
+Le repère galactique, avec les valeurs réelles de l’époque J2000 : pôle galactique en α₀ ≈ 12 h 51 min, δ₀ ≈ +27° 08′ ; centre galactique en α ≈ 17 h 46 min, δ ≈ −28° 56′. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</RepereGalactique>
+
+### Les coordonnées terrestres
+
+Les coordonnées terrestres, **latitude** $\varphi$ et **longitude** L, sont repérées par rapport au pôle et à l’équateur terrestres. L’axe de rotation de la Terre se déplace par rapport aux étoiles, mais il reste quasi fixe par rapport à la croûte terrestre.
+
+La Terre est aplatie aux pôles : en première approximation, c’est un ellipsoïde de révolution. Un méridien terrestre est un arc de longitude constante joignant les deux pôles ; le méridien origine est le méridien international, ou méridien de Greenwich. Pour un lieu donné, on distingue une seule longitude mais deux latitudes :
+
+- la **latitude géocentrique** $\varphi'$, angle entre la direction centre de la Terre-lieu et le plan de l’équateur ;
+- la **latitude géographique** (ou astronomique) $\varphi$, angle entre la normale à l’ellipsoïde et le plan de l’équateur.
+
+<CoordonneesGeo>
+Latitudes géographique et géocentrique, sur une coupe de l’ellipsoïde terrestre (aplatissement très exagéré). Schéma redessiné d’après l’original (ASM, P. Rocher).
+</CoordonneesGeo>
+
+Autrefois, on obtenait les latitudes par des mesures de hauteur d’astres au-dessus de l’horizon, et les longitudes par des mesures astronomiques (le « point astronomique »). La longitude se compte depuis le méridien international, en heures ou en degrés. Aujourd’hui, les coordonnées géographiques sont fournies par les systèmes satellitaires (GPS). Sur une autre planète, on parle de coordonnées planétographiques et planétocentriques.
+
+### Calcul des coordonnées géocentriques
+
+<span class="tag plus">Niveau licence</span>
+
+Soit $\varphi$ la latitude géographique, $\varphi'$ la latitude géocentrique et $h$ l’altitude du lieu ; $a$ est le rayon équatorial terrestre, $f$ l’aplatissement de l’ellipsoïde, et $\rho$ la distance du centre de la Terre au lieu, en rayons équatoriaux. On a :
+
+$$
+\begin{cases}
+\tan u = (1 - f)\tan\varphi \\
+\rho\cos\varphi' = \cos u + \dfrac{h}{a}\cos\varphi \\[1.5ex]
+\rho\sin\varphi' = (1 - f)\sin u + \dfrac{h}{a}\sin\varphi
+\end{cases}
+$$
+
+Les quantités $\rho\cos\varphi'$ et $\rho\sin\varphi'$ sont essentielles : elles donnent le vecteur centre de la Terre-observateur, qui permet de passer des coordonnées géocentriques aux coordonnées topocentriques. Il existe de nombreux ellipsoïdes de référence ; voici ceux utilisés en France.
+
+| Système géodésique | Ellipsoïde associé | a (m) | b (m) | f |
+| --- | --- | --- | --- | --- |
+| NTF | Clarke 1880 IGN | 6 378 249,2 | 6 356 515,0 | 1/293,466 021 |
+| ED50 | Hayford 1909 | 6 378 388,0 | 6 356 911,946 1 | 1/297,000 000 |
+| WGS84 et RGF93 | IAG GRS 1980 | 6 378 137,0 | 6 356 752,314 | 1/298,257 222 |
+
+#### Exercice : latitude géocentrique de Paris
+
+L’Observatoire de Paris a pour coordonnées géographiques : latitude 48° 50′ 11,2″ N, longitude 2° 20′ 13,8″ E, altitude 67 m.
+
+**1.** Calculez ses coordonnées géocentriques avec le système WGS84.
+
+<Repli titre="Indice">
+Calculez d’abord $u$, puis $\rho\cos\varphi'$ et $\rho\sin\varphi'$.
+</Repli>
+
+<Repli>
+Avec $f = 1/298{,}257\,222$ et $h/a = 67/6\,378\,137 = 1{,}05 \times 10^{-5}$ :
+
+- $\tan u = (1 - f)\tan\varphi$, d’où $u$ = 48° 44′ 27,9″ ;
+- $\rho\cos\varphi' = 0{,}659\,470$ ;
+- $\rho\sin\varphi' = 0{,}749\,225$.
+
+On en déduit $\rho = 0{,}998\,117$ (l’Observatoire est à environ 6 366 km du centre de la Terre) et $\varphi'$ = 48° 38′ 44,4″, soit environ 11′ 27″ de moins que la latitude géographique.
+</Repli>
+
+## Les repères locaux
+
+Les repères écliptique et équatorial sont fixes pour une époque donnée. Même centrés sur la Terre, ils ne tiennent compte ni de la position de l’observateur, ni de son mouvement. Voici deux repères liés à un observateur terrestre, qui tournent donc avec la Terre. Il faut d’abord exprimer cette rotation par rapport au repère équatorial.
+
+### Le temps sidéral
+
+Le système de coordonnées horaires est un intermédiaire : le repère équatorial y est lié à la Terre et tourne avec elle. Il a pour méridien origine le méridien du lieu, et la position du point vernal par rapport à ce méridien est donnée par un angle, le <Terme id="temps-sideral">temps sidéral local</Terme>, noté $T_L$. Exprimé en heures, il est compté positivement vers l’ouest (dans le sens des aiguilles d’une montre) à partir du méridien local. Il croît donc avec le temps.
+
+<TempsSideral>
+Le temps sidéral de Greenwich, vu depuis le pôle Nord. Schéma simplifié d’après l’original (ASM, P. Rocher) ; les continents ne sont pas représentés.
+</TempsSideral>
+
+### Les coordonnées équatoriales horaires
+
+Le système de coordonnées horaires est un système polaire. Son plan de base est l’équateur céleste ; Ox pointe vers le méridien local, Oy à 90° vers l’ouest (sens indirect) et Oz vers le pôle céleste. Les deux coordonnées sont :
+
+- l’<Terme id="angle-horaire">angle horaire</Terme> $H$, compté en heures de 0 h à 24 h, vers l’ouest, à partir du méridien du lieu. Comme le temps sidéral, il croît avec le temps ;
+- la déclinaison $\delta$, la même que dans le repère équatorial.
+
+Les petits cercles parallèles à l’équateur sont les **parallèles célestes** ; les demi-grands cercles joignant les pôles sont les **cercles horaires**. Dans le mouvement diurne, tout astre de déclinaison constante décrit un parallèle céleste. L’étoile Polaire décrit actuellement un cercle de moins de 1° de rayon autour du pôle, ce qui situe le pôle céleste à un degré près. Il n’en a pas toujours été ainsi : au XIIIe siècle, à cause de la précession, la Polaire était à 4° du pôle.
+
+<CoordonneesHoraires>
+Le repère équatorial horaire. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</CoordonneesHoraires>
+
+L’ascension droite, l’angle horaire et le temps sidéral local sont liés par une relation simple, où les trois angles doivent être exprimés dans la même unité :
+
+$$
+H = T_L - \alpha
+$$
+
+L’angle horaire d’un astre est le même en tous les lieux d’un même méridien. Et, par définition, le temps sidéral local est l’angle horaire du point vernal.
+
+#### Exercice : le temps sidéral
+
+**1.** Quelle est l’ascension droite d’une étoile qui passe au méridien d’un lieu donné à un instant donné ?
+
+<Repli titre="Indice">
+Que vaut l’angle horaire d’un astre au méridien ? Quelle formule relie ascension droite et angle horaire ?
+</Repli>
+
+<Repli>
+Au méridien, $H = 0$, donc $\alpha = T_L$ : l’ascension droite de l’étoile est égale au temps sidéral local de l’instant du passage. C’est ainsi qu’on mesure les ascensions droites avec une lunette méridienne.
+</Repli>
+
+### Effet d’un changement de longitude
+
+À un instant donné, le temps sidéral d’un méridien situé à l’est d’un autre est plus grand, de la différence de longitude ; à l’ouest, il est plus petit. Les longitudes doivent être dans la même unité que le temps sidéral, généralement en heures.
+
+Attention aux conventions. Autrefois, la longitude était comptée positivement vers l’ouest à partir de Greenwich (de 0 à 180°), et l’on écrivait $T_L = T_G - L$. Aujourd’hui, elle est comptée positivement vers l’est, et la formule devient :
+
+$$
+T_L = T_G + L
+$$
+
+Les deux formules coexistent dans la littérature et causent bien des erreurs. Pour les éviter, retenez que le temps sidéral augmente quand on va vers l’est. N’oubliez pas non plus que certaines cartes donnent la longitude par rapport au méridien de Paris, et en grades !
+
+### La variation du temps sidéral
+
+Le temps sidéral, angle horaire du point γ, augmente en moyenne de 24 h (360°) en 23 h 56 min 4 s de temps moyen. On peut donc calculer le temps sidéral local en tout lieu et à tout instant à partir du temps sidéral de Greenwich à 0 h : on calcule d’abord le temps sidéral à Greenwich à l’instant voulu, puis on ajoute ou retranche la longitude du lieu. Entre une durée $\Delta t$ de temps moyen et la variation $\Delta T$ du temps sidéral, on a :
+
+$$
+\Delta T = 1{,}002\,737\,9\;\Delta t \qquad\text{et}\qquad \Delta t = 0{,}997\,269\,6\;\Delta T
+$$
+
+On peut ainsi construire une horloge de temps sidéral, dont l’aiguille des heures fait deux tours en 23 h 56 min 4 s. Connaître le temps sidéral permet de calculer l’angle horaire d’un astre d’ascension droite connue. Inversement, si l’on connaît le temps sidéral local d’un événement, on en déduit le temps moyen de l’événement (si l’on connaît la longitude du lieu) ou la longitude du lieu (si l’on connaît le temps moyen).
+
+Ce repère ne dépend que de la longitude : on peut le placer au centre de la Terre ou en n’importe quel lieu du même méridien. Ce changement d’origine modifie toutefois les coordonnées des astres proches : c’est la parallaxe diurne.
+
+#### Exercice : temps sidéral local à Paris
+
+**1.** Déterminez le temps sidéral local à Paris (longitude 9 min 21 s est) le 30 mars 2010 à 18 h 03 min 42 s UTC (temps moyen de Greenwich), sachant que le temps sidéral de Greenwich à 0 h UTC vaut ce jour-là 12 h 29 min 07 s.
+
+<Repli titre="Indice">
+Faites une règle de trois, sachant qu’en 23 h 56 min 4 s de temps moyen le temps sidéral varie de 24 h, ou utilisez directement le coefficient 1,002 737 9.
+</Repli>
+
+<Repli>
+En 18 h 03 min 42 s de temps moyen, le temps sidéral avance de $1{,}002\,737\,9 \times 18{,}061\,67$ h = 18 h 06 min 40 s.
+
+À Greenwich : $T_G$ = 12 h 29 min 07 s + 18 h 06 min 40 s = 30 h 35 min 47 s, soit 6 h 35 min 47 s après avoir retiré 24 h.
+
+À Paris, à l’est de Greenwich : $T_L$ = 6 h 35 min 47 s + 9 min 21 s = **6 h 45 min 08 s**.
+</Repli>
+
+### Le repère local
+
+En un lieu de latitude $\varphi$ et de longitude L, le repère local a pour plan Oxy le plan horizontal, tangent à l’ellipsoïde ; l’axe Oz est la normale à ce plan, dirigée vers le zénith. Comme pour les coordonnées horaires, Ox est l’intersection du méridien et de l’horizon (direction du sud) et Oy est à 90° vers l’ouest (sens indirect). Le demi-plan vertical qui contient l’ouest est le **premier vertical ouest** ; celui qui contient l’est, le **premier vertical est**.
+
+- L’<Terme id="azimut">azimut</Terme> des astronomes $a$ se compte du sud vers l’ouest (sens des aiguilles d’une montre), de 0° à 360° : sud = 0°, ouest = 90°, nord = 180°, est = 270°.
+- La <Terme id="hauteur">hauteur</Terme> $h$ se compte de 0° à +90° vers le zénith et de 0° à −90° vers le <Terme id="nadir">nadir</Terme>, direction opposée au zénith. On utilise parfois la **distance zénithale** $z$, angle de 0° à 180° entre le zénith et l’astre.
+
+<CoordonneesLocales>
+Le repère local, ou azimutal. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</CoordonneesLocales>
+
+### Quelques définitions supplémentaires
+
+- À son lever, la hauteur d’un astre est nulle ; l’angle entre la direction de l’est et celle de l’astre est l’**amplitude ortive**. À son coucher, l’angle entre l’ouest et l’astre est l’**amplitude occase**.
+- Les cercles de même hauteur, parallèles à l’horizon, sont les **almicantarats**.
+- Dans l’hémisphère nord, l’angle entre le zénith et le pôle céleste nord vaut $\pi/2 - \varphi$, la **colatitude**. C’est aussi l’angle entre l’équateur céleste et le plan horizontal.
+
+### Formulaire du repère local
+
+<span class="tag plus">Niveau licence</span>
+
+Le pôle céleste nord, le zénith et l’astre forment un triangle sphérique. Le sixième angle, en A, formé par les directions du zénith et du pôle vues depuis l’astre, est l’**angle à l’astre** S.
+
+<TriangleLocal>
+Le triangle sphérique local. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</TriangleLocal>
+
+Avec les relations de trigonométrie sphérique appliquées aux cinq éléments connus, on obtient le passage des coordonnées horaires aux coordonnées locales :
+
+$$
+\begin{cases}
+\cos z = \sin\varphi\,\sin\delta + \cos\varphi\,\cos\delta\,\cos H \\
+\sin z\,\sin a = \cos\delta\,\sin H \\
+\sin z\,\cos a = -\cos\varphi\,\sin\delta + \sin\varphi\,\cos\delta\,\cos H \\
+z = \pi/2 - h
+\end{cases}
+$$
+
+et inversement :
+
+$$
+\begin{cases}
+\sin\delta = \sin\varphi\,\cos z - \cos\varphi\,\sin z\,\cos a \\
+\cos\delta\,\sin H = \sin z\,\sin a \\
+\cos\delta\,\cos H = \cos\varphi\,\cos z + \sin\varphi\,\sin z\,\cos a
+\end{cases}
+$$
+
+### Remarque sur le repère alt-azimutal
+
+Les géographes et les marins comptent aussi l’azimut dans le sens indirect, mais à partir du nord. Pour un lieu de l’hémisphère nord, l’azimut d’un astre croît avec le temps : le Soleil va d’est en ouest en passant par le sud. Dans l’hémisphère sud, l’azimut décroît : le Soleil va d’est en ouest en passant par le nord.
+
+Les montres ont été inventées dans l’hémisphère nord : leurs aiguilles tournent comme l’ombre des cadrans solaires de cet hémisphère, de l’est vers l’ouest en passant par le sud.
+
+Enfin, dans l’hémisphère nord, la hauteur du pôle céleste est égale à la latitude du lieu (à la réfraction atmosphérique près).
+
+### Simulations
+
+Le simulateur ci-dessous place un astre sur la sphère céleste locale. On choisit ses coordonnées équatoriales ($\alpha$, $\delta$), le lieu (latitude $\varphi$, longitude L, positive vers l’est) et la date en temps universel. Il calcule le temps sidéral local, l’angle horaire H, la hauteur h et l’azimut a. Z est le zénith, P le pôle céleste nord, γ le point vernal. La trajectoire diurne de l’astre est tracée en bleu.
+
+<SimulateurSphereCeleste />
+
+Les coordonnées et le fuseau horaire d’une ville se trouvent facilement en ligne. Pour suivre le Soleil au cours d’une journée, obtenez ses coordonnées avec le [simulateur du Soleil](#position-du-soleil-sur-lécliptique) et envoyez-les ici, ou utilisez le bouton « Soleil à cette date ».
+
+### Exercices d’utilisation des simulations
+
+Utilisez les deux simulateurs pour répondre.
+
+<Quiz questions={[
+  { question: "L’ascension droite correspond à :", choix: ["la longitude dans le repère équatorial", "la latitude dans le repère équatorial", "la longitude dans le repère de l’horizon", "la latitude dans le repère de l’horizon"], reponse: 0 },
+  { question: "Un changement de latitude sur Terre modifie la position du point vernal :", choix: ["dans le repère horizontal uniquement", "dans le repère équatorial uniquement", "dans les deux repères"], reponse: 0 },
+  { question: "La déclinaison est égale à la hauteur :", choix: ["à l’équateur", "au pôle Nord", "au pôle Sud"], reponse: 1 },
+  { question: "Quel est l’intervalle des valeurs possibles pour la déclinaison du Soleil ?", choix: ["[−90°, +90°]", "[−23° 26′, +23° 26′]", "cela dépend de la latitude sur Terre"], reponse: 1 },
+  { question: "Quelles sont les coordonnées équatoriales du Soleil quand il est au plus haut dans le ciel dans l’hémisphère nord (φ > 23°) ?", choix: ["α = 6 h, δ = +23° 26′", "α = 18 h, δ = −23° 26′", "α = 0 h ou 12 h, δ = 0°"], reponse: 0 },
+  { question: "Et dans l’hémisphère sud (φ < −23°) ?", choix: ["α = 6 h, δ = +23° 26′", "α = 18 h, δ = −23° 26′", "α = 0 h ou 12 h, δ = 0°"], reponse: 1 },
+  { question: "Et à l’équateur (φ = 0°) ?", choix: ["α = 6 h, δ = +23° 26′", "α = 18 h, δ = −23° 26′", "α = 0 h ou 12 h, δ = 0°"], reponse: 2 },
+  { question: "À quelle heure légale (heure d’été, TU + 2) le Soleil se couche-t-il au plus tard à Paris (φ = 49°, L = 2° E) ?", choix: ["entre 19 h et 20 h", "entre 20 h et 21 h", "entre 21 h et 22 h"], reponse: 2 },
+]} />
+
+<Repli titre="Aide pour les questions 5 à 7">
+Cherchez d’abord, avec le simulateur de la sphère locale, la déclinaison pour laquelle la hauteur au méridien est maximale, en tenant compte de la question 4. Vérifiez qu’un changement d’ascension droite ne modifie pas le résultat. Le simulateur du Soleil donne ensuite l’ascension droite correspondante.
+</Repli>
+
+#### Exercice : visibilité des étoiles
+
+Données :
+
+- Sirius : $\alpha$ = 6 h 45 min, $\delta$ = −16° 43′ ;
+- Dubhe (α de la Grande Ourse) : $\alpha$ = 11 h 04 min, $\delta$ = +61° 45′ ;
+- Paris : $\varphi$ = +49°, L = 2° E, fuseau UTC+1 ;
+- Le Cap : $\varphi$ = −34°, L = 18° E, fuseau UTC+2 ;
+- Tokyo : $\varphi$ = +36°, L = 140° E, fuseau UTC+9.
+
+**1.** Avec le simulateur, trouvez les mois de l’année où Sirius est visible à minuit, heure locale, à Paris, au Cap et à Tokyo.
+
+<Repli titre="Indice">
+Attention au décalage horaire ! Prenez minuit à l’heure du fuseau, sans tenir compte de l’heure d’été. Par convention, la longitude est positive vers l’est : 140° E = +140°.
+</Repli>
+
+**2.** Même question pour Dubhe.
+
+**3.** Expliquez les résultats.
+
+<Repli>
+1. Sirius est au-dessus de l’horizon à minuit à Paris de novembre à mars, au Cap d’octobre à avril, à Tokyo d’octobre à février (elle est sur l’horizon début mars).
+
+2. Dubhe est visible à minuit toute l’année à Paris et à Tokyo, jamais au Cap.
+
+3. Une étoile culmine à minuit quand elle est à l’opposé du Soleil, c’est-à-dire quand l’ascension droite du Soleil vaut celle de l’étoile plus 12 h. Pour Sirius, cela tombe vers 18 h 45, fin décembre-début janvier : elle est donc visible à minuit autour de cette période. Sa déclinaison étant négative, elle monte plus haut et reste visible plus longtemps dans l’hémisphère sud. Dubhe, elle, est circumpolaire à Paris et à Tokyo, car $\delta > 90° - \varphi$ (41° à Paris, 54° à Tokyo). Au Cap, elle ne se lève jamais, car $\delta > 90° + \varphi$ = 56°. Ces résultats sont détaillés dans la section suivante.
+</Repli>
+
+## Applications du repère local
+
+Tout ce que nous observons depuis la Terre l’est dans le repère local. Habitués à l’hémisphère nord, nous connaissons le ciel et les phénomènes propres à cet hémisphère. Étudions-les pour un lieu quelconque.
+
+### Méridiens et demi-cercles azimutaux
+
+- Un demi-cercle de la sphère céleste joignant le zénith au nadir est un **demi-cercle d’égal azimut**.
+- Le demi-cercle qui joint le pôle céleste nord au pôle sud en passant par le zénith est le **méridien supérieur**. Tous ses points ont un angle horaire nul (H = 0 h) : il est l’origine des angles horaires.
+- Le demi-cercle qui joint les deux pôles en passant par le nadir est le **méridien inférieur**. Tous ses points ont un angle horaire de 12 h (180°).
+- Le demi-cercle d’égal azimut qui contient le pôle céleste sud est souvent appelé « méridien sud ». C’est un abus de langage : il s’agit du demi-cercle d’azimut nul ($a$ = 0°), origine des azimuts. De même, le « méridien nord » est le demi-cercle d’azimut 180°.
+
+### Les astres circumpolaires
+
+À cause de la rotation de la Terre, tout astre passe au méridien supérieur et au méridien inférieur.
+
+- Si les deux passages sont observables, l’astre est <Terme id="circumpolaire">circumpolaire</Terme> : il ne se couche jamais.
+- Si aucun des deux ne l’est, l’astre ne se lève jamais.
+- Si seul le passage supérieur est observable, l’astre se lève et se couche.
+
+« Observable » signifie ici que le passage aurait lieu au-dessus de l’horizon, en l’absence du Soleil.
+
+<SphereLocale variante="circumpolaires">
+Astres circumpolaires et astres qui ne se lèvent jamais, pour une latitude de 45° nord. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</SphereLocale>
+
+### Astres à plus grande digression
+
+Tous les astres ne passent pas, en revanche, par le « méridien nord » et le « méridien sud ». Certains passent deux fois par le demi-cercle d’azimut 180°, ou deux fois par celui d’azimut 0°. Pour un lieu de l’hémisphère nord, ce sont les astres qui passent au méridien entre le zénith et le pôle nord (observables), ou entre le nadir et le pôle sud (jamais visibles). Leur azimut ne parcourt plus tout l’intervalle de 0° à 360° : il oscille entre deux valeurs extrêmes, les **plus grandes digressions** ouest et est de l’astre.
+
+<SphereLocale variante="digression">
+Plus grande digression d’un astre, pour une latitude de 45° nord : à cet instant, le demi-cercle azimutal est tangent à la trajectoire diurne de l’astre. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</SphereLocale>
+
+### La sphère locale dans l’hémisphère sud
+
+On représente presque toujours la sphère locale d’un lieu de l’hémisphère nord. Il est instructif de la tracer aussi pour un lieu de l’hémisphère sud.
+
+<SphereLocale variante="nord">
+La sphère locale dans l’hémisphère nord (latitude 45° N). Schéma redessiné d’après l’original (ASM, P. Rocher).
+</SphereLocale>
+
+<SphereLocale variante="sud">
+La sphère locale dans l’hémisphère sud (latitude 38° S) : le pôle céleste visible est le pôle sud.
+</SphereLocale>
+
+Dans les deux hémisphères, l’angle horaire H d’un astre croît avec le temps. L’azimut, lui, croît dans l’hémisphère nord mais décroît dans l’hémisphère sud. Ce choix de coordonnées croissant avec le temps est volontaire, même s’il va à l’encontre de la logique mathématique, qui préfère les repères directs.
+
+### Passage au méridien supérieur
+
+On peut étudier les passages au méridien de deux façons : dessiner chaque cas en fonction de la latitude et raisonner géométriquement, ou fixer l’angle horaire dans les formules et regarder ce qu’elles donnent pour l’azimut. C’est cette seconde méthode, analytique, que nous suivons. Au passage au méridien supérieur, il y a deux solutions :
+
+$$
+\begin{aligned}
+&\text{(1)} \quad a = 0° \quad\text{et}\quad h = 90° - \varphi + \delta = 90° - (\varphi - \delta) \\
+&\text{(2)} \quad a = 180° \quad\text{et}\quad h = 90° + \varphi - \delta
+\end{aligned}
+$$
+
+avec la condition $-90° \le h \le 90°$ imposée par la définition de la hauteur. Une seule solution convient toujours :
+
+- l’équation (1) donne une hauteur inférieure à 90° si $\varphi > \delta$ : le passage se fait au sud ($a$ = 0°) ;
+- l’équation (2) donne une hauteur inférieure à 90° si $\varphi < \delta$ : le passage se fait au nord ($a$ = 180°) ;
+- si $\varphi = \delta$, l’astre passe au zénith ($h$ = 90°) et l’azimut n’est pas défini.
+
+<CoupeMeridienne passage="superieur">
+Passage au méridien supérieur, sur une coupe méridienne de la sphère céleste. Le méridien supérieur est l’arc rouge PZP′. L’étoile (2) passe au nord, sur l’arc ZP : sa hauteur se compte depuis le nord de l’horizon. Les étoiles (1) passent au sud, sur l’arc ZP′ ; la dernière passe sous l’horizon, car une partie du méridien supérieur est sous l’horizon. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</CoupeMeridienne>
+
+On remarque aussi que la médiation d’un astre est la longitude du point de l’écliptique qui passe au méridien en même temps que lui.
+
+<Repli titre="En savoir plus : les équations">
+Au passage au méridien supérieur, $H$ = 0°, donc $\cos H = 1$ et $\sin H = 0$. Les formules de changement de repère donnent :
+
+$$
+\begin{cases}
+\cos z = \sin\varphi\,\sin\delta + \cos\varphi\,\cos\delta = \cos(\varphi - \delta) \\
+\sin z\,\sin a = 0 \\
+\sin z\,\cos a = -\cos\varphi\,\sin\delta + \sin\varphi\,\cos\delta = \sin(\varphi - \delta)
+\end{cases}
+$$
+
+Puisque $\sin a = 0$, $a$ = 0° ou 180°. Si $a$ = 0°, $\sin z = \sin(\varphi - \delta)$ ; si $a$ = 180°, $\sin z = -\sin(\varphi - \delta)$. Avec $h = 90° - z$, on retrouve les équations (1) et (2).
+</Repli>
+
+#### Exercice : passage du Soleil au méridien
+
+La déclinaison du Soleil varie au cours de l’année de −23° 26′ 21″ (solstice de décembre) à +23° 26′ 21″ (solstice de juin), en passant par 0° aux équinoxes.
+
+**1.** Quelle est la hauteur du Soleil à son passage au méridien supérieur à Paris (latitude 48° 50′ 11,2″ N) au début de chaque saison ?
+
+<Repli titre="Indice">
+Utilisez les solutions (1) et (2) et la condition sur la hauteur pour choisir la bonne.
+</Repli>
+
+**2.** Même question au Cap (latitude 33° 56′ 00″ S).
+
+**3.** À quelle latitude le Soleil passe-t-il au zénith le jour du solstice de juin ? Quel est le nom de ce parallèle ?
+
+**4.** Même question pour le solstice de décembre.
+
+**5.** Même question pour les équinoxes.
+
+<Repli>
+1. À Paris, $\varphi > \delta$ toute l’année : c’est l’équation (1), passage au sud. Aux équinoxes, $h$ = 90° − 48° 50′ 11,2″ = **41° 09′ 48,8″** ; au solstice de juin, **64° 36′ 09,8″** ; au solstice de décembre, **17° 43′ 27,8″**.
+
+2. Au Cap, $\varphi < \delta$ toute l’année : c’est l’équation (2), passage au nord. Aux équinoxes, $h$ = 90° − 33° 56′ = **56° 04′ 00″** ; au solstice de juin, **32° 37′ 39″** ; au solstice de décembre, **79° 30′ 21″**. Les saisons sont inversées : le Soleil est au plus haut en décembre.
+
+3. Le Soleil passe au zénith quand $\varphi = \delta$, soit $\varphi$ = +23° 26′ 21″ : c’est le **tropique du Cancer**.
+
+4. $\varphi$ = −23° 26′ 21″ : c’est le **tropique du Capricorne**.
+
+5. $\varphi$ = 0° : c’est l’**équateur**.
+</Repli>
+
+### Passage au méridien inférieur
+
+Au passage au méridien inférieur, $H$ = 180°, et il y a de nouveau deux solutions :
+
+$$
+\begin{aligned}
+&\text{(3)} \quad a = 0° \quad\text{et}\quad h = -90° - \varphi - \delta = -90° - (\varphi + \delta) \\
+&\text{(4)} \quad a = 180° \quad\text{et}\quad h = -90° + \varphi + \delta
+\end{aligned}
+$$
+
+toujours avec la condition $-90° \le h \le 90°$. Une seule solution convient :
+
+- l’équation (3) donne une hauteur supérieure à −90° si $\varphi < -\delta$ : le passage se fait au sud ($a$ = 0°) ;
+- l’équation (4) donne une hauteur supérieure à −90° si $\varphi > -\delta$ : le passage se fait au nord ($a$ = 180°) ;
+- si $\varphi = -\delta$, l’astre passe au nadir ($h$ = −90°) et l’azimut n’est pas défini.
+
+<CoupeMeridienne passage="inferieur">
+Passage au méridien inférieur. Le méridien inférieur est l’arc bleu PNP′. L’étoile (3) passe sur l’arc NP′, côté sud : sa hauteur se compte depuis le sud de l’horizon. Les étoiles (4) passent sur l’arc PN, côté nord : l’une passe au-dessus de l’horizon, car une partie du méridien inférieur (entre le nord et P) est au-dessus de l’horizon, les deux autres en dessous. Schéma redessiné d’après l’original (ASM, P. Rocher).
+</CoupeMeridienne>
+
+<Repli titre="En savoir plus : les équations">
+Avec $\cos H = -1$ et $\sin H = 0$ :
+
+$$
+\begin{cases}
+\cos z = \sin\varphi\,\sin\delta - \cos\varphi\,\cos\delta = -\cos(\varphi + \delta) \\
+\sin z\,\sin a = 0 \\
+\sin z\,\cos a = -\cos\varphi\,\sin\delta - \sin\varphi\,\cos\delta = -\sin(\varphi + \delta)
+\end{cases}
+$$
+
+Si $a$ = 0°, $\sin z = -\sin(\varphi + \delta)$ ; si $a$ = 180°, $\sin z = \sin(\varphi + \delta)$.
+</Repli>
+
+### Conclusion : les quatre équations
+
+La hauteur au méridien dépend de deux paramètres, la latitude $\varphi$ du lieu et la déclinaison $\delta$ de l’astre, et doit rester entre −90° et 90°. On résout toujours les quatre équations et on garde les solutions qui respectent cette condition.
+
+| Passage | Azimut | Hauteur | Équation |
+| --- | --- | --- | --- |
+| méridien supérieur, H = 0° | a = 0° | h = 90° − φ + δ | (1) |
+| méridien supérieur, H = 0° | a = 180° | h = 90° + φ − δ | (2) |
+| méridien inférieur, H = 180° | a = 0° | h = −90° − φ − δ | (3) |
+| méridien inférieur, H = 180° | a = 180° | h = −90° + φ + δ | (4) |
+
+Avec ces formules, on peut se placer en un lieu donné (on fixe $\varphi$) et étudier les passages au méridien selon la déclinaison des astres, ou choisir un astre (on fixe $\delta$) et étudier son passage selon la latitude.
+
+## Applications : hauteurs, levers et couchers
+
+### Hauteur de l’équateur au-dessus de l’horizon
+
+L’angle entre l’équateur et l’horizon s’obtient à l’intersection de l’équateur et du méridien supérieur : $\delta$ = 0°, avec l’équation (1) ou (2) et une hauteur positive.
+
+- L’équation (1) donne une hauteur positive si $\varphi$ est compris entre 0° et 90°, donc dans l’hémisphère nord : la hauteur de l’équateur vaut $h = 90° - \varphi$ (la colatitude), et l’intersection est au sud ($a$ = 0°).
+- L’équation (2) donne une hauteur positive si $\varphi$ est compris entre −90° et 0°, dans l’hémisphère sud : $h = 90° + \varphi$, et l’intersection est au nord ($a$ = 180°).
+
+La hauteur de l’équateur est donc toujours $90° - |\varphi|$, et la hauteur du pôle visible, son complément, vaut $|\varphi|$.
+
+#### Exercice : hauteur de l’équateur
+
+**1.** Calculez la hauteur de l’équateur au méridien à Paris (48° 50′ 11,2″ N) et au Cap (33° 56′ 00″ S).
+
+<Repli>
+À Paris, $h$ = 90° − 48° 50′ 11,2″ = **41° 09′ 48,8″**, au sud. Au Cap, $h$ = 90° − 33° 56′ = **56° 04′ 00″**, au nord.
+</Repli>
+
+### Hauteur de l’équateur sous l’horizon
+
+De même, l’intersection de l’équateur ($\delta$ = 0°) et du méridien inférieur donne l’angle de l’équateur sous l’horizon : équation (3) ou (4) avec une hauteur négative.
+
+- L’équation (3) donne une hauteur comprise entre −90° et 0° si $\varphi$ est compris entre −90° et 0°, dans l’hémisphère sud : $h = -90° - \varphi$, au sud ($a$ = 0°).
+- L’équation (4) donne une hauteur comprise entre −90° et 0° si $\varphi$ est compris entre 0° et 90°, dans l’hémisphère nord : $h = -90° + \varphi$, au nord ($a$ = 180°).
+
+La hauteur de l’équateur sous l’horizon est bien l’opposée de sa hauteur au-dessus.
+
+#### Exercice : l’équateur sous l’horizon
+
+**1.** Calculez la hauteur de l’équateur sous l’horizon, au méridien inférieur, à Paris et au Cap.
+
+<Repli>
+À Paris, $h$ = −90° + 48° 50′ 11,2″ = **−41° 09′ 48,8″**, au nord. Au Cap, $h$ = −90° + 33° 56′ = **−56° 04′ 00″**, au sud.
+</Repli>
+
+### Le Soleil au zénith entre les tropiques
+
+Un passage au zénith est par définition un passage au méridien supérieur. Entre les tropiques, la latitude est comprise entre $-\varepsilon$ et $+\varepsilon$, tout comme la déclinaison $\delta_S$ du Soleil. Les hauteurs au méridien supérieur sont données par (1) ou (2) :
+
+$$
+\text{(1)} \quad a = 0° \quad\text{et}\quad h = 90° - \varphi + \delta_S \qquad\qquad \text{(2)} \quad a = 180° \quad\text{et}\quad h = 90° + \varphi - \delta_S
+$$
+
+Le Soleil passe au zénith quand $h$ = 90° (l’azimut n’est alors plus défini), c’est-à-dire quand $\delta_S = \varphi$ : les jours où sa déclinaison égale la latitude du lieu, deux fois par an. Il y a une exception sur les tropiques, où cela n’arrive qu’une fois. Sur le tropique du Cancer ($\varphi = \varepsilon$), le Soleil passe au zénith au solstice de juin ; sur le tropique du Capricorne, au solstice de décembre. Sur l’équateur ($\varphi$ = 0), il y passe deux fois, aux équinoxes.
+
+En dehors des tropiques, $|\varphi| > \varepsilon$ : les équations n’ont plus de solution, et le Soleil ne passe jamais au zénith.
+
+#### Exercice : la déclinaison d’une étoile au zénith
+
+**1.** La direction du pôle Nord et l’équateur céleste fournissent des directions fixes communes à toutes les sphères locales ; chaque étoile y a sa propre déclinaison. Si l’on voit une étoile au zénith d’un lieu de latitude $\varphi$, quelle est sa déclinaison ?
+
+<ZenithDeclinaison>
+Coupe méridienne d’un lieu de latitude φ. Schéma redessiné d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</ZenithDeclinaison>
+
+<Repli titre="Indice">
+C’est la latitude du lieu ! Pourquoi ?
+</Repli>
+
+<Repli>
+Le pôle céleste est à la hauteur $\varphi$ au-dessus de l’horizon nord, donc à $90° - \varphi$ du zénith. L’équateur, perpendiculaire à la direction du pôle, passe à $\varphi$ du zénith côté sud. Une étoile au zénith est donc à l’angle $\varphi$ de l’équateur, du côté du pôle nord : $\delta = \varphi$. On retrouve l’équation (1) avec $h$ = 90°.
+</Repli>
+
+### Les étoiles qui ne se lèvent pas
+
+En un lieu de latitude $\varphi$, une étoile ne se lève pas si sa hauteur au méridien supérieur est négative ou nulle.
+
+- L’équation (1) donne $90° - \varphi + \delta \le 0$, soit $\delta \le \varphi - 90°$.
+- L’équation (2) donne $90° + \varphi - \delta \le 0$, soit $\delta \ge 90° + \varphi$.
+
+Comme la déclinaison est comprise entre −90° et +90°, la première inéquation n’a de solution que pour une latitude positive : dans l’hémisphère nord, les étoiles qui ne se lèvent pas vérifient $\delta \le \varphi - 90°$. La seconde ne vaut que pour une latitude négative : dans l’hémisphère sud, elles vérifient $\delta \ge 90° + \varphi$.
+
+À l’équateur, aucune étoile ne reste toujours cachée : seules celles de déclinaison ±90°, exactement aux pôles, restent en permanence sur l’horizon. Au pôle Nord, on ne voit aucune étoile de déclinaison négative ; au pôle Sud, aucune de déclinaison positive. Tout cela n’est rigoureux que si l’on néglige la réfraction atmosphérique.
+
+#### Exercice : étoiles sous l’horizon
+
+**1.** À Paris (48° 50′ 11,2″ N), quelles sont les déclinaisons limites des étoiles qui ne se lèvent pas ?
+
+**2.** Même question au Cap (33° 56′ 00″ S).
+
+<Repli>
+1. À Paris : $\delta \le$ 48° 50′ 11,2″ − 90° = **−41° 09′ 48,8″**.
+
+2. Au Cap : $\delta \ge$ 90° − 33° 56′ = **+56° 04′ 00″**. La Grande Ourse, par exemple, n’y est donc jamais visible en entier.
+</Repli>
+
+### Les étoiles qui ne se couchent pas
+
+Une étoile ne se couche pas si sa hauteur au méridien inférieur est positive ou nulle. On utilise les équations (3) et (4).
+
+- L’équation (3) donne $-90° - \varphi - \delta \ge 0$, soit $\delta \le -90° - \varphi$.
+- L’équation (4) donne $-90° + \varphi + \delta \ge 0$, soit $\delta \ge 90° - \varphi$.
+
+La première n’a de solution que dans l’hémisphère sud, où les étoiles circumpolaires vérifient $\delta \le -90° - \varphi$. La seconde ne vaut que dans l’hémisphère nord, où elles vérifient $\delta \ge 90° - \varphi$.
+
+Cas particuliers : à l’équateur, il n’y a aucune étoile circumpolaire. Au pôle Nord, toutes les étoiles de déclinaison positive sont circumpolaires ; au pôle Sud, toutes celles de déclinaison négative.
+
+#### Exercice : étoiles circumpolaires
+
+**1.** À Paris (48° 50′ 11,2″ N), quelles sont les déclinaisons limites des étoiles circumpolaires ?
+
+**2.** Même question au Cap (33° 56′ 00″ S).
+
+**3.** À quelle latitude le Soleil ne se couche-t-il pas le jour du solstice de juin ? Quel est le nom de ce parallèle ? Montrez qu’en ces lieux, le Soleil ne se lève pas le jour du solstice de décembre.
+
+**4.** En quels lieux voit-on, au cours de l’année, le plus d’étoiles ?
+
+**5.** En quels lieux en voit-on le moins ?
+
+<Repli>
+1. À Paris : $\delta \ge$ 90° − 48° 50′ 11,2″ = **+41° 09′ 48,8″**.
+
+2. Au Cap : $\delta \le$ −90° + 33° 56′ = **−56° 04′ 00″**.
+
+3. Au solstice de juin, $\delta = \varepsilon$. Le Soleil est circumpolaire si $\varepsilon \ge 90° - \varphi$, soit $\varphi \ge 90° - \varepsilon$ = **66° 33′ 39″** : c’est le **cercle polaire arctique**. Au solstice de décembre, $\delta = -\varepsilon$ et le Soleil ne se lève pas si $-\varepsilon \le \varphi - 90°$, soit la même condition $\varphi \ge 90° - \varepsilon$.
+
+4. À l’**équateur** : aucune étoile n’y est circumpolaire ni invisible, et toutes les étoiles du ciel y passent au-dessus de l’horizon au cours de l’année.
+
+5. Aux **pôles** : on n’y voit jamais qu’un seul hémisphère céleste, toujours le même, soit la moitié des étoiles.
+</Repli>
+
+### Les étoiles à plus grande digression
+
+Les étoiles à plus grande digression orientale ou occidentale sont celles qui passent au méridien supérieur entre le zénith et le pôle.
+
+- Dans l’hémisphère nord, le passage doit se faire au nord ($a$ = 180°), donc $h = 90° + \varphi - \delta$ doit être inférieur à 90° : $\delta > \varphi > 0$.
+- Dans l’hémisphère sud, le passage doit se faire au sud ($a$ = 0°), donc $h = 90° - \varphi + \delta$ doit être inférieur à 90° : $\delta < \varphi < 0$.
+
+#### Exercice : étoiles à plus grande digression
+
+**1.** À Paris (48° 50′ 11,2″ N), quelles sont les déclinaisons limites des étoiles qui ont une plus grande digression ?
+
+**2.** Même question au Cap (33° 56′ 00″ S).
+
+<Repli>
+1. À Paris : $\delta >$ **+48° 50′ 11,2″**.
+
+2. Au Cap : $\delta <$ **−33° 56′ 00″**.
+</Repli>
+
+### Circumpolaire ou plus grande digression ?
+
+Il ne faut pas confondre ces deux notions. Dans l’hémisphère nord, par exemple :
+
+- étoile circumpolaire $\iff \delta > 90° - \varphi$ (condition A) ;
+- plus grande digression $\iff \delta > \varphi$ (condition B).
+
+Si la latitude dépasse 45°, B entraîne A : toute étoile à plus grande digression est circumpolaire, mais la réciproque est fausse. Par 50° de latitude nord, une étoile de déclinaison 43° est circumpolaire (43° > 40°) mais n’a pas de plus grande digression (43° < 50°). Si la latitude est inférieure à 45°, c’est l’inverse : toute étoile circumpolaire a une plus grande digression, mais pas réciproquement. Par 30° nord, une étoile de déclinaison 40° a une plus grande digression (40° > 30°) mais n’est pas circumpolaire (40° < 60°). Les deux notions ne coïncident qu’à 45° de latitude.
+
+### Simulation
+
+Ce second exemplaire du simulateur est réglé sur une latitude de 49° nord et une étoile de déclinaison 60°. Vérifiez les points suivants.
+
+- Dans l’hémisphère nord, hors de la zone intertropicale (L = 0°, $\varphi > \varepsilon$), prenez un astre au-dessus de l’horizon : l’angle horaire et l’azimut croissent quand le temps avance.
+- Dans l’hémisphère sud, hors de la zone intertropicale ($\varphi < -\varepsilon$), l’angle horaire croît mais l’azimut décroît.
+- Vers la latitude de Paris ($\varphi$ = 49°), les étoiles de déclinaison supérieure à 90° − $\varphi$ = 41° ne se couchent pas. Celles de déclinaison supérieure à 49° présentent une plus grande digression, et passent au méridien supérieur (H = 0 h) comme au méridien inférieur (H = 12 h) au nord ($a$ = 180°). Une étoile de déclinaison égale à la latitude passe au zénith.
+- Refaites ces vérifications pour un lieu de l’hémisphère sud.
+
+<SimulateurSphereCeleste alpha={2} delta={60} phi={49} lon={0} />
+
+## Les nouveaux repères
+
+Le repère terrestre et le repère céleste sont liés : on détermine les latitudes et longitudes géographiques par des mesures astronomiques (hauteur des astres, passages au méridien). Ils ne sont donc pas indépendants. De plus, le repère écliptique dépend de la théorie du mouvement du barycentre Terre-Lune, et le repère équatorial des théories de la précession et de la nutation. D’où l’idée de construire de nouveaux repères, indépendants. Pour chacun, on distingue le **concept** (le système de référence) et sa **réalisation** (le repère).
+
+<Encadre type="def" titre="Le système de référence céleste international (ICRS) et sa réalisation (ICRF)">
+L’International Celestial Reference System (ICRS) est le concept : l’ensemble des prescriptions, conventions et modélisations nécessaires pour définir à tout instant un repère à trois axes. L’International Celestial Reference Frame (ICRF) en est une réalisation, fondée sur la direction, vue du barycentre du système solaire, d’un grand nombre de radiosources extragalactiques.
+</Encadre>
+
+<Encadre type="def" titre="Le système de référence terrestre international (ITRS) et sa réalisation (ITRF)">
+L’International Terrestrial Reference System (ITRS) rassemble les prescriptions, conventions et modélisations qui définissent l’origine, l’échelle, l’orientation et l’évolution dans le temps d’un système de référence terrestre conventionnel. C’est un système idéal, défini par la résolution n° 2 de l’UGGI (Vienne, 1991). L’International Terrestrial Reference Frame (ITRF) en est une réalisation. Elle est obtenue à partir des coordonnées et des vitesses d’un ensemble de stations terrestres, mesurées par interférométrie à très longue base (VLBI), télémétrie laser sur la Lune (LLR) et sur satellites (SLR), GPS et système DORIS.
+</Encadre>
+
+Pour calculer les éphémérides des astres vus de la Terre, il faut passer des coordonnées du repère céleste (ICRF) à des coordonnées liées à la Terre (ITRF). On le fait en deux étapes : on passe d’abord, par des transformations relativistes strictes, dans un système céleste géocentrique sans rotation, le GCRS. Puis on passe de ce système céleste géocentrique au système terrestre, l’ITRS.
+
+## Testez-vous
+
+<Quiz questions={[
+  { question: "La direction de l’équinoxe de printemps, c’est :", choix: ["la direction du pôle de l’écliptique", "l’origine des ascensions droites, nœud ascendant de l’écliptique sur l’équateur", "la direction du Soleil au solstice de juin"], reponse: 1 },
+  { question: "L’angle horaire se mesure dans le repère :", choix: ["équatorial local (horaire)", "horizontal", "équatorial absolu"], reponse: 0 },
+  { question: "Le temps sidéral, c’est :", choix: ["la durée d’une rotation de 360° de la Terre sur elle-même", "une échelle de temps absolue, indépendante de la Terre", "l’angle horaire du point vernal"], reponse: 2 },
+  { question: "L’angle horaire d’un astre est nul quand il passe :", choix: ["au méridien inférieur du lieu", "au méridien supérieur du lieu", "dans le demi-cercle azimutal sud"], reponse: 1 },
+  { question: "L’azimut des astronomes est nul quand l’astre passe :", choix: ["au méridien inférieur du lieu", "dans le demi-cercle azimutal sud", "au méridien supérieur du lieu"], reponse: 1 },
+  { question: "Pour un astre observé avec un instrument méridien, l’angle horaire est :", choix: ["nul : le temps sidéral local est alors égal à l’ascension droite", "égal à 6 h", "strictement positif"], reponse: 0 },
+]} />

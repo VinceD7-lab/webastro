@@ -1,0 +1,32 @@
+---
+/** Excentricité de l’orbite terrestre de −1 000 000 à +200 000 ans (solution La2004, Laskar et al. 2004). */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, point2D, type P2 } from '../../lib/projection';
+import data from '../../data/excentricite-la2004.json';
+const W = 640, H = 330, g = 58, d = 20, h = 22, b = 46;
+const t0 = data.t0, t1 = data.t0 + data.pas * (data.e.length - 1), eMax = 0.06;
+const X = (t: number) => g + ((t - t0) / (t1 - t0)) * (W - g - d), Y = (e: number) => H - b - (e / eMax) * (H - b - h);
+const nb = (x: number, dec: number) => x.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+let s = '';
+for (let e = 0; e <= eMax + 1e-9; e += 0.01) s += trait2D([g, Y(e)], [W - d, Y(e)], { couleur: 'var(--rule)', epaisseur: e === 0 ? 1.2 : 0.7 }) + texte2D([g - 8, Y(e) + 4], nb(e, 2), { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+for (let t = -1000; t <= 200; t += 200) s += trait2D([X(t), H - b], [X(t), H - b + 5], { couleur: 'var(--ink-soft)', epaisseur: 1 }) + texte2D([X(t), H - b + 20], t === 0 ? '0' : `${t > 0 ? '+' : '−'}${nb(Math.abs(t), 0)}`, { ancre: 'middle', taille: 12, couleur: 'var(--ink-soft)' });
+s += texte2D([(g + W - d) / 2, H - 8], 'milliers d’années (0 = aujourd’hui)', { ancre: 'middle', taille: 12.5, couleur: 'var(--ink-soft)' });
+s += texte2D([14, (h + H - b) / 2], 'excentricité', { ancre: 'middle', taille: 12.5, couleur: 'var(--ink-soft)', rotation: -90 });
+s += trait2D([X(0), h], [X(0), H - b], { couleur: 'var(--ink-soft)', epaisseur: 1, tirets: '3 3' });
+const pts: P2[] = data.e.map((e: number, i: number) => [X(t0 + i * data.pas), Y(e)]);
+s += `<path d="${chemin(pts)}" fill="none" stroke="var(--orbit)" stroke-width="2" stroke-linejoin="round"/>`;
+// Étiquettes directes : aujourd’hui, prochain minimum, maximum de la période.
+const i0 = (0 - t0) / data.pas, futur = data.e.slice(i0), iMin = i0 + futur.indexOf(Math.min(...futur));
+const iMax = data.e.indexOf(Math.max(...data.e));
+const marques: [number, string[], number, number, 'start' | 'end'][] = [
+  [i0, ['aujourd’hui', nb(data.e[i0], 4)], 8, -40, 'start'],
+  [iMin, [`dans ${nb(t0 + iMin * data.pas, 0)} 000 ans`, nb(data.e[iMin], 4)], -10, -30, 'end'],
+  [iMax, [`maximum ${nb(data.e[iMax], 3)} (il y a ${nb(-(t0 + iMax * data.pas), 0)} 000 ans)`], 8, -6, 'start'],
+];
+for (const [i, lignes, dx, dy, a] of marques) {
+  const p = pts[i];
+  s += `<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="var(--orbit)" stroke="var(--surface)" stroke-width="2"/>`;
+  s += lignes.map((l, j) => texte2D(p, l, { dx, dy: dy + j * 15, ancre: a, taille: 12.5 })).join('');
+}
+---
+<Figure titre="Excentricité de l’orbite de la Terre du dernier million d’années jusqu’à 200 000 ans dans le futur, d’après la solution La2004" largeur={W} hauteur={H} svg={s}><slot /></Figure>

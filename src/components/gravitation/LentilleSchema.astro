@@ -1,0 +1,36 @@
+---
+/** Principe d’un mirage gravitationnel : la lumière d’une galaxie lointaine est déviée par un amas massif ; l’observateur en voit plusieurs images déformées. */
+import Figure from '../reperes/Figure.astro';
+import { chemin, texte2D, trait2D, type P2 } from '../../lib/projection';
+import { terre } from '../../lib/dessin';
+const O: P2 = [58, 175], L: P2 = [292, 175], S: P2 = [522, 175], h = 62;
+let s = '';
+// Axe optique.
+s += trait2D(O, S, { couleur: 'var(--rule)', epaisseur: 1, tirets: '3 5' });
+for (const sg of [-1, 1]) {
+  const D: P2 = [L[0], L[1] + sg * h];
+  // Rayon réel : de la source à l’amas, puis dévié vers l’observateur.
+  s += `<path d="${chemin([S, D, O])}" fill="none" stroke="var(--sun)" stroke-width="2"/>`;
+  s += trait2D(D, [D[0] + (O[0] - D[0]) * 0.45, D[1] + (O[1] - D[1]) * 0.45], { couleur: 'var(--sun)', epaisseur: 2, fleche: 'fin' });
+  // Direction d’où l’observateur croit voir arriver la lumière.
+  const k = (S[0] - O[0]) / (D[0] - O[0]), I: P2 = [O[0] + (D[0] - O[0]) * k, O[1] + (D[1] - O[1]) * k];
+  s += trait2D(D, I, { couleur: 'var(--ink-soft)', epaisseur: 1.2, tirets: '6 5' });
+  // Image étirée en arc, centré sur la lentille (convexe vers l’extérieur).
+  s += `<path d="M${I[0] - 22},${I[1] - sg * 5} Q${I[0]},${I[1] + sg * 9} ${I[0] + 22},${I[1] - sg * 5}" fill="none" stroke="var(--orbit)" stroke-width="5" stroke-linecap="round" opacity=".75"/>`;
+  s += texte2D(I, 'image', { dx: -30, dy: sg < 0 ? 5 : 5, ancre: 'end', taille: 13.5, couleur: 'var(--orbit)' });
+}
+// Amas de galaxies : un nuage de petites ellipses.
+const amas: [number, number, number][] = [[0, 0, 13], [-16, -10, 7], [14, -14, 8], [-10, 16, 6], [17, 11, 7], [3, -26, 5], [-24, 4, 5], [26, -2, 5], [-2, 27, 5]];
+s += `<ellipse cx="${L[0]}" cy="${L[1]}" rx="44" ry="46" fill="var(--sector-2)" stroke="none"/>`;
+for (const [dx, dy, r] of amas) s += `<ellipse cx="${L[0] + dx}" cy="${L[1] + dy}" rx="${r}" ry="${r * 0.7}" fill="var(--brass)" fill-opacity=".8" transform="rotate(${(dx * 7) % 50} ${L[0] + dx} ${L[1] + dy})"/>`;
+s += texte2D([L[0], L[1] + 70 + 22], 'amas de galaxies', { ancre: 'middle', taille: 14, couleur: 'var(--brass)' });
+s += texte2D([L[0], L[1] + 70 + 39], '(lentille)', { ancre: 'middle', taille: 13, couleur: 'var(--brass)' });
+// Source et observateur.
+s += `<ellipse cx="${S[0]}" cy="${S[1]}" rx="10" ry="6" fill="var(--orbit)" stroke="var(--ink)" stroke-width="1"/>`;
+s += texte2D(S, 'galaxie lointaine', { dx: 0, dy: 26, ancre: 'middle', taille: 13.5 });
+s += texte2D(S, '(position réelle)', { dx: 0, dy: 42, ancre: 'middle', taille: 12.5, couleur: 'var(--ink-soft)' });
+s += terre(O, 14);
+s += texte2D(O, 'observateur', { dy: 34, ancre: 'middle', taille: 13.5 });
+s += texte2D([592, 340], 'Échelles et angles très exagérés', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+---
+<Figure titre="Mirage gravitationnel : la lumière d’une galaxie lointaine, déviée par la masse d’un amas de galaxies, parvient à l’observateur par plusieurs chemins ; il en voit plusieurs images étirées en arcs" largeur={600} hauteur={350} svg={s}><slot /></Figure>

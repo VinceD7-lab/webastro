@@ -1,0 +1,92 @@
+---
+/**
+ * Une même mesure, deux modèles : l’écart d’angle du Soleil entre Alexandrie et Syène,
+ * interprété sur une Terre ronde (Ératosthène : taille de la Terre)
+ * ou sur une Terre plate (Anaxagore : distance et taille du Soleil).
+ */
+---
+<div class="sim" data-modeles data-pagefind-ignore>
+  <svg viewBox="0 0 600 300" role="img" aria-label="À gauche, Terre ronde et rayons solaires parallèles ; à droite, Terre plate et Soleil proche">
+    <g data-dessin font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Angle mesuré à Alexandrie</span> <input data-angle type="range" min="0.5" max="20" step="any" value="7" /> <output data-angle-out></output></label>
+    <label><span>Distance Alexandrie-Syène</span> <input data-base type="range" min="100" max="2000" step="any" value="800" /> <output data-base-out></output></label>
+    <div class="presets" role="group" aria-label="Exemples">
+      <button class="tool" type="button" data-pre="7,800">Mesure d’Ératosthène</button>
+      <button class="tool" type="button" data-pre="1,111">Un degré de méridien</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-tour>–</b><span>Terre ronde : tour de la Terre</span></div>
+    <div><b data-rayon>–</b><span>Terre ronde : rayon</span></div>
+    <div><b data-dsol>–</b><span>Terre plate : distance du Soleil</span></div>
+    <div><b data-diam>–</b><span>Terre plate : diamètre du Soleil</span></div>
+  </div>
+  <p class="small">Valeurs réelles : rayon de la Terre 6 371 km ; Soleil à 149,6 millions de km, diamètre 1,39 million de km. La mesure est la même dans les deux cas ; seul le modèle change.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:5.5em;font-variant-numeric:tabular-nums}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .small{margin:.6rem 0 0}
+</style>
+
+<script>
+  import { eratosthene, anaxagore } from '../lib/distances';
+  import { chemin, trait2D, texte2D, type P2 } from '../lib/projection';
+  import { arcAngle, disque } from '../lib/dessin';
+
+  const nb = (x: number, d = 0) => x.toLocaleString('fr-FR', { maximumFractionDigits: d });
+  document.querySelectorAll<HTMLElement>('[data-modeles]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const angle = q<HTMLInputElement>('[data-angle]'), base = q<HTMLInputElement>('[data-base]'), dessin = q<SVGGElement>('[data-dessin]');
+
+    function maj() {
+      const a = parseFloat(angle.value), d = parseFloat(base.value);
+      const ron = eratosthene(a, d), pla = anaxagore(a, d);
+      // Terre ronde (à gauche) : l’angle est dessiné tel quel.
+      const O: P2 = [150, 430], R = 300, p = (t: number, r = R): P2 => [O[0] + r * Math.cos((t * Math.PI) / 180), O[1] - r * Math.sin((t * Math.PI) / 180)];
+      const Sy = p(90), Al = p(90 + a), arc: P2[] = [];
+      for (let i = 0; i <= 40; i++) arc.push(p(62 + i * 1.4));
+      let s = `<text x="150" y="22" font-size="15" text-anchor="middle" fill="var(--ink)">Terre ronde, Soleil très loin</text>`;
+      s += `<path d="${chemin(arc)}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+      for (const P of [Al, Sy, p(74)]) s += trait2D(P, [P[0], 40], { couleur: 'var(--sun)', epaisseur: 2.4, fleche: 'fin' });
+      s += trait2D(Sy, p(90, R - 70), { tirets: '5 4', epaisseur: 1 }) + trait2D(Al, p(90 + a, R - 70), { tirets: '5 4', epaisseur: 1 });
+      s += trait2D(Al, p(90 + a, R + 70), { couleur: 'var(--orbit)', epaisseur: 1.6 });
+      s += arcAngle(Al, 90, 90 + a, 50, 'var(--ko)', 2) + texte2D([Al[0] - 14, Al[1] - 56], `${nb(a, 1)}°`, { ancre: 'end', taille: 13, couleur: 'var(--ko)' });
+      s += texte2D(Al, 'Alexandrie', { dx: -6, dy: 18, ancre: 'end', taille: 12 }) + texte2D(Sy, 'Syène', { dx: 6, dy: 18, taille: 12 });
+      s += `<line x1="300" y1="10" x2="300" y2="290" stroke="var(--rule)"/>`;
+      // Terre plate (à droite) : la hauteur du Soleil suit la mesure, plafonnée pour rester dans le cadre.
+      const sol = 250, xA = 360, xS = 560, h = Math.min(205, (xS - xA) / Math.tan((a * Math.PI) / 180));
+      const S: P2 = [xS, sol - h];
+      s += `<text x="450" y="22" font-size="15" text-anchor="middle" fill="var(--ink)">Terre plate, Soleil proche</text>`;
+      s += `<line x1="310" y1="${sol}" x2="595" y2="${sol}" stroke="var(--ink)" stroke-width="1.6"/>`;
+      s += trait2D([xA, sol], [xA, sol - 150], { couleur: 'var(--orbit)', epaisseur: 1.6 });
+      s += trait2D(S, [xA, sol], { couleur: 'var(--sun)', epaisseur: 2.4 }) + trait2D(S, [xS, sol], { couleur: 'var(--sun)', epaisseur: 2.4 }) + disque(S, 9, 'var(--sun)');
+      s += arcAngle([xA, sol], (Math.atan2(h, xS - xA) * 180) / Math.PI, 90, 54, 'var(--ko)', 2) + texte2D([xA + 8, sol - 62], `${nb(a, 1)}°`, { taille: 13, couleur: 'var(--ko)' });
+      s += texte2D([xA, sol + 18], 'Alexandrie', { ancre: 'middle', taille: 12 }) + texte2D([xS, sol + 18], 'Syène', { ancre: 'middle', taille: 12 });
+      s += texte2D([(xA + xS) / 2, sol + 38], `${nb(d)} km`, { ancre: 'middle', taille: 13 });
+      if (h >= 205) s += texte2D([xS - 8, 46], '(hors cadre)', { ancre: 'end', taille: 12, couleur: 'var(--ink-soft)' });
+      dessin.innerHTML = s;
+      q('[data-angle-out]').textContent = `${nb(a, 1)}°`;
+      q('[data-base-out]').textContent = `${nb(d)} km`;
+      q('[data-tour]').textContent = `${nb(ron.tour)} km`;
+      q('[data-rayon]').textContent = `${nb(ron.rayon)} km`;
+      q('[data-dsol]').textContent = `${nb(pla.distance)} km`;
+      q('[data-diam]').textContent = `${nb(pla.diametre, pla.diametre < 100 ? 1 : 0)} km`;
+    }
+    angle.addEventListener('input', maj);
+    base.addEventListener('input', maj);
+    root.querySelectorAll<HTMLButtonElement>('[data-pre]').forEach((b) => b.addEventListener('click', () => { const [a, d] = b.dataset.pre!.split(','); angle.value = a; base.value = d; maj(); }));
+    maj();
+  });
+</script>

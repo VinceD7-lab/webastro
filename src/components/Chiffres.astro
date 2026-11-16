@@ -1,0 +1,14 @@
+---
+/** Rangée de valeurs clés. */
+interface Props { valeurs: { valeur: string; legende: string }[] }
+const { valeurs } = Astro.props;
+---
+<div class="chiffres">
+  {valeurs.map((v) => <div><b>{v.valeur}</b><span>{v.legende}</span></div>)}
+</div>
+<style>
+  .chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin:1.6rem 0}
+  div > div{border-top:2px solid var(--brass);padding-top:.5rem}
+  b{display:block;font-family:var(--display);font-size:2rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+  span{font-size:.9rem;color:var(--ink-soft)}
+</style>

@@ -1,0 +1,107 @@
+---
+/**
+ * Jour sidéral et jour solaire : vue depuis le pôle Nord. La Terre tourne sur elle-même et avance sur son orbite ;
+ * l’observateur (point rouge) revoit l’étoile après un jour sidéral, mais le Soleil seulement après un jour solaire.
+ * La durée de l’année est réglable : en la raccourcissant, on rend visible l’écart (3 min 56 s par jour pour l’année réelle).
+ */
+---
+<div class="sim" data-jour-sideral data-pagefind-ignore>
+  <svg viewBox="0 0 600 360" role="img" aria-label="Terre vue du pôle Nord tournant sur elle-même et autour du Soleil, avec la direction d’une étoile lointaine et celle du Soleil">
+    <g data-fond font-family="Literata Variable, Georgia, serif"></g>
+    <g data-dyn font-family="Literata Variable, Georgia, serif"></g>
+  </svg>
+  <div class="controls">
+    <label><span>Durée de l’année</span> <input data-annee type="range" min="0.778" max="2.5626" step="any" /> <output data-annee-out></output></label>
+    <button class="tool" data-pause type="button" aria-pressed="false">Pause</button>
+    <div class="presets" role="group" aria-label="Repères de temps">
+      <button class="tool" type="button" data-saut="sideral">Un jour sidéral</button>
+      <button class="tool" type="button" data-saut="solaire">Un jour solaire</button>
+      <button class="tool" type="button" data-saut="zero">Retour au début</button>
+    </div>
+  </div>
+  <div class="readout" aria-live="polite">
+    <div><b data-temps>–</b><span>temps écoulé (jours solaires)</span></div>
+    <div><b data-sid>–</b><span>durée du jour sidéral</span></div>
+    <div><b data-ecart>–</b><span>retard du Soleil sur l’étoile après un tour</span></div>
+    <div><b data-etat>–</b><span>ce que voit l’observateur</span></div>
+  </div>
+  <p class="note">Le jour sidéral (retour d’une étoile au méridien) est plus court que le jour solaire (retour du Soleil) de 1/(N + 1) de jour, N étant le nombre de jours de l’année. Avec l’année réelle (365,26 jours), l’écart n’est que de 3 min 56 s, soit moins de 1° : on le voit bien en raccourcissant l’année.</p>
+</div>
+
+<style>
+  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
+  svg{display:block;width:100%;height:auto}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
+  .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 260px;flex-wrap:wrap}
+  .controls output{min-width:8em;font-variant-numeric:tabular-nums}
+  .presets{display:flex;flex-wrap:wrap;gap:.4rem}
+  input[type=range]{flex:1;min-width:120px;accent-color:var(--brass)}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
+  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
+  .readout b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .readout span{color:var(--ink-soft)}
+  .note{font-size:.85rem;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+
+<script>
+  import { texte2D, trait2D, type P2 } from '../lib/projection';
+  import { nbFr as nb } from '../lib/relativite';
+
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const RAD = Math.PI / 180, S: P2 = [300, 180], R = 125, RT = 30, SEC_PAR_JOUR = 6;
+  const pol = (c: P2, a: number, l: number): P2 => [c[0] + l * Math.cos(a * RAD), c[1] - l * Math.sin(a * RAD)];
+  const hms = (s: number) => `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')} min ${nb(s % 60, 1)} s`;
+
+  document.querySelectorAll<HTMLElement>('[data-jour-sideral]').forEach((root) => {
+    const q = <T extends Element>(s: string) => root.querySelector(s) as T;
+    const curseur = q<HTMLInputElement>('[data-annee]'), pause = q<HTMLButtonElement>('[data-pause]');
+    let N = 24, t = 0, avant = 0, enPause = reduit;
+    curseur.value = String(Math.log10(N));
+
+    q('[data-fond]').innerHTML =
+      `<circle cx="${S[0]}" cy="${S[1]}" r="${R}" fill="none" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="5 5"/>`
+      + `<circle cx="${S[0]}" cy="${S[1]}" r="20" fill="var(--sun)" stroke="var(--ink)" stroke-width="1"/>`
+      + texte2D(S, 'Soleil', { dy: 38, ancre: 'middle', taille: 13 });
+
+    function dessiner() {
+      const phi = (360 * t) / N, theta = (360 * t * (N + 1)) / N; // direction du Soleil vue de la Terre ; rotation sidérale
+      const E = pol(S, 180 + phi, R); // la Terre part à gauche du Soleil et tourne dans le sens direct
+      const aSoleil = phi; // direction Terre → Soleil
+      let s = trait2D(pol(E, 0, RT + 4), pol(E, 0, 215), { couleur: 'var(--ink-soft)', epaisseur: 1.2, tirets: '7 5' });
+      s += texte2D(pol(E, 0, 215), 'étoile lointaine', { dx: 6, dy: 4, taille: 12, couleur: 'var(--ink-soft)' });
+      s += trait2D(pol(E, aSoleil, RT + 4), pol(E, aSoleil, R - 16), { couleur: 'var(--sun)', epaisseur: 1.8 });
+      s += `<circle cx="${E[0].toFixed(1)}" cy="${E[1].toFixed(1)}" r="${RT}" fill="var(--orbit)" fill-opacity=".28" stroke="var(--ink)" stroke-width="1.4"/>`;
+      s += `<circle cx="${E[0].toFixed(1)}" cy="${E[1].toFixed(1)}" r="2.5" fill="var(--ink)"/>`;
+      const a = pol(E, theta, RT), b = pol(E, theta, RT + 22);
+      s += trait2D(a, b, { couleur: 'var(--ko)', epaisseur: 3 }) + `<circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="5" fill="var(--ko)"/>`;
+      // Observateur dans la direction de l’étoile ? du Soleil ?
+      const ecartEtoile = Math.abs(((theta + 180) % 360 + 360) % 360 - 180), ecartSoleil = Math.abs((((theta - phi) + 180) % 360 + 360) % 360 - 180);
+      q('[data-etat]').textContent = ecartSoleil < 2 ? 'le Soleil au méridien : midi' : ecartEtoile < 2 ? 'l’étoile au méridien' : 'ni l’un ni l’autre';
+      s += texte2D([14, 24], ecartSoleil < 2 ? 'Midi : l’observateur voit le Soleil au méridien' : ecartEtoile < 2 ? 'Un tour complet : l’étoile est au méridien, pas encore le Soleil' : '', { taille: 13.5, couleur: 'var(--ko)' });
+      q('[data-dyn]').innerHTML = s;
+      q('[data-temps]').textContent = nb(t, 2);
+    }
+    function maj() {
+      N = 10 ** parseFloat(curseur.value);
+      q('[data-annee-out]').textContent = `${nb(N, N < 100 ? 1 : 2)} jours`;
+      q('[data-sid]').textContent = hms((86_400 * N) / (N + 1));
+      const ec = 86_400 / (N + 1);
+      q('[data-ecart]').textContent = `${nb(ec / 60, 0)} min ${String(Math.round(ec % 60)).padStart(2, '0')} s`;
+      dessiner();
+    }
+    function boucle(now: number) {
+      if (!enPause && avant) { t += Math.min(0.1, (now - avant) / 1000) / SEC_PAR_JOUR; dessiner(); }
+      avant = now; requestAnimationFrame(boucle);
+    }
+    curseur.addEventListener('input', maj);
+    pause.addEventListener('click', () => { enPause = !enPause; pause.setAttribute('aria-pressed', String(enPause)); pause.textContent = enPause ? 'Reprendre' : 'Pause'; });
+    if (reduit) { pause.setAttribute('aria-pressed', 'true'); pause.textContent = 'Reprendre'; }
+    root.querySelectorAll<HTMLButtonElement>('[data-saut]').forEach((bt) => bt.addEventListener('click', () => {
+      const k = bt.dataset.saut;
+      t = k === 'zero' ? 0 : k === 'sideral' ? N / (N + 1) : 1;
+      enPause = true; pause.setAttribute('aria-pressed', 'true'); pause.textContent = 'Reprendre'; dessiner();
+    }));
+    maj();
+    requestAnimationFrame(boucle);
+  });
+</script>

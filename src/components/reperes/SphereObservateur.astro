@@ -1,0 +1,23 @@
+---
+/** La sphère céleste locale : horizon, zénith, almicantarat et plan vertical d’un astre (redessiné d’après ASM, J.-E. Arlot et D. Guillaume). */
+import Figure from './Figure.astro';
+import { Vue, sph, mul, comb, texte2D, type V3 } from '../../lib/projection';
+const v = new Vue(300, 215, 165, 20, 16);
+const Z: V3 = [0, 0, 1], N: V3 = [0, 0, -1], O: V3 = [0, 0, 0];
+const hM = 40, M = sph(58, hM), H = sph(58, 0);
+let s = v.contour({ remplir: 'var(--surface-2)' });
+s += v.polygone(v.pointsCercle(Z, 0), 'var(--sun)', 0.3);
+s += v.cercle(Z, 0, { epaisseur: 1.4 });
+s += v.polygone(v.pointsCercle(Z, Math.sin((hM * Math.PI) / 180)), 'var(--ko)', 0.14) + v.cercle(Z, Math.sin((hM * Math.PI) / 180), { couleur: 'var(--ko)', epaisseur: 1.2 });
+const demi: V3[] = []; for (let i = 0; i <= 90; i++) { const t = (i * Math.PI) / 90; demi.push(comb([Math.cos(t), Z], [Math.sin(t), H])); }
+s += v.polygone([...demi, O], 'var(--ok)', 0.25) + v.courbe(demi, { couleur: 'var(--ok)', epaisseur: 1.6 });
+s += v.ligne(Z, N, { tirets: '5 4', epaisseur: 1 }) + v.ligne(O, H, { epaisseur: 1 });
+s += v.ligne(O, mul(M, 1.42), { fleche: 'fin', epaisseur: 1.6 });
+s += v.point(O, 4) + v.point(M, 4.5, 'var(--ko)') + v.point(Z, 3.5) + v.point(N, 3.5);
+s += v.texte(Z, 'Z (zénith)', { dy: -10, ancre: 'middle' }) + v.texte(N, 'N (nadir)', { dy: 24, ancre: 'middle' });
+s += v.texte(M, 'M', { dx: 8, dy: 18, italique: true, taille: 17 }) + v.texte(O, 'O', { dx: -18, dy: 18, italique: true, taille: 17 });
+s += texte2D([128, 222], 'horizon H', { ancre: 'end' });
+s += texte2D([150, 96], 'almicantarat (a)', { ancre: 'end', couleur: 'var(--ko)', taille: 14 });
+s += texte2D([405, 70], 'plan vertical de M', { couleur: 'var(--ok)', taille: 14 });
+---
+<Figure titre="Sphère céleste locale d’un observateur O : plan de l’horizon H, zénith Z, nadir N, cercle de même hauteur (almicantarat) et plan vertical passant par l’astre M" largeur={600} hauteur={420} svg={s}><slot /></Figure>

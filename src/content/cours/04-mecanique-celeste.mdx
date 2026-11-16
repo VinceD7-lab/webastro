@@ -1,0 +1,325 @@
+---
+title: La mécanique céleste
+slug: mecanique-celeste
+numero: 4
+resume: Le problème des deux corps et ses perturbations.
+source: https://media4.obspm.fr/public/ressources_lu/pages_mecanique-celeste/introduction-mecanique-celeste.html
+---
+import Encadre from '../../components/Encadre.astro';
+import Terme from '../../components/Terme.astro';
+import Quiz from '../../components/Quiz.astro';
+import Frise from '../../components/Frise.astro';
+import Personne from '../../components/Personne.astro';
+import SimulateurCanonNewton from '../../components/SimulateurCanonNewton.astro';
+import SimulateurPeriodes from '../../components/SimulateurPeriodes.astro';
+import SimulateurLagrange from '../../components/SimulateurLagrange.astro';
+import NCorps from '../../components/mecanique/NCorps.astro';
+import VitesseLiberation from '../../components/mecanique/VitesseLiberation.astro';
+import PointsLagrange from '../../components/mecanique/PointsLagrange.astro';
+import OrbitesSatellites from '../../components/mecanique/OrbitesSatellites.astro';
+import TransfertOrbite from '../../components/mecanique/TransfertOrbite.astro';
+import Saturne from '../../components/mecanique/Saturne.astro';
+import GardienAnneaux from '../../components/mecanique/GardienAnneaux.astro';
+import OrbiteUranus from '../../components/mecanique/OrbiteUranus.astro';
+import ExcentriciteTerre from '../../components/mecanique/ExcentriciteTerre.astro';
+
+## Introduction
+
+Les [lois de Kepler](../kepler/) ne sont qu’une description empirique, cinématique, de ce que l’on observe. En fait, le mouvement des astres obéit à des principes plus fondamentaux, qui permettent d’expliquer de nombreux phénomènes : ce sont les principes de la mécanique céleste.
+
+## Dynamique et gravitation
+
+### Le principe fondamental de la dynamique
+
+Le principe fondamental de la dynamique est un outil de la mécanique classique. Il relie les forces appliquées à un corps et l’évolution de son mouvement. Pour un solide de masse $m$ dont on étudie le mouvement dans un <Terme id="referentiel-galileen">référentiel galiléen</Terme>, il s’énonce :
+
+$$
+\vec F = m\,\vec\gamma = m\,\frac{d\vec v}{dt}
+$$
+
+$\vec F$ représente l’ensemble des forces appliquées à l’objet et $\vec\gamma$ son accélération, c’est-à-dire la dérivée $d\vec v/dt$ de sa vitesse par rapport au temps.
+
+### En savoir plus : le principe fondamental de la mécanique
+
+<span class="tag plus">En savoir plus</span>
+
+Appliquée à un point matériel (un solide de dimensions négligeables devant les distances en jeu) ou à un ensemble de points matériels, cette loi peut se réécrire de plusieurs manières, toutes équivalentes.
+
+- **Le théorème du mouvement du centre de masse** (ou <Terme id="barycentre">barycentre</Terme>) : « le barycentre d’un système matériel se meut comme si toute la masse du système y était concentrée, les forces extérieures au système agissant toutes sur ce barycentre ».
+- **Le théorème du moment cinétique** : « la dérivée par rapport au temps du moment cinétique en un point d’un système matériel est, à chaque instant, égale au moment résultant des forces extérieures par rapport à ce même point ».
+- **Le théorème de l’énergie cinétique** (autrefois appelé théorème des forces vives) : « la variation de l’énergie cinétique d’un système matériel pendant un intervalle de temps est égale à la somme des travaux des forces intérieures et extérieures appliquées à ce système pendant cet intervalle ».
+
+Du théorème du moment cinétique découle directement la [deuxième loi de Kepler](../kepler/#deuxième-loi-les-aires) (loi des aires) : il suffit que l’interaction gravitationnelle soit une force centrale.
+
+### Histoire : les débuts de la mécanique
+
+<Encadre type="hist">
+On doit ces principes à Galilée et à Huygens. Ils ont été affinés ensuite par Descartes, Clairaut, Euler et d’Alembert.
+</Encadre>
+
+**<Personne id="galilee">Galilée</Personne>** (1564-1642) était d’abord un physicien. Il étudia la mécanique et la dynamique des corps en mouvement. Il montra que l’accélération due à la pesanteur est la même pour tous les corps à la surface du globe, et il établit la loi de l’inertie : tout corps qui n’est soumis à aucune force extérieure est animé d’un mouvement rectiligne uniforme, dans un référentiel que l’on nomme aujourd’hui « galiléen ».
+
+**<Personne id="huygens">Christian Huygens</Personne>** (1629-1695), hollandais, développa une théorie ondulatoire de la lumière. En 1673, il publia la loi de l’accélération centrifuge des corps en mouvement circulaire. Il séjourna quinze ans en France, à l’invitation de <Personne id="colbert">Colbert</Personne>.
+
+**<Personne id="descartes">René Descartes</Personne>** (1596-1650) apporta une vision complètement nouvelle de l’Univers : l’Univers évolue seul, nul besoin d’un dieu qui intervienne à tout moment. Descartes étudia l’optique et fit une théorie de la réflexion et de la réfraction. Il introduisit les mathématiques en physique, en particulier un système de coordonnées, aujourd’hui dites cartésiennes, qui facilite les calculs.
+
+**<Personne id="clairaut">Alexis Clairaut</Personne>** (1713-1765) fut l’un des membres de l’expédition en Laponie. Il s’attaqua à des problèmes de mécanique céleste comme celui des trois corps, appliqué au système Terre-Lune perturbé par le Soleil. Il appliqua la théorie de la gravitation universelle aux comètes, en particulier aux perturbations de Jupiter et de Saturne sur la trajectoire de la comète de Halley.
+
+**<Personne id="euler">Leonhard Euler</Personne>** (1707-1783), mathématicien suisse, étudia les perturbations mutuelles de Jupiter et de Saturne ainsi que les orbites paraboliques des comètes. On lui doit les « angles d’Euler », qui permettent de repérer l’orientation d’un solide en mouvement par rapport à un trièdre trirectangle.
+
+**<Personne id="dalembert">Jean le Rond d’Alembert</Personne>** (1717-1783) publia un traité de dynamique contenant le théorème sur les forces d’inertie connu aujourd’hui sous le nom de théorème de d’Alembert. Il établit également les équations du mouvement de la Terre autour de son axe et fit la première théorie mathématique de la <Terme id="precession">précession</Terme>.
+
+<Frise evenements={[
+  { date: "1564-1642", titre: "Galilée", texte: "Loi de l’inertie, chute des corps." },
+  { date: "1596-1650", titre: "Descartes", texte: "Coordonnées cartésiennes, mathématiques appliquées à la physique." },
+  { date: "1629-1695", titre: "Huygens", texte: "Accélération centrifuge (1673)." },
+  { date: "1642-1727", titre: "Newton", texte: "Gravitation universelle (Principia, 1687)." },
+  { date: "1707-1783", titre: "Euler", texte: "Perturbations de Jupiter et Saturne, angles d’Euler." },
+  { date: "1713-1765", titre: "Clairaut", texte: "Problème des trois corps, retour de la comète de Halley." },
+  { date: "1717-1783", titre: "d’Alembert", texte: "Dynamique, théorie de la précession." },
+  { date: "1736-1813", titre: "Lagrange", texte: "Mouvements perturbés, points d’équilibre." },
+  { date: "1749-1827", titre: "Laplace", texte: "Traité de mécanique céleste." },
+]} />
+
+### La gravitation universelle
+
+Le caractère universel de la gravitation a été mis en évidence par **<Personne id="newton">Newton</Personne>** (1642-1727) dans ses *Principes mathématiques de la philosophie naturelle* (1687). Newton a été le premier à comprendre que la pomme qui tombe d’un arbre et la Lune qui tourne autour de la Terre obéissent à la même loi, et que leurs mouvements sont de même nature.
+
+La loi de la gravitation universelle s’énonce ainsi :
+
+> Deux points matériels de masses $m$ et $m'$ exercent l’un sur l’autre une force attractive, proportionnelle à leurs masses et inversement proportionnelle au carré de la distance $r$ qui les sépare.
+
+Le module $F$ de cette force vaut :
+
+$$
+F = G\,\frac{m\,m'}{r^2}
+$$
+
+où $G$ est la constante de la gravitation ($G \approx 6{,}674 \times 10^{-11}\ \mathrm{m^3\,kg^{-1}\,s^{-2}}$). Cette loi suppose que la force se transmet instantanément dans l’espace ; la relativité générale corrigera ce point (voir le chapitre [La gravitation universelle et la relativité](../gravitation/)).
+
+### La mécanique céleste
+
+La mécanique céleste est l’application de la mécanique newtonienne et des principes fondamentaux de la mécanique aux corps du système solaire. C’est **<Personne id="laplace">Laplace</Personne>** (1749-1827) qui en a posé les fondements, dans son *Traité de mécanique céleste*. Elle va (presque) tout expliquer :
+
+- le mouvement des planètes et de leurs satellites ;
+- la précession et la nutation ;
+- les marées ;
+- l’aplatissement des planètes.
+
+En première approximation, la mécanique newtonienne explique donc parfaitement les mouvements dans le système solaire. Mais avant d’aborder un cas aussi complexe, on s’intéresse d’abord au problème à deux corps.
+
+## Dynamique du système solaire
+
+### Le problème à deux corps
+
+Le problème à deux corps étudie deux solides, assimilés à leur centre de masse, qui n’interagissent qu’entre eux. Ce problème se résout analytiquement, assez simplement, dans le référentiel du centre de masse du système : le reste de l’Univers étant oublié, le centre de masse est isolé et fournit un bon référentiel galiléen.
+
+- **Le mouvement est plan.** Le moment cinétique du système est constant, car l’interaction est centrale, toujours dirigée vers le barycentre du système.
+- **L’énergie du système est constante.** L’interaction gravitationnelle dérive d’un « champ de force ».
+- **La trajectoire est une conique.** Comme la force varie en inverse du carré de la distance, un troisième invariant apparaît : le vecteur excentricité. La trajectoire d’un corps par rapport à l’autre est un cercle, une ellipse, une parabole ou une hyperbole, définie dans le plan du mouvement par son <Terme id="demi-grand-axe">demi-grand axe</Terme> $a$ et son <Terme id="excentricite">excentricité</Terme> $e$.
+
+C’est dans le cadre de plusieurs problèmes à deux corps, un pour chaque couple planète-Soleil, que s’appliquent les [lois de Kepler](../kepler/).
+
+### Les mouvements dans le système solaire
+
+Le système solaire compte plus de deux corps. Pour obtenir les mouvements des planètes avec une très bonne précision, il faut envisager un problème de $N$ corps qui s’attirent mutuellement.
+
+<NCorps>
+Le principe du problème des N corps de masses m<sub>i</sub>. Schéma redessiné d’après l’original (CNRS, J.-E. Arlot).
+</NCorps>
+
+Chacun des $N$ corps de masse $m_i$ exerce sur le corps repéré par $j$ une force proportionnelle au produit de leurs masses et inversement proportionnelle au carré de leur distance. La force totale subie par le corps $j$ s’écrit :
+
+$$
+\vec F_j = \sum_{i \neq j} G\,\frac{m_i\,m_j}{P_jP_i^{\,3}}\;\overrightarrow{P_jP_i}
+$$
+
+où $P_i$ désigne la position du corps $i$.
+
+Mais en y regardant de plus près, on est en présence d’un très gros corps, le Soleil, mille fois plus massif que la plus grosse des planètes, Jupiter, entouré de petits corps qui tournent autour de lui. Chaque couple Soleil-planète est un problème à deux corps. En première approximation, on peut négliger la masse $m$ de la planète devant celle du Soleil, notée $M$. La force subie par la planète est alors :
+
+$$
+F = -\,G\,\frac{M\,m}{r^2}
+$$
+
+Le coefficient $GM$, produit de la constante de la gravitation par la masse du Soleil, est alors le même pour toutes les planètes : c’est ce que traduit la [troisième loi de Kepler](../kepler/#troisième-loi-les-périodes), que <Personne id="kepler">Kepler</Personne> (1571-1630) avait remarquée sans pouvoir la démontrer.
+
+Dans le cas de $N$ corps, on considère toujours des mouvements de deux corps pris deux à deux, avec une <Terme id="perturbation">perturbation</Terme> due aux autres corps. Celle-ci fait varier les paramètres de l’orbite elliptique du petit corps qui tourne autour du plus gros. C’est <Personne id="lagrange">Lagrange</Personne> (1736-1813) qui introduisit les équations de ces mouvements perturbés.
+
+### La vitesse de libération
+
+Pour quitter un corps céleste, la Terre par exemple, il faut vaincre la gravitation et d’abord éviter de retomber au sol. Deux cas se présentent :
+
+- éviter de retomber, mais rester en orbite autour de la Terre : la trajectoire est fermée (cercle ou ellipse) ;
+- quitter l’attraction terrestre en s’éloignant indéfiniment : la trajectoire est ouverte (parabole ou hyperbole).
+
+<VitesseLiberation>
+Trajectoires d’un objet lancé horizontalement à 2 000 km d’altitude, à l’échelle : à cette altitude, la vitesse circulaire vaut 6,9 km/s et la vitesse de libération 9,8 km/s. L’altitude est exagérée pour que la trajectoire T0 soit visible. Schéma redessiné d’après l’original (CNRS, J.-E. Arlot, et ASM, G. Bessou), trajectoires recalculées.
+</VitesseLiberation>
+
+En première approximation, la trajectoire d’une pierre lancée depuis le sol est une parabole, si l’on suppose la Terre plate et le centre d’attraction à l’infini. En réalité, c’est une ellipse dont le centre de la Terre est un <Terme id="foyer">foyer</Terme>. Pour que la trajectoire ne heurte pas la surface, il faut « circulariser » l’orbite. L’altitude minimale pour satelliser un objet est d’environ 300 km : plus bas, le freinage par l’atmosphère le fait vite retomber.
+
+Pour un objet lancé horizontalement à 300 km d’altitude :
+
+- **en dessous de 7,7 km/s environ**, la vitesse est insuffisante et l’objet retombe sur la Terre ;
+- **à 7,7 km/s**, la vitesse circulaire à cette altitude, la trajectoire est un cercle ;
+- **entre 7,7 et 10,9 km/s**, c’est une ellipse dont le périgée est le point de lancement, d’autant plus allongée que la vitesse est grande ;
+- **à partir de 10,9 km/s**, la <Terme id="vitesse-liberation">vitesse de libération</Terme> à cette altitude, la trajectoire n’est plus fermée : l’objet s’éloigne indéfiniment sur une parabole, puis, au-delà, sur une hyperbole.
+
+Ce sont les quatre cas du schéma ci-dessus (T0 à T3), dessiné pour un lancement à 2 000 km d’altitude, où les seuils sont plus bas.
+
+Ces deux vitesses se calculent à la distance $r$ du centre de la Terre :
+
+$$
+v_\text{circ} = \sqrt{\frac{GM}{r}} \qquad v_\text{lib} = \sqrt{\frac{2\,GM}{r}} = \sqrt{2}\;v_\text{circ}
+$$
+
+Au niveau du sol, elles valent 7,9 km/s et 11,2 km/s. Elles diminuent avec l’altitude.
+
+<SimulateurCanonNewton />
+
+### Les points de Lagrange
+
+Sur l’orbite d’un corps autour d’une masse centrale, il existe des points d’équilibre très utiles pour les satellites artificiels d’observation : les <Terme id="points-lagrange">points de Lagrange</Terme>.
+
+Pour modéliser les mouvements dans le système solaire, on part d’un problème simplifié : les trajectoires des planètes sont des ellipses, mais les éléments de ces ellipses varient au cours du temps. Cette ellipse de base est appelée <Terme id="ellipse-osculatrice">ellipse osculatrice</Terme>. Pour chaque planète, on considère un problème à deux corps perturbé par les autres planètes. C’est <Personne id="lagrange">Lagrange</Personne> qui, au XVIII<sup>e</sup> siècle, a posé les équations du problème.
+
+Lagrange a aussi montré que, dans un système à deux corps, il existe des positions d’équilibre où un troisième corps, de masse négligeable, peut rester immobile par rapport aux deux autres. Ce sont les cinq points de Lagrange du système, L1 à L5.
+
+<PointsLagrange>
+Les points de Lagrange L1, L2, L3, L4 et L5 par rapport à l’orbite d’une planète P autour du Soleil S. Les angles (SP, SL4) et (SP, SL5) font chacun 60°. Schéma redessiné d’après l’original (CNRS, J.-E. Arlot).
+</PointsLagrange>
+
+Seuls les points L4 et L5 sont des points d’équilibre stables, et à condition que la masse de la planète soit inférieure à environ 1/26 de celle du Soleil, ce qui est le cas de toutes les planètes. Des astéroïdes, les « Troyens », sont piégés en ces points de l’orbite de Jupiter, et aussi de celle de Mars.
+
+Les points L1 et L2 de la Terre, situés à 1,5 million de kilomètres de nous, servent à installer des télescopes d’observation. Le satellite SOHO observe le Soleil depuis L1 depuis 1996. Le satellite Gaia a cartographié la Galaxie depuis L2 de 2014 à 2025, et le télescope spatial James-Webb y observe depuis 2022. Ces positions étant instables, il faut corriger régulièrement la trajectoire des satellites.
+
+<SimulateurLagrange />
+
+### Les satellites géostationnaires
+
+Un <Terme id="satellite-geostationnaire">satellite géostationnaire</Terme> paraît immobile depuis la surface de la Terre. Pourquoi ? Non pas parce qu’il est réellement immobile, mais parce qu’il tourne autour de la Terre à la même vitesse angulaire que la Terre autour de son axe. Il doit donc faire une révolution en 24 heures, ou plus exactement en 23 heures 56 minutes 4 secondes : c’est la période de rotation sidérale de la Terre.
+
+<OrbitesSatellites>
+Période de révolution selon l’altitude : environ 1 h 30 à 300 km, 23 h 56 à 35 786 km, 4 jours à 100 000 km. Schéma redessiné d’après l’original (CNRS, J.-E. Arlot), à l’échelle, périodes recalculées.
+</OrbitesSatellites>
+
+<SimulateurPeriodes />
+
+### En savoir plus : calcul des périodes des satellites artificiels de la Terre
+
+<span class="tag plus">En savoir plus</span>
+
+Un satellite artificiel de la Terre tourne d’autant moins vite qu’il est loin de la Terre. Il respecte la troisième loi de Kepler : $a^3/T^2$ est une constante pour tous les objets qui tournent autour d’un même corps, où $a$ est le demi-grand axe de l’orbite et $T$ la période de révolution. Pour la Terre, cette constante vaut :
+
+$$
+\frac{a^3}{T^2} = \frac{GM}{4\pi^2}
+$$
+
+où $G$ est la constante de la gravitation et $M$ la masse de la Terre. Avec $G = 6{,}672\,59 \times 10^{-11}\ \mathrm{m^3\,kg^{-1}\,s^{-2}}$ et $M = 5{,}973\,6 \times 10^{24}$ kg, on trouve $GM/4\pi^2 = 1{,}009\,65 \times 10^{13}\ \mathrm{m^3/s^2}$.
+
+**Orbite basse.** Supposons les orbites circulaires. Pour un satellite à 300 km d’altitude, $a = 300 + 6\,378 = 6\,678$ km, soit $6{,}678 \times 10^6$ m, donc $a^3 = 2{,}978\,1 \times 10^{20}\ \mathrm{m^3}$. Alors :
+
+$$
+T^2 = \frac{a^3}{1{,}009\,65 \times 10^{13}} = 2{,}949\,6 \times 10^{7}\ \mathrm{s^2}
+$$
+
+d’où $T \approx 5\,431$ s, soit environ une heure et demie.
+
+**Orbite géostationnaire.** À quelle distance du centre de la Terre doit se trouver un satellite pour être géostationnaire ? $T$ doit valoir 23 h 56 min 4 s, soit 86 164 s. Alors $T^2 = 7{,}424\,2 \times 10^{9}\ \mathrm{s^2}$, d’où $a^3 = T^2 \times 1{,}009\,65 \times 10^{13}$, soit $a^3 = 7{,}495\,9 \times 10^{22}\ \mathrm{m^3}$, et $a = 4{,}216\,4 \times 10^{7}$ m, soit 42 164 km. En retranchant le rayon terrestre, on obtient l’altitude d’un satellite géostationnaire : environ 35 800 km, que l’on arrondit souvent à 36 000 km.
+
+**La Lune.** On peut faire le même calcul pour des satellites plus éloignés : la période augmente. À 384 400 km du centre de la Terre, elle atteint 27,4 jours : c’est la Lune ! Sa période réelle, 27,3 jours, est un peu plus courte, car la masse de la Lune, négligée ici, s’ajoute à celle de la Terre.
+
+### Les transferts d’orbites par impulsion gravitationnelle
+
+Les sondes spatiales utilisent le « rebond » gravitationnel, ou <Terme id="assistance-gravitationnelle">assistance gravitationnelle</Terme>, pour aller plus loin et plus vite en économisant du carburant, indispensable pour échapper à l’attraction terrestre. On utilise pour cela les lois de Kepler et le mouvement des deux corps.
+
+La sonde suit d’abord un mouvement képlérien autour d’un corps central A, la Terre par exemple. Le corps A étant prépondérant, on place la sonde sur une orbite elliptique dont l’apogée (le point le plus éloigné de A) est proche d’un autre corps B. Près de l’apogée, l’attraction de B devient prépondérante et modifie la trajectoire de la sonde. De petites manœuvres permettent alors de la placer sur une nouvelle orbite, autour du corps B cette fois.
+
+<TransfertOrbite>
+Principe du transfert d’orbite. Schéma redessiné d’après l’original (CNRS, J.-E. Arlot).
+</TransfertOrbite>
+
+Ce principe est couramment utilisé par les sondes qui doivent se diriger vers l’extérieur du système solaire, vers Jupiter, Saturne, Uranus et Neptune. La sonde Voyager 2, par exemple, a survolé ces quatre planètes entre 1979 et 1989 en passant de l’une à l’autre.
+
+### Les satellites gardiens des anneaux
+
+<Saturne>
+Saturne et ses anneaux. Dessin stylisé, d’après une image de la NASA (C. J. Hamilton).
+</Saturne>
+
+Les planètes géantes ont la particularité d’être entourées d’anneaux ; ceux de Saturne sont les plus spectaculaires. Un anneau est formé d’une multitude de petits blocs de roche et de glace en orbite autour de la planète. Leurs collisions mutuelles les ont rassemblés en un disque très plat.
+
+Les divisions, ces espaces vides qui apparaissent à l’intérieur d’un même anneau, sont longtemps restées inexpliquées. La découverte de petits satellites qui orbitent dans certaines de ces divisions a fourni une explication : c’est le cas de Pan dans la division d’Encke, ou de Daphnis dans la division de Keeler. D’autres divisions, comme celle de Cassini, s’expliquent par une résonance avec un satellite plus lointain, Mimas.
+
+Le schéma ci-dessous montre, en trois temps, un satellite qui orbite dans une division.
+
+<GardienAnneaux>
+Un satellite gardien dans une division, vu de dessus, dans le repère qui tourne avec lui : les particules plus proches de la planète vont plus vite et le dépassent. 1. Une particule se détache de l’anneau, pénètre dans la division et s’approche du satellite. 2. Le satellite modifie sa trajectoire (problème des deux corps) et augmente son excentricité : elle retourne dans l’anneau. 3. De retour dans l’anneau, la particule subit de nouvelles collisions qui circularisent son orbite et l’empêchent de revenir dans la division. Schéma redessiné d’après l’original (ASM).
+</GardienAnneaux>
+
+On a ainsi l’impression que le satellite repousse les blocs hors de la division. Il n’y a pourtant aucun effet de répulsion : tout est conforme à la loi de la gravitation universelle.
+
+### Testez-vous sur la dynamique du système solaire
+
+<Quiz questions={[
+  { question: "La trajectoire d’une masse lancée à la surface de la Terre, soumise à la seule pesanteur, est :", choix: ["une ellipse", "une hyperbole", "une parabole"], reponse: [0, 2], explication: "C’est une ellipse dont le centre de la Terre est un foyer : c’est la solution du problème à deux corps Terre + objet. Mais sur une petite distance, on peut l’assimiler à une parabole." },
+  { question: "La trajectoire d’une planète est :", choix: ["une ellipse", "un cercle", "une courbe proche d’une ellipse, qui se déforme lentement"], reponse: 2, explication: "Il y a plus de deux corps dans le système solaire : les autres planètes perturbent l’orbite, qui reste proche d’une ellipse en déformation constante. Cette courbe obéit bien aux équations du mouvement, mais on ne sait pas les résoudre exactement." },
+  { question: "L’altitude d’un satellite géostationnaire est de :", choix: ["360 km", "3 600 km", "36 000 km"], reponse: 2, explication: "À cette altitude (35 786 km exactement), le satellite fait le tour de la Terre en 23 h 56 min, comme la Terre autour de son axe : il surplombe toujours la même région." },
+]} />
+
+## Les théories du mouvement des planètes
+
+### Remarques générales sur les théories planétaires
+
+Le mouvement des planètes autour du Soleil est un cas particulier du problème des $N$ corps, qui n’a pas de solution exacte pour $N$ supérieur à 2. Tous les corps s’attirent les uns les autres selon la loi de la gravitation, mais on considère que la masse des planètes est faible devant celle du corps central, le Soleil. On cherche des solutions approchées, fondées sur la théorie des perturbations : les coordonnées sont des fonctions du temps $t$, des masses des corps en présence et de constantes d’intégration. On obtient ces solutions en construisant des théories analytiques ou en effectuant des intégrations numériques.
+
+### En savoir plus : théories analytiques ou intégration numérique ?
+
+<span class="tag plus">En savoir plus</span>
+
+Dans les **théories analytiques**, les coordonnées s’écrivent comme des combinaisons de fonctions algébriques et trigonométriques du temps $t$ et des paramètres du problème (masses et constantes d’intégration). Calculer une position avec ces théories est long mais relativement simple : il suffit de remplacer le temps par sa valeur dans les séries. Jusqu’à l’apparition des ordinateurs, il fallait construire des tables intermédiaires, à partir desquelles on fabriquait les éphémérides.
+
+Les **intégrations numériques** donnent les valeurs des coordonnées et des vitesses aux instants $t_0$, $t_0 + h$, $t_0 + 2h$, etc., où $t_0$ est l’instant initial et $h$ le pas d’intégration. Ces méthodes sont bien adaptées aux ordinateurs ; elles ont été particulièrement utilisées aux États-Unis. Pour calculer une position quelconque, il faut cependant construire des tables intermédiaires à partir de l’intégration numérique. Ce sont ces tables qui servent à fabriquer les éphémérides.
+
+### En savoir plus : la découverte de Neptune par Le Verrier
+
+<span class="tag plus">En savoir plus</span>
+
+La mécanique céleste allait prouver sa force en faisant découvrir une nouvelle planète du système solaire par le calcul, et non plus seulement par l’observation du ciel.
+
+<Personne id="leverrier">Le Verrier</Personne> avait établi un modèle du mouvement d’Uranus à partir des lois de la dynamique et de la gravitation universelle. Mais la comparaison avec les observations ne donnait pas satisfaction : Uranus s’écartait de son orbite calculée. La différence ne pouvait pas s’expliquer par l’imprécision des observations, elle était bien plus grande. Le Verrier supposa qu’un corps massif attirait Uranus hors de son orbite. Mais où se trouvait ce corps, et quel était-il ? L’étude des observations d’Uranus faites entre 1800 et 1850 lui permit d’en calculer la masse et la distance. L’orbite ainsi obtenue montrait qu’il s’agissait d’une nouvelle planète, au-delà d’Uranus.
+
+<Personne id="adams">Adams</Personne> fit le même calcul en Angleterre, mais c’est Le Verrier qui fit observer la nouvelle planète par <Personne id="galle">Galle</Personne>, à Berlin, en 1846. En fait, l’orbite réelle de Neptune était assez différente de celle calculée : les observations d’Uranus disponibles ne permettaient pas une meilleure précision.
+
+<OrbiteUranus>
+Orbite théorique et orbite observée avant la découverte de Neptune. Les positions d’Uranus et de Neptune, tous les dix ans, montrent que les deux planètes étaient proches au début des années 1820. Schéma redessiné d’après l’original (CNRS), positions recalculées.
+</OrbiteUranus>
+
+La découverte de Pluton, en 1930 par <Personne id="tombaugh">Clyde Tombaugh</Personne> à l’observatoire fondé par <Personne id="lowell">Percival Lowell</Personne>, ne s’est pas faite ainsi : la masse de Pluton est bien trop faible pour perturber Neptune.
+
+### L’argument temps dans les théories planétaires
+
+Disons maintenant quelques mots de l’argument « temps » des éphémérides. Pour connaître une position à un instant donné, quel instant chercher dans les éphémérides ? Jusqu’en 1834, on a utilisé le temps solaire vrai de Paris. Ensuite, grâce à des horloges plus fiables, on a utilisé le temps moyen de Paris. À partir de 1916, à la suite d’une conférence internationale tenue à Paris en 1911, on a utilisé le temps moyen de Greenwich.
+
+Ces temps étaient liés à la rotation de la Terre, considérée comme suffisamment uniforme. La mise en évidence d’irrégularités dans cette rotation, en particulier d’un ralentissement, a conduit les astronomes à introduire une échelle de temps uniforme pour le calcul des éphémérides, fondée sur la révolution de la Terre autour du Soleil. On utilisa le Temps des éphémérides, défini à partir de la théorie du Soleil de <Personne id="newcomb">Newcomb</Personne>, ou encore, dans la *Connaissance des temps*, le Temps uniforme de <Personne id="leverrier">Le Verrier</Personne>, tiré de sa propre théorie du Soleil et donc très proche du précédent. À partir de 1984, on adopta le Temps dynamique terrestre (devenu Temps terrestre en 1991), une échelle uniforme construite à partir des horloges atomiques, beaucoup plus stables que les mouvements célestes. Voir le chapitre [La mesure du temps](../mesure-temps/).
+
+Ainsi, si l’on utilisait le Temps universel comme argument des éphémérides, on verrait les planètes accélérer… C’est en fait la Terre qui ralentit !
+
+### Application : l’évolution de l’excentricité de l’orbite terrestre
+
+La mécanique céleste permet aussi de calculer, avec une précision plus faible que celle des éphémérides valables sur quelques siècles, l’évolution des orbites planétaires sur de très longues durées, de l’ordre de plusieurs millions d’années. On constate ainsi que l’excentricité de l’orbite terrestre varie largement. Ses variations se composent de nombreux termes périodiques, dont les plus importants ont des périodes voisines de 100 000 ans, et pour l’un d’eux de 400 000 ans.
+
+Les travaux de mécanique céleste menés depuis les années 1970, notamment à l’Institut de mécanique céleste (aujourd’hui IMCCE), ont permis de confirmer l’origine astronomique des variations du climat de la Terre au cours du quaternaire. Les paléoclimatologues montrent en effet une corrélation entre les grandes glaciations et les variations de l’orbite et de l’axe de la Terre : l’excentricité de l’orbite, l’<Terme id="obliquite">obliquité</Terme> et la précession. Ces trois paramètres modifient la répartition de l’ensoleillement au fil des saisons et des latitudes (théorie de <Personne id="milankovitch">Milankovitch</Personne>). L’excentricité agit surtout en amplifiant l’effet de la précession : quand l’orbite est presque circulaire, la distance au Soleil varie peu au cours de l’année. La grande précision de la mécanique céleste fournit ainsi une horloge à la paléoclimatologie, en lui donnant les dates des glaciations et des périodes interglaciaires.
+
+<ExcentriciteTerre>
+Variations de l’excentricité de l’orbite terrestre sur 1 200 000 ans. Dans 26 000 ans environ, l’excentricité passera par un minimum de 0,0024 : l’orbite de la Terre sera presque circulaire. Les contrastes d’ensoleillement dus à la précession seront alors faibles, ce qui, d’après les études de Berger et Loutre (2002), annonce une période interglaciaire exceptionnellement longue, de l’ordre de 50 000 ans, même sans tenir compte des modifications de l’atmosphère par les activités humaines. Courbe calculée d’après la solution La2004 (Laskar et al., 2004, IMCCE), redessinée d’après l’original (ASM, J.-E. Arlot et G. Bessou).
+</ExcentriciteTerre>
+
+### Testez-vous sur les théories planétaires
+
+<Quiz questions={[
+  { question: "Le Verrier a découvert Neptune en 1846 :", choix: ["parce que Neptune, passée près d’Uranus au début des années 1820, en avait nettement perturbé le mouvement", "parce qu’il a eu de la chance", "parce qu’on soupçonnait une planète supplémentaire à cause de la loi de Titius-Bode"], reponse: 0, explication: "Les perturbations d’Uranus étaient les plus fortes autour de la conjonction des deux planètes, au début des années 1820 : une planète supplémentaire, pas très éloignée, devait les causer. Le Verrier et Adams ont d’ailleurs pris comme point de départ la distance donnée par la loi de Titius-Bode, qui s’est révélée fausse pour Neptune (30 ua au lieu d’environ 39)." },
+  { question: "Clyde Tombaugh a découvert Pluton en 1930 :", choix: ["parce qu’il a eu de la chance", "parce que Pluton perturbait Neptune, comme Neptune avait perturbé Uranus au XIXe siècle", "parce que Pluton était plus brillant vers 1930"], reponse: 0, explication: "Pluton est bien trop peu massive pour perturber Neptune de façon mesurable. Tombaugh la cherchait d’après des prédictions de Percival Lowell, fondées sur des écarts qui se sont révélés illusoires : la découverte, assez près de la position prédite, tient du hasard." },
+  { question: "Quels paramètres de la Terre influent sur son climat à long terme ?", choix: ["l’excentricité de son orbite", "son demi-grand axe, c’est-à-dire sa distance moyenne au Soleil", "l’inclinaison de son axe de rotation"], reponse: [0, 2], explication: "L’excentricité de l’orbite, l’inclinaison de l’axe (obliquité) et la précession modifient la répartition de l’ensoleillement : leurs périodes se retrouvent dans les glaciations du quaternaire. Le demi-grand axe de l’orbite terrestre, lui, ne varie presque pas." },
+]} />

@@ -1,4 +1,5 @@
 ---
+import { espacesFines } from '../lib/typo.mjs';
 /** Terme du glossaire : affiche sa définition au survol, au clic ou au focus. */
 import glossaire from '../data/glossaire.json';
 interface Props { id: keyof typeof glossaire }
@@ -6,4 +7,4 @@ const { id } = Astro.props;
 const g = glossaire[id];
 if (!g) throw new Error(`Terme inconnu dans le glossaire : « ${id} ». Ajoutez-le à src/data/glossaire.json.`);
 ---
-<button type="button" class="term" data-titre={g.titre} data-def={g.definition}><slot /></button>
+<button type="button" class="term" data-titre={espacesFines(g.titre)} data-def={espacesFines(g.definition)}><slot /></button>

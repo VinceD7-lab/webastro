@@ -5,7 +5,7 @@ const { evenements } = Astro.props;
 ---
 <ol class="frise">
   {evenements.map((e) => (
-    <li><span class="when" set:html={e.date} /><span class="what"><b>{e.titre}.</b> <Fragment set:html={e.texte} /></span></li>
+    <li><span class="when" set:html={e.date} /><span class="what"><b set:html={e.titre + "."} /> <Fragment set:html={e.texte} /></span></li>
   ))}
 </ol>
 <style>

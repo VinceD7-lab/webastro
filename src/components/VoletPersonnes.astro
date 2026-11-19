@@ -5,8 +5,12 @@
  */
 import personnalites from '../data/personnalites.json';
 import { url } from '../lib/url';
+import { espacesFines } from '../lib/typo.mjs';
 type Fiche = { nom: string; naissance: number | null; mort: number | null; description: string; resume: string[]; wikipedia: string; article: string; portrait?: { fichier: string; auteur: string; licence: string; source: string } };
-const fiches = Object.entries(personnalites as Record<string, Fiche>);
+interface Props { /** Identifiants des personnalités citées dans la page : seules leurs fiches sont rendues. */ ids: string[] }
+const { ids } = Astro.props;
+const toutes = personnalites as Record<string, Fiche>;
+const fiches = ids.filter((id) => toutes[id]).map((id) => [id, toutes[id]] as const);
 const dates = (f: Fiche) => (f.naissance ? `${f.naissance}–${f.mort ?? ''}` : '');
 ---
 <aside id="volet-personne" class="volet" role="dialog" aria-modal="false" aria-labelledby="volet-titre" hidden data-pagefind-ignore>
@@ -19,8 +23,8 @@ const dates = (f: Fiche) => (f.naissance ? `${f.naissance}–${f.mort ?? ''}` : 
     {f.portrait && <img class="volet-portrait" src={url('/' + f.portrait.fichier)} alt={`Portrait de ${f.nom}`} loading="lazy" decoding="async" />}
     <h2 id="volet-titre" tabindex="-1">{f.nom}</h2>
     {dates(f) && <p class="volet-dates">{dates(f)}</p>}
-    {f.description && <p class="volet-desc">{f.description.charAt(0).toUpperCase() + f.description.slice(1)}</p>}
-    {f.resume.map((p) => <p>{p}</p>)}
+    {f.description && <p class="volet-desc">{espacesFines(f.description.charAt(0).toUpperCase() + f.description.slice(1))}</p>}
+    {f.resume.map((p) => <p>{espacesFines(p)}</p>)}
     <p class="volet-lien"><a href={f.wikipedia} target="_blank" rel="noopener">Lire l’article sur Wikipédia ↗</a></p>
     <p class="volet-credits">
       Texte : extrait de l’article Wikipédia « <a href={f.wikipedia} target="_blank" rel="noopener">{f.article}</a> », licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>.

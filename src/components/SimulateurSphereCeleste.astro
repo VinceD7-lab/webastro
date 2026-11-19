@@ -47,9 +47,7 @@ const { alpha = 6.75, delta = -16.72, phi = 48.84, lon = 2.34 } = Astro.props;
 </div>
 
 <style>
-  .sim{border:1px solid var(--rule);border-radius:10px;background:var(--bg);padding:1rem;margin:1.8rem 0}
   svg{display:block;width:100%;height:auto}
-  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin-top:.8rem;font-size:.95rem}
   .controls label{display:flex;align-items:center;gap:.5rem;flex:1 1 220px}
   .controls label.date{flex-basis:100%;flex-wrap:wrap}
   .controls output{min-width:7.5em;font-variant-numeric:tabular-nums}
@@ -57,9 +55,7 @@ const { alpha = 6.75, delta = -16.72, phi = 48.84, lon = 2.34 } = Astro.props;
   input[type=range]{flex:1;accent-color:var(--brass)}
   input[type=datetime-local]{font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:.3rem .5rem}
   .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem;font-size:.9rem}
-  .readout div{border-top:1px solid var(--rule);padding-top:.4rem}
   .readout b{display:block;font-family:var(--display);font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
-  .readout span{color:var(--ink-soft)}
   .etat{margin:.6rem 0 0}
 </style>
 

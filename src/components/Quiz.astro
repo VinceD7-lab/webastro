@@ -1,4 +1,5 @@
 ---
+import { espacesFines } from '../lib/typo.mjs';
 /**
  * Quiz à corriger dans la page.
  * `reponse` : index de la bonne réponse (à partir de 0), ou tableau d’index s’il y en a plusieurs (cases à cocher).
@@ -15,10 +16,10 @@ const id = 'q' + Math.random().toString(36).slice(2, 8);
     const bonnes = (multiple ? (q.reponse as number[]) : [q.reponse as number]).slice().sort((a, b) => a - b);
     return (
       <fieldset data-answer={bonnes.join(',')}>
-        <legend>{i + 1}. {q.question}{multiple && <span class="multi"> (plusieurs réponses possibles)</span>}</legend>
-        {q.choix.map((c, j) => <label><input type={multiple ? 'checkbox' : 'radio'} name={`${id}-${i}`} value={String(j)} /> {c}</label>)}
+        <legend>{i + 1}. {espacesFines(q.question)}{multiple && <span class="multi"> (plusieurs réponses possibles)</span>}</legend>
+        {q.choix.map((c, j) => <label><input type={multiple ? 'checkbox' : 'radio'} name={`${id}-${i}`} value={String(j)} /> {espacesFines(c)}</label>)}
         <p class="fb" aria-live="polite"></p>
-        {q.explication && <p class="explication" hidden>{q.explication}</p>}
+        {q.explication && <p class="explication" hidden>{espacesFines(q.explication)}</p>}
       </fieldset>
     );
   })}

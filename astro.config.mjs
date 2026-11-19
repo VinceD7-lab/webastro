@@ -1,9 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import { unified } from '@astrojs/markdown-remark';
+import sitemap from '@astrojs/sitemap';
+import { unified, rehypeHeadingIds } from '@astrojs/markdown-remark';
+import { rehypeEspacesFines } from './src/lib/typo.mjs';
+import { rehypeTemml } from './src/lib/rehype-temml.mjs';
+import { rehypeSections } from './src/lib/rehype-sections.mjs';
 import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,12 +39,20 @@ export default defineConfig({
   site: 'https://vinced7-lab.github.io',
   base: BASE,
   trailingSlash: 'always',
-  integrations: [mdx(), anciennesAdresses()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/404') }), anciennesAdresses()],
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
-      // Formules rendues en MathML natif : aucune feuille de style ni police à charger.
-      rehypePlugins: [[rehypeKatex, { output: 'mathml' }]],
+      rehypePlugins: [
+        // Identifiants des titres calculés en premier, sur le texte d’origine :
+        // les ancres existantes (liens entre chapitres) ne changent pas.
+        rehypeHeadingIds,
+        // Formules converties en MathML au build (Temml) ; style et police : src/styles/maths.css.
+        rehypeTemml,
+        rehypeEspacesFines,
+        // Sections, exercices encadrés, approfondissements repliables, ancres des titres.
+        rehypeSections,
+      ],
     }),
   },
 });

@@ -1,10 +1,11 @@
 ---
+import { espacesFines } from '../lib/typo.mjs';
 /** Encadré pédagogique. type : def | retenir | hist | plus */
 interface Props { type?: 'def' | 'retenir' | 'hist' | 'plus'; titre?: string }
 const { type = 'retenir', titre } = Astro.props;
 const defauts = { def: 'Définition', retenir: 'À retenir', hist: 'Repère historique', plus: 'En savoir plus' };
 ---
 <aside class={`box ${type}`}>
-  <div class="box-title">{titre ?? defauts[type]}</div>
+  <div class="box-title">{espacesFines(titre ?? defauts[type])}</div>
   <slot />
 </aside>

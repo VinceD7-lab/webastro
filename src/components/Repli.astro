@@ -1,9 +1,12 @@
 ---
+import { espacesFines } from '../lib/typo.mjs';
 /** Bloc repliable : correction d’exercice, approfondissement… */
 interface Props { titre?: string }
 const { titre = 'Afficher la correction' } = Astro.props;
+// Sur papier, le bloc est déplié : « Afficher la correction » devient « Correction ».
+const imprime = espacesFines(titre.replace(/^Afficher (la |le |les |l’)?/, '').replace(/^./, (c) => c.toUpperCase()));
 ---
 <details class="reveal">
-  <summary>{titre}</summary>
+  <summary data-imprime={imprime}><span class="ecran">{espacesFines(titre)}</span></summary>
   <div class="inner"><slot /></div>
 </details>

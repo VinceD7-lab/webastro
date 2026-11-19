@@ -1,11 +1,28 @@
 ---
+import { espacesFines } from '../lib/typo.mjs';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Almanach from '../components/Almanach.astro';
 import { chapitres } from '../data/chapitres';
 import { url } from '../lib/url';
+import { getCollection } from 'astro:content';
+import { sourceDe, statsChapitre, libellesStats } from '../lib/stats-chapitre';
+const parSlug = new Map((await getCollection('cours')).map((e) => [e.id, libellesStats(statsChapitre(sourceDe(e)))]));
 const premier = chapitres.find((c) => c.slug);
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'Mécanique céleste, Temps et Calendriers',
+  description: 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).',
+  inLanguage: 'fr',
+  author: { '@type': 'Person', name: 'Jean-Eudes Arlot' },
+  isBasedOn: 'https://media4.obspm.fr/public/ressources_lu/pages_mctc/index.html',
+  hasPart: chapitres.filter((c) => c.slug).map((c) => ({
+    '@type': 'LearningResource', name: c.titre, description: c.resume, position: c.numero,
+    url: Astro.site ? new URL(url(`/cours/${c.slug}/`), Astro.site).href : undefined,
+  })),
+};
 ---
-<BaseLayout title="Accueil">
+<BaseLayout title="Accueil" jsonld={jsonld}>
   <section class="hero">
     <svg class="hero-orbits" viewBox="0 0 900 600" aria-hidden="true" fill="none" stroke="var(--rule)">
       <ellipse cx="450" cy="300" rx="120" ry="116" />
@@ -33,13 +50,13 @@ const premier = chapitres.find((c) => c.slug);
     <div class="wrap">
       <div class="section-head">
         <h2>Plan du cours</h2>
-        <p>Huit chapitres, du repérage des astres jusqu’aux éphémérides. Les chapitres marqués « à lire ici » sont disponibles sur ce site&#8239;; les autres renvoient vers le site d’origine en attendant leur migration.</p>
+        <p>Huit chapitres, du repérage des astres jusqu’aux éphémérides, chacun avec ses schémas, ses simulations interactives et ses exercices corrigés.</p>
       </div>
       <div class="prereq">
         <h3>Prérequis</h3>
         <ul>
           <li>Niveau physique de terminale scientifique pour le corps du cours.</li>
-          <li>Niveau licence scientifique pour les parties marquées <span class="tag hist">Histoire</span> et <span class="tag plus">En savoir plus</span>.</li>
+          <li>Niveau licence scientifique pour les approfondissements, repliés dans le texte et marqués <span class="tag plus">Niveau licence</span>, <span class="tag plus">En savoir plus</span> ou <span class="tag hist">Histoire</span>.</li>
         </ul>
       </div>
       <ol class="chapters">
@@ -47,8 +64,9 @@ const premier = chapitres.find((c) => c.slug);
           <li class={c.slug ? 'local' : undefined}>
             <a href={c.slug ? url(`/cours/${c.slug}/`) : c.source}>
               <span class="n">{c.numero}</span>
-              <span class="t">{c.titre}{c.slug && <span class="badge">à lire ici</span>}</span>
-              <span class="d">{c.resume}</span>
+              <span class="t">{espacesFines(c.titre)}</span>
+              <span class="d">{espacesFines(c.resume)}</span>
+              {c.slug && parSlug.has(c.slug) && <span class="m">{parSlug.get(c.slug)!.join(' · ')}</span>}
             </a>
           </li>
         ))}
@@ -80,7 +98,7 @@ const premier = chapitres.find((c) => c.slug);
   .n{grid-row:span 2;font-family:var(--display);font-size:2.3rem;line-height:1;color:var(--brass)}
   .t{font-family:var(--display);font-size:1.45rem;font-weight:600;line-height:1.15}
   .d{font-size:.95rem;color:var(--ink-soft);line-height:1.55}
+  .m{grid-column:2;font-size:.82rem;color:var(--ink-soft);margin-top:.35rem;font-variant-numeric:tabular-nums}
   .chapters a:hover .t{color:var(--orbit)}
-  .badge{font-family:var(--text);font-size:.72rem;font-weight:400;margin-left:.6rem;padding:.1rem .5rem;border-radius:999px;background:var(--brass);color:var(--bg);vertical-align:middle;white-space:nowrap}
   @media (max-width:900px){ .hero-inner{grid-template-columns:1fr} .prereq{grid-template-columns:1fr;gap:.8rem} }
 </style>

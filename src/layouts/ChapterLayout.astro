@@ -1,44 +1,84 @@
 ---
-import { readFileSync } from 'node:fs';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import { chapitres } from '../data/chapitres';
 import { url } from '../lib/url';
+import { espacesFines } from '../lib/typo.mjs';
+import { sourceDe, statsChapitre, libellesStats } from '../lib/stats-chapitre';
 import VoletPersonnes from '../components/VoletPersonnes.astro';
+import '../styles/maths.css';
 
 interface Props { entry: CollectionEntry<'cours'>; headings: MarkdownHeading[] }
 const { entry, headings } = Astro.props;
 const { title, numero, resume, auteur, source } = entry.data;
-const sommaire = headings.filter((h) => h.depth === 2);
-const lien = (c?: (typeof chapitres)[number]) => (c ? { href: c.slug ? url(`/cours/${c.slug}/`) : c.source, externe: !c.slug, titre: c.titre } : null);
+
+// Sommaire à deux niveaux, numéroté comme les titres (compteurs CSS de global.css).
+type Entree = { slug: string; texte: string; num: string; enfants: Entree[] };
+const sommaire: Entree[] = [];
+for (const h of headings) {
+  if (h.depth === 2) {
+    sommaire.push({ slug: h.slug, texte: espacesFines(h.text), num: `${numero}.${sommaire.length + 1}`, enfants: [] });
+  } else if (h.depth === 3 && sommaire.length) {
+    const parent = sommaire[sommaire.length - 1];
+    parent.enfants.push({ slug: h.slug, texte: espacesFines(h.text), num: `${parent.num}.${parent.enfants.length + 1}`, enfants: [] });
+  }
+}
+
+const lien = (c?: (typeof chapitres)[number]) => (c ? { href: c.slug ? url(`/cours/${c.slug}/`) : c.source, externe: !c.slug, titre: espacesFines(c.titre) } : null);
 const i = chapitres.findIndex((c) => c.numero === numero);
 const prec = lien(chapitres[i - 1]);
 const suiv = lien(chapitres[i + 1]);
-// Volet des personnalités : seulement sur les chapitres qui utilisent le composant Personne.
-// (`entry.body` n’est pas toujours fourni pour les fichiers MDX : on lit alors le fichier source.)
-const texteSource = entry.body || (entry.filePath ? readFileSync(entry.filePath, 'utf8') : '');
-const avecPersonnes = texteSource.includes('<Personne ');
+
+const texteSource = sourceDe(entry);
+const stats = libellesStats(statsChapitre(texteSource));
+// Seules les fiches des personnalités citées dans ce chapitre sont embarquées dans la page.
+const idsPersonnes = [...new Set([...texteSource.matchAll(/<Personne\s+id="([^"]+)"/g)].map((m) => m[1]))];
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: title,
+  description: resume,
+  inLanguage: 'fr',
+  learningResourceType: 'Chapitre de cours',
+  position: numero,
+  author: auteur.split(/,\s*|\s+et\s+/).map((name: string) => ({ '@type': 'Person', name })),
+  isPartOf: { '@type': 'Course', name: 'Mécanique céleste, Temps et Calendriers', url: Astro.site ? new URL(url('/'), Astro.site).href : undefined },
+  ...(source ? { isBasedOn: source } : {}),
+};
 ---
-<BaseLayout title={title} description={resume}>
+<BaseLayout title={title} description={resume} type="article" jsonld={jsonld}>
   <section class="chapter" aria-labelledby="titre-chapitre">
     <div class="chapter-grid">
       <nav class="toc" aria-label="Sommaire du chapitre">
         <p class="crumb"><a href={url('/#plan')}>Cours</a> › Chapitre {numero}</p>
         <details class="toc-details" open>
           <summary>Sommaire du chapitre</summary>
-          <ol>
-            {sommaire.map((h) => <li><a class="lnk" href={`#${h.slug}`}>{h.text}</a></li>)}
+          <ol class="toc-liste">
+            {sommaire.map((h) => (
+              <li>
+                <a class="lnk" href={`#${h.slug}`}><span class="num">{h.num}</span>{h.texte}</a>
+                {h.enfants.length > 0 && (
+                  <ol>
+                    {h.enfants.map((s) => <li><a class="lnk sous" href={`#${s.slug}`}><span class="num">{s.num}</span>{s.texte}</a></li>)}
+                  </ol>
+                )}
+              </li>
+            ))}
           </ol>
         </details>
       </nav>
 
       <article class="prose" data-pagefind-body>
-        <header>
+        <header class="entete-chapitre">
           <p class="kicker">Chapitre {numero} sur {chapitres.length} · {auteur}</p>
-          <h1 id="titre-chapitre" data-pagefind-meta="title">{title}</h1>
+          <h1 id="titre-chapitre" data-pagefind-meta="title">{espacesFines(title)}</h1>
+          <p class="resume">{espacesFines(resume)}</p>
+          <ul class="meta-chapitre" aria-label="Contenu du chapitre" data-pagefind-ignore>
+            {stats.map((s) => <li>{s}</li>)}
+          </ul>
         </header>
-        <div class="content">
+        <div class="content" style={`counter-reset: chap ${numero} h2`}>
           <slot />
         </div>
         {source && <p class="small no-print" data-pagefind-ignore>Version d’origine : <a href={source}>site de l’Observatoire de Paris</a>.</p>}
@@ -50,25 +90,45 @@ const avecPersonnes = texteSource.includes('<Personne ');
       </article>
     </div>
   </section>
-  {avecPersonnes && <VoletPersonnes />}
+
+  <!-- Sommaire flottant (écrans étroits) : la liste est recopiée depuis le sommaire principal au chargement. -->
+  <button type="button" class="toc-flottant" id="tocFlottant" aria-haspopup="dialog" aria-controls="tocFeuille" hidden>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Sommaire
+  </button>
+  <dialog class="toc-feuille" id="tocFeuille" aria-labelledby="tocFeuilleTitre">
+    <div class="head">
+      <h2 id="tocFeuilleTitre">Chapitre {numero} · Sommaire</h2>
+      <button class="tool" type="button" data-fermer>Fermer</button>
+    </div>
+    <nav aria-labelledby="tocFeuilleTitre" class="toc-feuille-nav"></nav>
+    <a class="haut" href="#contenu" data-fermer>↑ Haut de page</a>
+  </dialog>
+
+  {idsPersonnes.length > 0 && <VoletPersonnes ids={idsPersonnes} />}
 </BaseLayout>
 
 <script>
-  /* Section en cours dans le sommaire */
+  /* ---------- Section en cours dans le sommaire (h2 et h3) ---------- */
   const liens = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a.lnk'));
   const parId = new Map(liens.map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+  const marquer = (a: HTMLAnchorElement) => {
+    liens.forEach((l) => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
+    document.querySelectorAll('.toc-liste > li.ouvert').forEach((li) => li.classList.remove('ouvert'));
+    a.classList.add('active'); a.setAttribute('aria-current', 'true');
+    // Déplie les sous-sections de la section h2 en cours.
+    a.closest('.toc-liste > li')?.classList.add('ouvert');
+  };
   const io = new IntersectionObserver((entrees) => {
     for (const e of entrees) {
       if (!e.isIntersecting) continue;
       const a = parId.get(e.target.id);
-      if (!a) continue;
-      liens.forEach((l) => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
-      a.classList.add('active'); a.setAttribute('aria-current', 'true');
+      if (a) marquer(a);
     }
   }, { rootMargin: '-15% 0px -75% 0px' });
   parId.forEach((_, id) => { const h = document.getElementById(id); if (h) io.observe(h); });
 
-  /* Barre de progression de lecture */
+  /* ---------- Barre de progression de lecture ---------- */
   const article = document.querySelector('article.prose')!;
   const barre = document.getElementById('progress')!;
   const maj = () => {
@@ -78,8 +138,52 @@ const avecPersonnes = texteSource.includes('<Personne ');
   };
   addEventListener('scroll', maj, { passive: true }); addEventListener('resize', maj); maj();
 
-  /* Sommaire replié sur mobile */
+  /* ---------- Sommaire replié sur mobile ---------- */
   const det = document.querySelector<HTMLDetailsElement>('.toc-details')!;
-  const mode = () => { det.open = innerWidth > 900; };
-  mode(); addEventListener('resize', mode);
+  const etroit = matchMedia('(max-width: 900px)');
+  const mode = () => { det.open = !etroit.matches; };
+  mode(); etroit.addEventListener('change', mode);
+
+  /* ---------- Sommaire flottant (écrans étroits) ---------- */
+  const bouton = document.getElementById('tocFlottant') as HTMLButtonElement;
+  const feuille = document.getElementById('tocFeuille') as HTMLDialogElement;
+  feuille.querySelector('nav')!.append(document.querySelector('.toc-liste')!.cloneNode(true));
+  const tocStatique = document.querySelector('.toc')!;
+  // Le bouton n’apparaît qu’une fois le sommaire du haut sorti de l’écran.
+  new IntersectionObserver(([e]) => { bouton.hidden = e.isIntersecting; }).observe(tocStatique);
+  bouton.addEventListener('click', () => {
+    // Met en évidence la section en cours dans la copie du sommaire et déplie ses sous-sections.
+    const actif = document.querySelector<HTMLAnchorElement>('.toc a.lnk.active');
+    feuille.querySelectorAll('.toc-liste > li.ouvert').forEach((li) => li.classList.remove('ouvert'));
+    feuille.querySelectorAll<HTMLAnchorElement>('a.lnk').forEach((a) => {
+      const courant = !!actif && a.hash === actif.hash;
+      a.classList.toggle('active', courant);
+      if (courant) a.closest('.toc-liste > li')?.classList.add('ouvert');
+    });
+    feuille.showModal();
+    feuille.querySelector<HTMLElement>('a.lnk.active, a.lnk')?.focus();
+  });
+  feuille.addEventListener('click', (ev) => {
+    const t = ev.target as HTMLElement;
+    if (t === feuille || t.closest('[data-fermer]') || t.closest('a.lnk')) feuille.close();
+  });
+
+  /* ---------- Ancre vers un passage replié : on le déplie ---------- */
+  // (liens du sommaire, de la recherche, des autres chapitres)
+  function devoiler(hash: string) {
+    if (!hash || hash.length < 2) return;
+    const cible = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!cible) return;
+    let replie = false;
+    for (let d = cible.closest('details'); d; d = d.parentElement?.closest('details') ?? null) {
+      if (!d.open) { d.open = true; replie = true; }
+    }
+    if (replie) cible.scrollIntoView();
+  }
+  devoiler(location.hash);
+  addEventListener('hashchange', () => devoiler(location.hash));
+  document.addEventListener('click', (ev) => {
+    const a = (ev.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+    if (a && a.hash === location.hash) devoiler(a.hash); // même ancre cliquée deux fois : pas de hashchange
+  });
 </script>

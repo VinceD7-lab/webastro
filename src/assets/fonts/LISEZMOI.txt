@@ -1,0 +1,11 @@
+LibertinusMath-Regular.woff2 : police mathématique des formules (src/styles/maths.css).
+
+Provenance : Libertinus 7.051 (https://github.com/alerque/libertinus/releases/tag/v7.051),
+fichier static/OTF/LibertinusMath-Regular.otf, converti en WOFF2 avec wawoff2 (compresseur woff2 de Google).
+
+Pourquoi pas le WOFF2 de l'archive, ni @fontsource/libertinus-math ?
+Les deux ont perdu les tables OpenType MATH et GSUB, indispensables au MathML :
+sans elles, les racines n'ont pas de barre et les fractions en bloc sont rendues en petit.
+Après toute mise à jour de la police, vérifier que MATH figure dans la liste des tables.
+
+Licence : SIL Open Font License 1.1, voir LibertinusMath-OFL.txt.

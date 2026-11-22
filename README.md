@@ -1,12 +1,19 @@
-# Mécanique céleste, Temps et Calendriers
+# Lumières sur l’Univers
 
 [![Déploiement](https://github.com/VinceD7-lab/webastro/actions/workflows/deploy.yml/badge.svg)](https://github.com/VinceD7-lab/webastro/actions/workflows/deploy.yml)
 Site : <https://vinced7-lab.github.io/webastro/>
 
-Version modernisée du cours de Jean-Eudes Arlot publié par l’Observatoire de Paris
-(collection « Lumières sur l’Univers »), construite avec [Astro](https://astro.build).
+Portail de la collection de cours libres de l’Observatoire de Paris
+(<https://media4.obspm.fr/public/ressources_lu/index.html>), construit avec [Astro](https://astro.build).
+Il présente les 22 cours de la collection ; un menu « Cours » (touche `c`) permet d’atteindre
+n’importe lequel depuis toute page. Les cours sont réécrits un à un : pour l’instant seul
+**Mécanique céleste, Temps et Calendriers** (Jean-Eudes Arlot) l’est, les autres s’ouvrent
+sur le site d’origine.
 
-Les huit chapitres sont migrés : **La notion de repère**, **La mesure des distances**,
+Vocabulaire : le site d’origine appelle « chapitres » les 22 ensembles ; l’interface les nomme
+« cours », pour ne pas les confondre avec les chapitres de Mécanique céleste.
+
+Les huit chapitres de Mécanique céleste sont migrés : **La notion de repère**, **La mesure des distances**,
 **Les lois de Kepler**, **La mécanique céleste**, **La gravitation universelle et la relativité**,
 **La mesure du temps**, **Les calendriers** et **Les éphémérides**.
 
@@ -34,18 +41,40 @@ src/
 ├─ content/cours/          un fichier .mdx par chapitre
 ├─ content.config.ts       champs obligatoires du frontmatter
 ├─ data/
-│  ├─ chapitres.ts         plan complet du cours (8 chapitres)
+│  ├─ collection.ts        les 22 cours : thèmes, descriptions, auteurs, cours modernisés
+│  ├─ collection-parties.json  titres et liens des 117 parties (généré, voir plus bas)
+│  ├─ chapitres.ts         plan complet de Mécanique céleste (8 chapitres)
 │  ├─ glossaire.json       définitions des infobulles et de la page Glossaire
 │  └─ redirections.mjs     anciennes adresses → nouvelles pages
 ├─ components/             encadrés, quiz, outils interactifs
 ├─ layouts/                BaseLayout (en-tête, thème, recherche), ChapterLayout (sommaire, progression)
 ├─ lib/
 │  ├─ calendriers.ts       conversions entre calendriers (testées sur les dates de référence du cours)
+│  ├─ collection.ts        plan de la collection prêt à afficher (menu, accueil)
 │  └─ url.ts               préfixe les liens internes avec `base`
-├─ pages/                  accueil, glossaire, 404, route des chapitres
+├─ pages/                  accueil (portail), mctc/ (page du cours), glossaire, 404, route des chapitres
 ├─ styles/global.css       couleurs, typographie, mode sombre
 └─ assets/                 images des cours (optimisées automatiquement)
 ```
+
+## La collection : menu, accueil, redirections
+
+- **Menu « Cours »** (`components/MenuCours.astro`) : monté dans `BaseLayout`, donc sur toutes les pages.
+  À droite, la fiche du cours survolé (auteurs, description, parties). À l’ouverture, le cours lu est
+  sélectionné (« vous êtes ici ») ; le chapitre affiché est « page actuelle », les chapitres déjà
+  réécrits « à lire ici ». Les pages passent `cours` (dossier d’origine) et `chapitre` (slug) à `BaseLayout`.
+- **Accueil** (`pages/index.astro`) : les cours en cartes par thème, les cours modernisés en tête.
+  La page du cours Mécanique céleste est `/mctc/`.
+- **Thèmes, descriptions, auteurs** : à modifier dans `src/data/collection.ts`.
+- **Titres et liens des parties** : relevés sur le sommaire général du site d’origine
+  (`pages_r-ressources/sommaire.html`) ; le cours Gravitation, absent de ce sommaire, est lu sur sa
+  propre page. Pour les relever à nouveau : `node scripts/releve-collection.mjs`
+  (réécrit `src/data/collection-parties.json`).
+- **Cours modernisé** : une partie passe en « à lire ici » toute seule dès que son chapitre a un `slug`
+  dans `chapitres.ts` et un fichier dans `src/content/cours/`. Pour un nouveau cours entièrement migré,
+  ajoutez son dossier dans `LOCAUX` (`collection.ts`) avec l’adresse de sa page d’accueil.
+- **Anciennes adresses** : `src/data/redirections.mjs`, y compris l’entrée du site d’origine
+  (`index.html`) et celle du cours (`pages_mctc/`).
 
 ## Ajouter un chapitre
 
@@ -67,7 +96,8 @@ src/
    ```
 
 2. Dans `src/data/chapitres.ts`, ajoutez `slug: 'gravitation'` au chapitre 5.
-   Il passe alors en « à lire ici » sur l’accueil, et les boutons précédent/suivant suivent.
+   Il passe alors en « à lire ici » sur la page du cours et dans le menu « Cours », et les boutons
+   précédent/suivant suivent.
 3. Ajoutez ses anciennes adresses dans `src/data/redirections.mjs`.
 
 Chaque titre `##` devient une entrée du sommaire latéral et un résultat de recherche.

@@ -4,6 +4,7 @@ import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import { chapitres } from '../data/chapitres';
 import { url } from '../lib/url';
+import { COURS_MIGRE, LOCAUX } from '../data/collection';
 import { espacesFines } from '../lib/typo.mjs';
 import { sourceDe, statsChapitre, libellesStats } from '../lib/stats-chapitre';
 import VoletPersonnes from '../components/VoletPersonnes.astro';
@@ -43,15 +44,15 @@ const jsonld = {
   learningResourceType: 'Chapitre de cours',
   position: numero,
   author: auteur.split(/,\s*|\s+et\s+/).map((name: string) => ({ '@type': 'Person', name })),
-  isPartOf: { '@type': 'Course', name: 'Mécanique céleste, Temps et Calendriers', url: Astro.site ? new URL(url('/'), Astro.site).href : undefined },
+  isPartOf: { '@type': 'Course', name: 'Mécanique céleste, Temps et Calendriers', url: Astro.site ? new URL(url(LOCAUX[COURS_MIGRE]), Astro.site).href : undefined },
   ...(source ? { isBasedOn: source } : {}),
 };
 ---
-<BaseLayout title={title} description={resume} type="article" jsonld={jsonld}>
+<BaseLayout title={title} description={resume} type="article" jsonld={jsonld} cours={COURS_MIGRE} chapitre={entry.id}>
   <section class="chapter" aria-labelledby="titre-chapitre">
     <div class="chapter-grid">
       <nav class="toc" aria-label="Sommaire du chapitre">
-        <p class="crumb"><a href={url('/#plan')}>Cours</a> › Chapitre {numero}</p>
+        <p class="crumb"><a href={url(`${LOCAUX[COURS_MIGRE]}#plan`)}>Plan du cours</a> › Chapitre {numero}</p>
         <details class="toc-details" open>
           <summary>Sommaire du chapitre</summary>
           <ol class="toc-liste">

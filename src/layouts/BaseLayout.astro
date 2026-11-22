@@ -6,17 +6,30 @@ import '@fontsource/cormorant-garamond/600.css';
 import '@fontsource/cormorant-garamond/500-italic.css';
 import '../styles/global.css';
 import { url } from '../lib/url';
+import { coursParDossier } from '../data/collection';
+import { espacesFines } from '../lib/typo.mjs';
+import MenuCours from '../components/MenuCours.astro';
 
 interface Props {
-  title: string; description?: string; actif?: 'plan' | 'glossaire';
+  title: string; description?: string; actif?: 'glossaire';
+  /** Cours de la page (dossier d’origine, ex. `pages_mctc`) : fil d’Ariane et repères du menu « Cours ». */
+  cours?: string;
+  /** Slug du chapitre affiché, pour le repère « page actuelle » du menu. */
+  chapitre?: string;
   /** `article` pour les chapitres, `website` sinon (Open Graph). */
   type?: 'website' | 'article';
   /** Données structurées schema.org, sérialisées en JSON-LD. */
   jsonld?: Record<string, unknown>;
 }
-const { title, description = 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).', actif, type = 'website', jsonld } = Astro.props;
-const NOM_SITE = 'Mécanique céleste, Temps et Calendriers';
-const titreComplet = title === 'Accueil' ? NOM_SITE : `${title} – ${NOM_SITE}`;
+const { title, actif, cours: dossier, chapitre, type = 'website', jsonld } = Astro.props;
+const coursActuel = dossier ? coursParDossier.get(dossier) : undefined;
+if (dossier && !coursActuel) throw new Error(`BaseLayout : cours inconnu « ${dossier} »`);
+const NOM_SITE = 'Lumières sur l’Univers';
+const description = Astro.props.description ?? (coursActuel
+  ? 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).'
+  : 'Les 22 cours de la collection « Lumières sur l’Univers » de l’Observatoire de Paris, avec le cours Mécanique céleste, Temps et Calendriers en version modernisée.');
+const suffixe = coursActuel ? coursActuel.titre : NOM_SITE;
+const titreComplet = title === 'Accueil' ? NOM_SITE : `${title} – ${suffixe}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const image = Astro.site ? new URL(url('/og.png'), Astro.site).href : undefined;
 ---
@@ -52,13 +65,28 @@ const image = Astro.site ? new URL(url('/og.png'), Astro.site).href : undefined;
   <a class="skip" href="#contenu">Aller au contenu</a>
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="brand" href={url('/')}>Mécanique céleste, Temps et Calendriers</a>
+      <!-- Ouvre le menu latéral gauche des cours (src/components/MenuCours.astro) -->
+      <button class="tool bouton-cours" id="openCours" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="coursDlg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
+        <span class="lbl">Cours</span> <kbd>c</kbd>
+      </button>
+      <nav class="fil" aria-label="Fil d’Ariane">
+        <a class="fil-site" href={url('/')} aria-current={!coursActuel && title === 'Accueil' ? 'page' : undefined}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orbit)" stroke-width="1.6" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="5.2" transform="rotate(-24 12 12)"/><circle cx="12" cy="12" r="2.6" fill="var(--sun)" stroke="none"/></svg>
+          <span class="fil-nom">{NOM_SITE}</span>
+        </a>
+        {coursActuel && (
+          <>
+            <span class="fil-sep" aria-hidden="true">/</span>
+            <a class="fil-cours" href={coursActuel.local ? url(coursActuel.local) : coursActuel.entree}>{espacesFines(coursActuel.titre)}</a>
+          </>
+        )}
+      </nav>
       <button class="tool menu-mobile" id="menuToggle" type="button" aria-expanded="false" aria-controls="topnav">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        Menu
+        <span class="lbl">Menu</span>
       </button>
       <nav class="topnav" id="topnav" aria-label="Navigation principale">
-        <a href={url('/#plan')} aria-current={actif === 'plan' ? 'page' : undefined}>Plan du cours</a>
         <a href={url('/glossaire/')} aria-current={actif === 'glossaire' ? 'page' : undefined}>Glossaire</a>
       </nav>
       <button class="tool" id="openSearch" type="button" aria-label="Rechercher dans le cours">
@@ -77,11 +105,13 @@ const image = Astro.site ? new URL(url('/og.png'), Astro.site).href : undefined;
 
   <footer class="site-footer">
     <div class="wrap">
-      <p>D’après le cours de Jean-Eudes Arlot publié par l’Observatoire de Paris dans la collection <a href="https://media4.obspm.fr/public/ressources_lu/pages_mctc/index.html">Lumières sur l’Univers</a>. Version modernisée, textes adaptés.</p>
+      <p>Les cours de la collection <a href="https://media4.obspm.fr/public/ressources_lu/index.html">Lumières sur l’Univers</a> sont publiés par l’Observatoire de Paris. {coursActuel?.local ? <>« {espacesFines(coursActuel.titre)} », de {coursActuel.auteurs}, est présenté ici en version modernisée, textes adaptés.</> : <>Un cours est repris ici, en version modernisée, dès qu’il est réécrit ; les autres s’ouvrent sur le site d’origine.</>}</p>
     </div>
   </footer>
 
   <div class="tip" id="tip" role="tooltip" hidden></div>
+
+  <MenuCours cours={dossier} chapitre={chapitre} />
 
   <dialog class="search" id="searchDlg" aria-labelledby="search-title">
     <div class="head">

@@ -74,7 +74,15 @@ input[type=number],select{font:inherit;font-size:1rem;color:var(--ink);backgroun
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
 .topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:1rem;padding:.7rem 1.25rem}
-.brand{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--ink);text-decoration:none;margin-right:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fil{display:flex;align-items:baseline;gap:.55rem;margin-right:auto;min-width:0;white-space:nowrap}
+.fil a{color:var(--ink);text-decoration:none}
+.fil-site{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--display);font-size:1.3rem;font-weight:600;flex:0 1 auto;min-width:0}
+.fil-nom{overflow:hidden;text-overflow:ellipsis}
+.fil-site svg{flex:none}
+.fil-site svg{align-self:center}
+.fil-sep{color:var(--rule);font-size:1.1rem}
+.fil-cours{font-family:var(--display);font-style:italic;font-size:1.3rem;color:var(--brass)!important;overflow:hidden;text-overflow:ellipsis}
+.fil a:hover{text-decoration:underline;text-decoration-thickness:1px}
 .topnav{display:flex;gap:1.2rem;font-size:.95rem}
 .topnav a{color:var(--ink-soft);text-decoration:none}
 .topnav a:hover,.topnav a[aria-current]{color:var(--ink)}
@@ -85,6 +93,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   /* Libellé masqué visuellement mais lu par les lecteurs d’écran (nom accessible du bouton de thème) */
   .tool .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .topbar-inner{gap:.5rem}
+  .fil-sep,.fil-cours{display:none}
+  .fil-site{font-size:1.15rem}
   .topbar .tool{min-height:2.6rem;min-width:2.6rem;justify-content:center}
   .menu-mobile{display:inline-flex}
   .topnav{display:none;position:absolute;top:100%;right:1.25rem;flex-direction:column;gap:0;min-width:12rem;background:var(--surface);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:.4rem 0}

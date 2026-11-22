@@ -1,0 +1,274 @@
+---
+/**
+ * Menu « Cours » : panneau latéral gauche, rétractable, listant les cours de la collection (à gauche, par thème)
+ * et la fiche du cours survolé (à droite). Le bouton d’ouverture, #openCours, est dans BaseLayout.
+ * Toutes les fiches sont dans le HTML ; le script ne fait qu’afficher l’une ou l’autre.
+ */
+import { planCollection, nombreDeCours } from '../lib/collection';
+import { espacesFines } from '../lib/typo.mjs';
+import { url } from '../lib/url';
+
+interface Props {
+  /** Dossier d’origine du cours de la page en cours (`pages_mctc`). */
+  cours?: string;
+  /** Slug du chapitre affiché (`kepler`). */
+  chapitre?: string;
+}
+const { cours: actuel, chapitre } = Astro.props;
+const plan = await planCollection({ cours: actuel, chapitre });
+const tous = plan.flatMap((t) => t.cours);
+const modernes = tous.filter((c) => c.moderne).length;
+// Texte cherché par le filtre : sans accents ni majuscules.
+const sansAccents = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const recherche = (c: (typeof tous)[number], theme: string) =>
+  sansAccents([c.titre, c.description, c.auteurs, theme, ...c.parties.map((p) => p.titre)].join(' '));
+const iconeLien = '↗';
+---
+<dialog class="menu-cours" id="coursDlg" aria-labelledby="coursTitre" data-pagefind-ignore data-actuel={actuel}>
+  <header class="mc-tete">
+    <div class="mc-titres">
+      <h2 id="coursTitre">Tous les cours</h2>
+      <p>{nombreDeCours} cours de la collection Lumières sur l’Univers · {modernes} en version modernisée</p>
+    </div>
+    <label class="mc-filtre">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="coursFiltre" placeholder="Filtrer : éclipses, exoplanètes, Kepler…" aria-label="Filtrer les cours" autocomplete="off" />
+    </label>
+    <button class="tool" type="button" data-fermer>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      Fermer
+    </button>
+  </header>
+
+  <div class="mc-corps" data-vue="liste">
+    <nav class="mc-liste" aria-label="Cours de la collection">
+      {plan.map((t) => (
+        <section class="mc-theme">
+          <h3>{espacesFines(t.titre)}</h3>
+          <ul>
+            {t.cours.map((c) => (
+              <li data-recherche={recherche(c, t.titre)}>
+                <button type="button" class="mc-cours" id={`cours-${c.dossier}`} data-dossier={c.dossier} aria-expanded="false" aria-controls={`fiche-${c.dossier}`} data-ici={c.dossier === actuel ? '' : undefined}>
+                  <span class="mc-num">{String(c.numero).padStart(2, '0')}</span>
+                  <span class="mc-nom">{espacesFines(c.titre)}</span>
+                  {c.dossier === actuel && <span class="mc-badge ici">vous êtes ici</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="mc-vide" hidden>Aucun cours ne correspond à ce filtre.</p>
+    </nav>
+
+    <div class="mc-fiches" aria-live="polite">
+      {plan.flatMap((t) => t.cours.map((c) => (
+        <article class="mc-fiche" id={`fiche-${c.dossier}`} aria-labelledby={`fiche-titre-${c.dossier}`} hidden>
+          <button type="button" class="mc-retour" data-retour>← Tous les cours</button>
+          <p class="mc-sur">Cours {c.numero} · {espacesFines(t.titre)}</p>
+          <h3 class="mc-titre" id={`fiche-titre-${c.dossier}`}>{espacesFines(c.titre)}</h3>
+          {c.auteurs && <p class="mc-auteurs">{c.auteurs}</p>}
+          <p class="mc-desc">{espacesFines(c.description)}</p>
+          <p class="mc-actions">
+            <a class="btn" href={c.href} rel={c.externe ? 'noopener' : undefined}>Ouvrir le cours{c.externe && <span class="visually-hidden"> (site d’origine de l’Observatoire de Paris)</span>}</a>
+            {c.moderne
+              ? <span class="mc-etiquette">version modernisée</span>
+              : <span class="mc-origine">sur le site d’origine {iconeLien}</span>}
+          </p>
+          <h4 class="mc-parties-titre">{c.affichees.length} {c.affichees.length > 1 ? 'parties' : 'partie'}</h4>
+          <ol class="mc-parties">
+            {c.affichees.map((p) => (
+              <li>
+                <a href={p.href} aria-current={p.actuelle ? 'page' : undefined} class:list={{ actuelle: p.actuelle }}>
+                  <span class="mc-pn">{p.numero}</span>
+                  <span class="mc-pt">{espacesFines(p.titre)}</span>
+                  {p.actuelle
+                    ? <span class="mc-badge">page actuelle</span>
+                    : p.migre
+                      ? <span class="mc-badge">à lire ici</span>
+                      : <span class="mc-ext" aria-hidden="true">{iconeLien}</span>}
+                  {p.externe && <span class="visually-hidden"> (site d’origine)</span>}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </article>
+      )))}
+    </div>
+  </div>
+
+  <footer class="mc-pied">
+    <a href={url('/')}>Voir tous les cours sur une page</a>
+    <p>Les liens marqués {iconeLien} ouvrent le <a href="https://media4.obspm.fr/public/ressources_lu/index.html">site d’origine de l’Observatoire de Paris</a>.</p>
+  </footer>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('coursDlg') as HTMLDialogElement;
+  const ouvreur = document.getElementById('openCours') as HTMLButtonElement;
+  const corps = dlg.querySelector<HTMLElement>('.mc-corps')!;
+  const filtre = document.getElementById('coursFiltre') as HTMLInputElement;
+  const vide = dlg.querySelector<HTMLElement>('.mc-vide')!;
+  const boutons = [...dlg.querySelectorAll<HTMLButtonElement>('.mc-cours')];
+  const fiches = new Map([...dlg.querySelectorAll<HTMLElement>('.mc-fiche')].map((f) => [f.id.replace('fiche-', ''), f]));
+  const survol = matchMedia('(hover: hover) and (min-width: 761px)');
+  const sansAccents = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const visibles = () => boutons.filter((b) => !b.closest('li')!.hidden);
+
+  /** Affiche la fiche d’un cours. Sur mobile, `vue` bascule de la liste à la fiche. */
+  function choisir(bouton: HTMLButtonElement, vue = false) {
+    for (const b of boutons) b.setAttribute('aria-expanded', String(b === bouton));
+    for (const [d, f] of fiches) f.hidden = d !== bouton.dataset.dossier;
+    if (vue) corps.dataset.vue = 'fiche';
+  }
+
+  function filtrer() {
+    const mots = sansAccents(filtre.value).split(/\s+/).filter(Boolean);
+    for (const b of boutons) {
+      const li = b.closest('li')!;
+      const texte = li.dataset.recherche ?? '';
+      li.hidden = !mots.every((m) => texte.includes(m));
+    }
+    dlg.querySelectorAll<HTMLElement>('.mc-theme').forEach((t) => { t.hidden = !t.querySelector('li:not([hidden])'); });
+    vide.hidden = visibles().length > 0;
+    const choisi = boutons.find((b) => b.getAttribute('aria-expanded') === 'true');
+    if (!choisi || choisi.closest('li')!.hidden) { const premier = visibles()[0]; if (premier) choisir(premier); }
+  }
+
+  function ouvrir() {
+    filtre.value = '';
+    filtrer();
+    corps.dataset.vue = 'liste';
+    const courant = boutons.find((b) => b.dataset.dossier === dlg.dataset.actuel) ?? boutons[0];
+    choisir(courant);
+    dlg.showModal();
+    ouvreur.setAttribute('aria-expanded', 'true');
+    courant.scrollIntoView({ block: 'center' });
+    courant.focus({ preventScroll: true });
+  }
+
+  /** Rétracte le panneau vers la gauche, puis ferme le dialogue. */
+  const mouvementReduit = matchMedia('(prefers-reduced-motion: reduce)');
+  function fermer() {
+    if (!dlg.open || dlg.classList.contains('rentre')) return;
+    if (mouvementReduit.matches) { dlg.close(); return; }
+    dlg.classList.add('rentre');
+    dlg.addEventListener('animationend', () => { dlg.classList.remove('rentre'); dlg.close(); }, { once: true });
+  }
+
+  ouvreur.addEventListener('click', () => (dlg.open ? fermer() : ouvrir()));
+  // Échap : même rétraction que le bouton Fermer.
+  dlg.addEventListener('cancel', (ev) => { ev.preventDefault(); fermer(); });
+  dlg.addEventListener('close', () => ouvreur.setAttribute('aria-expanded', 'false'));
+  dlg.addEventListener('click', (ev) => {
+    const t = ev.target as HTMLElement;
+    if (t === dlg || t.closest('[data-fermer]')) fermer();
+    else if (t.closest('a')) dlg.close(); // on quitte la page : pas d’animation
+  });
+  dlg.querySelectorAll<HTMLElement>('[data-retour]').forEach((b) => b.addEventListener('click', () => { corps.dataset.vue = 'liste'; }));
+  filtre.addEventListener('input', filtrer);
+
+  for (const b of boutons) {
+    b.addEventListener('mouseenter', () => { if (survol.matches) choisir(b); });
+    b.addEventListener('focus', () => { if (survol.matches) choisir(b); });
+    b.addEventListener('click', () => choisir(b, true));
+  }
+
+  // Flèches dans la liste : passe d’un cours au suivant, d’un thème à l’autre.
+  dlg.querySelector('.mc-liste')!.addEventListener('keydown', (e) => {
+    const ev = e as KeyboardEvent;
+    const liste = visibles();
+    const i = liste.indexOf(document.activeElement as HTMLButtonElement);
+    if (i < 0) return;
+    const cibles: Record<string, HTMLButtonElement | undefined> = { ArrowDown: liste[i + 1], ArrowUp: liste[i - 1], Home: liste[0], End: liste.at(-1) };
+    if (ev.key in cibles) { ev.preventDefault(); cibles[ev.key]?.focus(); }
+  });
+
+  // Raccourci « c », sauf pendant la saisie ou si une autre fenêtre est ouverte.
+  document.addEventListener('keydown', (ev) => {
+    const tag = document.activeElement?.tagName || '';
+    if (ev.key === 'c' && !ev.ctrlKey && !ev.metaKey && !ev.altKey && !/INPUT|TEXTAREA|SELECT/.test(tag) && !document.querySelector('dialog[open]')) {
+      ev.preventDefault();
+      ouvrir();
+    }
+  });
+</script>
+
+<style is:global>
+  dialog.menu-cours{position:fixed;inset:0 auto 0 0;margin:0;width:min(1080px,calc(100vw - 3rem));height:100dvh;max-width:none;max-height:none;padding:0;border:0;border-right:1px solid var(--rule);border-radius:0 14px 14px 0;background:var(--surface);color:var(--ink);overflow:hidden;box-shadow:0 24px 70px rgba(5,8,25,.45)}
+  dialog.menu-cours[open]{display:flex;flex-direction:column}
+  dialog.menu-cours::backdrop{background:rgba(10,14,35,.55);backdrop-filter:blur(2px)}
+  .mc-tete{display:flex;align-items:center;gap:1.5rem;padding:1.1rem 1.5rem;border-bottom:1px solid var(--rule)}
+  .mc-titres{flex:none}
+  .mc-titres h2{font-size:1.75rem;font-weight:500}
+  .mc-titres p{margin:.15rem 0 0;font-size:.88rem;line-height:1.3;color:var(--ink-soft)}
+  .mc-filtre{flex:1;display:flex;align-items:center;gap:.6rem;max-width:25rem;margin-left:auto;padding:.45rem .9rem;border:1px solid var(--rule);border-radius:999px;background:var(--bg);color:var(--ink-soft)}
+  .mc-filtre:focus-within{border-color:var(--brass)}
+  .mc-filtre input{all:unset;flex:1;min-width:0;font-size:.95rem;color:var(--ink)}
+  .mc-filtre input::placeholder{color:var(--ink-soft);opacity:.85}
+  .mc-corps{flex:1;min-height:0;display:grid;grid-template-columns:minmax(18rem,22rem) minmax(0,1fr)}
+  .mc-liste{overflow:auto;padding:.9rem .6rem 1.2rem;overscroll-behavior:contain}
+  .mc-theme h3{font-family:var(--text);font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--brass);margin:1rem .7rem .35rem}
+  .mc-theme:first-child h3{margin-top:.2rem}
+  .mc-theme ul{list-style:none;margin:0;padding:0}
+  .mc-theme li[hidden]{display:none}
+  .mc-cours{all:unset;box-sizing:border-box;display:flex;align-items:baseline;gap:.9rem;width:100%;padding:.5rem .7rem;border-left:3px solid transparent;border-radius:0 8px 8px 0;font-size:1.02rem;line-height:1.3;cursor:pointer;color:var(--ink)}
+  .mc-cours:hover{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+  .mc-cours[aria-expanded="true"]{background:var(--bg);border-left-color:var(--brass)}
+  .mc-cours:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+  .mc-num{flex:none;width:1.5rem;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .mc-nom{flex:1;min-width:0}
+  .mc-badge{flex:none;align-self:center;font-size:.72rem;line-height:1.5;padding:0 .5rem;border:1px solid var(--brass);border-radius:999px;color:var(--brass);white-space:nowrap}
+  .mc-badge.ici{background:var(--brass);color:var(--surface)}
+  .mc-vide{margin:1rem .8rem;color:var(--ink-soft)}
+  .mc-fiches{background:var(--bg);border-left:1px solid var(--rule);overflow:auto;padding:1.3rem 2rem 1.5rem;overscroll-behavior:contain}
+  .mc-fiche[hidden]{display:none}
+  .mc-retour{display:none}
+  .mc-sur{margin:0 0 .5rem;font-size:.9rem;color:var(--ink-soft)}
+  .mc-titre{font-size:clamp(1.9rem,3.2vw,2.3rem);font-weight:500;line-height:1.05}
+  .mc-auteurs{margin:.6rem 0 0;font-size:.95rem;color:var(--ink-soft)}
+  .mc-desc{margin:.9rem 0 1.1rem;max-width:46ch;font-size:1.12rem;line-height:1.55}
+  .mc-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;margin:0 0 1.4rem}
+  .mc-etiquette,.mc-origine{font-size:.85rem;color:var(--brass)}
+  .mc-etiquette{padding:.1rem .7rem;border:1px solid var(--brass);border-radius:999px}
+  .mc-origine{color:var(--ink-soft)}
+  .mc-parties-titre{font-family:var(--text);font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 .4rem}
+  .mc-parties{list-style:none;margin:0;padding:0;columns:2;column-gap:2rem}
+  .mc-parties li{break-inside:avoid;border-top:1px solid var(--rule)}
+  .mc-parties a{display:flex;align-items:baseline;gap:.9rem;padding:.45rem .2rem;color:var(--ink);text-decoration:none;line-height:1.3}
+  .mc-parties a:hover .mc-pt{text-decoration:underline}
+  .mc-parties a.actuelle .mc-pt{font-weight:700}
+  .mc-pn{flex:none;width:1rem;font-variant-numeric:tabular-nums;color:var(--brass)}
+  .mc-pt{flex:1;min-width:0}
+  .mc-ext{flex:none;font-size:.8rem;color:var(--ink-soft)}
+  .mc-pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.5rem;padding:.8rem 1.5rem;border-top:1px solid var(--rule);font-size:.92rem}
+  .mc-pied p{margin:0;color:var(--ink-soft)}
+  .tool.bouton-cours[aria-expanded="true"]{background:var(--brass);border-color:var(--brass);color:var(--surface)}
+  .tool.bouton-cours[aria-expanded="true"] kbd{color:inherit;border-color:currentColor}
+
+  /* Mobile : la liste et la fiche se succèdent plein écran. */
+  @media (max-width:760px){
+    dialog.menu-cours{width:100vw;border-radius:0;border-right:0}
+    .mc-tete{flex-wrap:wrap;gap:.6rem 1rem;padding:.9rem 1rem}
+    .mc-titres{flex:1}
+    .mc-titres p{display:none}
+    .mc-filtre{order:3;flex:1 0 100%;max-width:none;margin:0}
+    .mc-corps{grid-template-columns:1fr}
+    .mc-corps[data-vue="liste"] .mc-fiches,.mc-corps[data-vue="fiche"] .mc-liste{display:none}
+    .mc-fiches{border-left:0;padding:1rem 1.1rem 2rem}
+    .mc-retour{all:unset;display:inline-block;cursor:pointer;margin-bottom:1rem;color:var(--orbit);font-size:.95rem}
+    .mc-parties{columns:1}
+    .mc-cours{padding:.7rem .7rem;font-size:1.05rem}
+    .mc-pied{padding:.7rem 1rem;font-size:.85rem}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    /* Le panneau glisse depuis la gauche, et s’y rétracte à la fermeture (classe .rentre). */
+    dialog.menu-cours[open]{animation:mc-sort .24s cubic-bezier(.2,.8,.2,1)}
+    dialog.menu-cours.rentre{animation:mc-rentre .18s ease-in forwards}
+    dialog.menu-cours[open]::backdrop{animation:mc-fond .24s ease-out}
+    dialog.menu-cours.rentre::backdrop{animation:mc-fond .18s ease-in reverse forwards}
+    @keyframes mc-sort{from{transform:translateX(-100%)}to{transform:none}}
+    @keyframes mc-rentre{from{transform:none}to{transform:translateX(-100%)}}
+    @keyframes mc-fond{from{opacity:0}to{opacity:1}}
+  }
+</style>

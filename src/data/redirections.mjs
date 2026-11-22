@@ -5,6 +5,12 @@
  * Ajoutez une ligne par page migrée.
  */
 export const redirections = {
+  // Entrée du site d’origine et sommaire général → accueil du portail.
+  '/public/ressources_lu/index.html': '/',
+  '/public/ressources_lu/pages_r-ressources/sommaire.html': '/#cours',
+  // Cours Mécanique céleste, Temps et Calendriers → sa page.
+  '/public/ressources_lu/pages_mctc/index.html': '/mctc/',
+  '/public/ressources_lu/pages_mctc/introduction-mctc.html': '/mctc/',
   '/public/ressources_lu/pages_defrepere/index.html': '/cours/reperes/',
   '/public/ressources_lu/pages_defrepere/impression.html': '/cours/reperes/',
   '/public/ressources_lu/pages_defrepere/introduction-sphere-celeste.html': '/cours/reperes/#introduction',

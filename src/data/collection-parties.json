@@ -1,0 +1,624 @@
+{
+  "pages_distances-temps": {
+    "titre": "Distances et Temps dans l'Univers",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_distances-temps/intro-distances-temps.html",
+    "auteurs": "François Hammer",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_distances-temps/intro-distances-temps.html"
+      },
+      {
+        "titre": "De la Terre aux étoiles",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_terre-etoiles/index.html"
+      },
+      {
+        "titre": "Visite de la Voie Lactée",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_visite-galaxie/index.html"
+      },
+      {
+        "titre": "De la Galaxie aux galaxies de l'Univers local",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_galaxie-univers-local/index.html"
+      },
+      {
+        "titre": "De l'Univers local aux confins de l'Univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_univers-lointain/index.html"
+      },
+      {
+        "titre": "Conclusion : le temps et l'espace, des notions indissociables",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_distances-temps/conclu-distances-temps.html"
+      }
+    ]
+  },
+  "pages_pus7": {
+    "titre": "Les ondes gravitationnelles",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/intro.html",
+    "auteurs": "",
+    "parties": [
+      {
+        "titre": "Les ondes gravitationnelles",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/intro.html"
+      },
+      {
+        "titre": "Les phénomènes ondulatoires en physique",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-2_index.html"
+      },
+      {
+        "titre": "Qu'est-ce qu'une onde gravitationnelle ?",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-3_index.html"
+      },
+      {
+        "titre": "Les sources d'ondes gravitationnelles",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-4_index.html"
+      },
+      {
+        "titre": "Détecter les ondes gravitationnelles",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-5_index.html"
+      },
+      {
+        "titre": "Anatomie d'une onde gravitationnelle",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-6_index.html"
+      },
+      {
+        "titre": "Conclusion",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-conclusion_index.html"
+      },
+      {
+        "titre": "Evaluation",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-eval_index.html"
+      },
+      {
+        "titre": "Entretien avec Eric Chassande-Mottin",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_pus7/pus7-chap13-entretien_index.html"
+      }
+    ]
+  },
+  "pages_cosmologie": {
+    "titre": "Cosmologie",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_cosmologie/intro.html",
+    "auteurs": "Sylvain Fouquet, François Hammer",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_cosmologie/intro.html"
+      },
+      {
+        "titre": "L'expansion de l'Univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_expansion/index.html"
+      },
+      {
+        "titre": "Le continuum espace-temps de l'univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_relat-gene/index.html"
+      },
+      {
+        "titre": "Le Fond Diffus Cosmologique",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_fdc/index.html"
+      },
+      {
+        "titre": "La nucléosynthèse primordiale",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_nucleo-prim/index.html"
+      },
+      {
+        "titre": "Les différentes phases de l'univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_univ-debut/index.html"
+      },
+      {
+        "titre": "Structuration de l'univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_struc-univ/index.html"
+      }
+    ]
+  },
+  "pages_etoiles-planetes": {
+    "titre": "Des Etoiles aux Planètes",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_etoiles-planetes/introduction-bb.html",
+    "auteurs": "Noël Robichon, Yves-Paul Viala, Jean Schneider, Alain Doressoundiram, Raphael Moreno",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_etoiles-planetes/introduction-bb.html"
+      },
+      {
+        "titre": "Les étoiles",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_etoiles/index.html"
+      },
+      {
+        "titre": "Exoplanètes",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_exoplanetes/index.html"
+      },
+      {
+        "titre": "Planétologie Comparée",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie/index.html"
+      }
+    ]
+  },
+  "pages_mctc": {
+    "titre": "Mécanique céleste, Temps et Calendriers",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_mctc/introduction-mctc.html",
+    "auteurs": "Jean-Eudes Arlot",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_mctc/introduction-mctc.html"
+      },
+      {
+        "titre": "Introduction à la notion de repère",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_defrepere/index.html"
+      },
+      {
+        "titre": "La mesure des distances",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_mesure-distances/index.html"
+      },
+      {
+        "titre": "Les lois de Kepler",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_kepler/index.html"
+      },
+      {
+        "titre": "La mécanique céleste",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_mecanique-celeste/index.html"
+      },
+      {
+        "titre": "La gravitation universelle et la relativité",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravitation/index.html"
+      },
+      {
+        "titre": "La mesure du temps",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_mesure-temps/index.html"
+      },
+      {
+        "titre": "Les calendriers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_calendriers/index.html"
+      },
+      {
+        "titre": "Les éphémérides",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_ephemerides/index.html"
+      }
+    ]
+  },
+  "pages_stlp": {
+    "titre": "Soleil Terre Lune Phénomènes",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_stlp/introduction-stlp.html",
+    "auteurs": "Patrick Rocher",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_stlp/introduction-stlp.html"
+      },
+      {
+        "titre": "Les saisons",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_saisons/index.html"
+      },
+      {
+        "titre": "Les mouvements de la Terre et de la Lune",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_mouvement-terre-lune/index.html"
+      },
+      {
+        "titre": "Les éclipses de Soleil",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_eclipses-soleil/index.html"
+      },
+      {
+        "titre": "Visibilité des éclipses de Soleil",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_visibilite-eclipses-soleil/index.html"
+      },
+      {
+        "titre": "Récurrences des éclipses de Soleil",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_recurrences-eclipses-soleil/index.html"
+      },
+      {
+        "titre": "Les éclipses de Lune",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_eclipses-lune/index.html"
+      },
+      {
+        "titre": "Problèmes et QCM",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_stlp-problemes/index.html"
+      }
+    ]
+  },
+  "pages_extragal": {
+    "titre": "Astrophysique extragalactique",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_extragal/introduction-extragal.html",
+    "auteurs": "Florence Durret",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_extragal/introduction-extragal.html"
+      },
+      {
+        "titre": "Les galaxies",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_galaxies/index.html"
+      },
+      {
+        "titre": "Les grandes structures de l'univers",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_structures/index.html"
+      }
+    ]
+  },
+  "pages_physique": {
+    "titre": "Compléments de Physique",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_physique/introduction-physique.html",
+    "auteurs": "Benjamin Mollier, Laurence Tresse",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_physique/introduction-physique.html"
+      },
+      {
+        "titre": "Optique géométrique",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_optique-geometrique/index.html"
+      },
+      {
+        "titre": "Les Quatre Forces Fondamentales de la Nature",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_forces/index.html"
+      }
+    ]
+  },
+  "pages_soleil": {
+    "titre": "Soleil et Héliosphère",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_soleil/introduction-soleil.html",
+    "auteurs": "Carine Briand, Jean Aboudarham, Cyril Dauphin, Arnaud Beck",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_soleil/introduction-soleil.html"
+      },
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_introduction-soleil/index.html"
+      },
+      {
+        "titre": "Un peu d'astrométrie solaire",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_astrometrie-solaire/index.html"
+      },
+      {
+        "titre": "L'activité solaire",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_activite-solaire/index.html"
+      },
+      {
+        "titre": "Des rayons X à la radio",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_rayonnements/index.html"
+      },
+      {
+        "titre": "Problèmes de physique appliqués au Soleil",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_physique-solaire/index.html"
+      }
+    ]
+  },
+  "pages_tps": {
+    "titre": "Travaux Pratiques",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_tps/introduction-tps.html",
+    "auteurs": "Jean-Eudes Arlot, Danielle Briot, Jennifer Romon, Françoise Roques / Florence Henry, Florence HENRY, Noël Robichon, Audrey Delsanti, Stéfan Renner, Christophe Marqué, Moncef Derouich, Noel Robichon, Alain Doressoundiram",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tps/introduction-tps.html"
+      },
+      {
+        "titre": "Mesure de la position d'un corps céleste",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-mesure-position/index.html"
+      },
+      {
+        "titre": "Le calendrier de la Poste",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-calendrier/index.html"
+      },
+      {
+        "titre": "Modéliser un astéroïde en pâte à modeler",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-modeliser-asteroide/index.html"
+      },
+      {
+        "titre": "La révolution des satellites de Jupiter",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-jupiter/index.html"
+      },
+      {
+        "titre": "Ombres et lumière sur les anneaux de Saturne",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-saturne/index.html"
+      },
+      {
+        "titre": "Maquette Soleil Terre Lune",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-maquette-stl/index.html"
+      },
+      {
+        "titre": "Mesure du rayon de la Lune et de la distance Terre-Lune",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-rayon-distance-lune/index.html"
+      },
+      {
+        "titre": "Les phases de la Lune",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-phases-lune/index.html"
+      },
+      {
+        "titre": "Mesure de la rotation différentielle du Soleil par l'observation des taches solaires",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-rotation-differentielle-sol/index.html"
+      },
+      {
+        "titre": "Dynamique des éjections de masse coronale",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-dynamique-ejections/index.html"
+      },
+      {
+        "titre": "Étude du spectre du soleil",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-spectre-soleil/index.html"
+      },
+      {
+        "titre": "Cosmologie",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-cosmologie/index.html"
+      },
+      {
+        "titre": "Construction d'une maquette en trois dimensions de la constellation du Lion",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-maquette-constellation-lion/index.html"
+      },
+      {
+        "titre": "Transit Planétaire: lecture commentée d'un article grand public",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-transit-planetaire/index.html"
+      },
+      {
+        "titre": "Réalisation d'un \"mini-interféromètre\"",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_tp-interferometre/index.html"
+      }
+    ]
+  },
+  "pages_temps": {
+    "titre": "Distance et temps",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_temps/introduction-temps.html",
+    "auteurs": "Benoît Mosser",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_temps/introduction-temps.html"
+      },
+      {
+        "titre": "Distance et temps : Outils",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_position/index.html"
+      },
+      {
+        "titre": "Repérer et observer",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_repere/index.html"
+      },
+      {
+        "titre": "L'échelle des distances",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_distance/index.html"
+      }
+    ]
+  },
+  "pages_masse": {
+    "titre": "Masse",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_masse/introduction-masse.html",
+    "auteurs": "",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_masse/introduction-masse.html"
+      },
+      {
+        "titre": "Masse : Outils",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_outils-masse/index.html"
+      },
+      {
+        "titre": "Systèmes binaires et multiples",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_binaire/index.html"
+      },
+      {
+        "titre": "Marée et problème à N corps",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_maree/index.html"
+      }
+    ]
+  },
+  "pages_temperature": {
+    "titre": "Température",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_temperature/introduction-temperature.html",
+    "auteurs": "Benoît Mosser, M. Gerbaldi, B. Mosser, G. Theureau",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_temperature/introduction-temperature.html"
+      },
+      {
+        "titre": "Rayonnement : Outils",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_rayonnement/index.html"
+      },
+      {
+        "titre": "Diagramme HR",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_diagramme/index.html"
+      },
+      {
+        "titre": "Evolution stellaire",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_evolution/index.html"
+      }
+    ]
+  },
+  "pages_instrumentation": {
+    "titre": "Instrumentation",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_instrumentation/introduction-instrumentation.html",
+    "auteurs": "B. Mosser",
+    "parties": [
+      {
+        "titre": "Introduction",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_instrumentation/introduction-instrumentation.html"
+      },
+      {
+        "titre": "Outils",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_optique/index.html"
+      },
+      {
+        "titre": "Chaîne de mesure",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_observer/index.html"
+      },
+      {
+        "titre": "Techniques et instruments",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_instrument/index.html"
+      }
+    ]
+  },
+  "pages_planetologie-histoire": {
+    "titre": "Sciences planétaires: Histoire et définitions",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-histoire/index.html",
+    "auteurs": "Françoise Roques, Alain Doressoundiram, Jean Schneider",
+    "parties": [
+      {
+        "titre": "Définitions :planètes et exoplanètes",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-histoire/definition_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-histoire/definitions-se-tester_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-formation": {
+    "titre": "Sciences planétaires: Formation des planètes",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/index.html",
+    "auteurs": "Philippe Thébault",
+    "parties": [
+      {
+        "titre": "Découvrir",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/formation-decouvrir_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/formation-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester (1): Questions de cours (QCM)",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/formation-setester1_index.html"
+      },
+      {
+        "titre": "Se tester (2): exercices",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/formation-setester2_index.html"
+      },
+      {
+        "titre": "s'évaluer",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-formation/formation-sevaluer_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-petitscorps": {
+    "titre": "Sciences planétaires: Petits corps",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-petitscorps/index.html",
+    "auteurs": "Nicolas Fray",
+    "parties": [
+      {
+        "titre": "Décrire",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-petitscorps/petitscorps-decrire_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-petitscorps/petitscorps-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-petitscorps/se-tester_index.html"
+      },
+      {
+        "titre": "S'évaluer",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-petitscorps/ptscorps-eval_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-surface": {
+    "titre": "Sciences planétaires: Surfaces planétaires",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-surface/index.html",
+    "auteurs": "Alice Le Gall",
+    "parties": [
+      {
+        "titre": "Découvrir",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-surface/decouvrir_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-surface/surfaces-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-surface/surfaces-setester_index.html"
+      },
+      {
+        "titre": "S'évaluer",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-surface/sevaluer_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-thermique": {
+    "titre": "Sciences planétaires: Structure thermique",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-thermique/index.html",
+    "auteurs": "Emmanuel Marcq",
+    "parties": [
+      {
+        "titre": "Découvrir",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-thermique/fluide-temperature-decouvrir_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-thermique/fluide-temperature-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-thermique/fluide-temperature-setester_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-dynamique": {
+    "titre": "Sciences planétaires: Dynamique atmosphérique",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-dynamique/index.html",
+    "auteurs": "Thomas Navarro, Arianna Piccialli",
+    "parties": [
+      {
+        "titre": "Découvrir",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-dynamique/fluide-dynamique-decouvrir_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-dynamique/fluide-dynamique-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-dynamique/fluide-dynamique-tester_index.html"
+      }
+    ]
+  },
+  "pages_planetologie-habitabilite": {
+    "titre": "Sciences planétaires: Habitabilité",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-habitabilite/index.html",
+    "auteurs": "Martin Turbet, Francois Forget",
+    "parties": [
+      {
+        "titre": "Découvrir",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-habitabilite/habit-decouvrir_index.html"
+      },
+      {
+        "titre": "Comprendre",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-habitabilite/habit-comprendre_index.html"
+      },
+      {
+        "titre": "Se tester",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_planetologie-habitabilite/habit-setester_index.html"
+      }
+    ]
+  },
+  "pages_gravite": {
+    "titre": "Gravitation",
+    "entree": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/index.html",
+    "auteurs": "Andrea Cattaneo",
+    "parties": [
+      {
+        "titre": "La gravité comme force à distance",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/aristote-pomme.html"
+      },
+      {
+        "titre": "Les forces électromagnétiques",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/electricites-et-magnetisme.html"
+      },
+      {
+        "titre": "Nature de la gravité",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/principe-equivalence.html"
+      },
+      {
+        "titre": "Les ondes gravitationnelles : propagation",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/mouvement-propagation.html"
+      },
+      {
+        "titre": "Ondes gravitationnelles : génération",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/generation.html"
+      },
+      {
+        "titre": "Les ondes gravitationnelles : détection",
+        "href": "https://media4.obspm.fr/public/ressources_lu/pages_gravite/detection-theorie.html"
+      }
+    ]
+  }
+}

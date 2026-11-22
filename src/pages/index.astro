@@ -1,24 +1,27 @@
 ---
 import { espacesFines } from '../lib/typo.mjs';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Almanach from '../components/Almanach.astro';
 import { chapitres } from '../data/chapitres';
 import { url } from '../lib/url';
-import { getCollection } from 'astro:content';
-import { sourceDe, statsChapitre, libellesStats } from '../lib/stats-chapitre';
-const parSlug = new Map((await getCollection('cours')).map((e) => [e.id, libellesStats(statsChapitre(sourceDe(e)))]));
-const premier = chapitres.find((c) => c.slug);
+import { planCollection, nombreDeCours, nombreDeParties } from '../lib/collection';
+
+const plan = await planCollection();
+const tous = plan.flatMap((t) => t.cours);
+const modernes = tous.filter((c) => c.moderne);
+const premierChapitre = chapitres.find((c) => c.slug);
+const nbChapitres = chapitres.filter((c) => c.slug).length;
+const absolu = (chemin: string) => (Astro.site ? new URL(chemin, Astro.site).href : chemin);
+
 const jsonld = {
   '@context': 'https://schema.org',
-  '@type': 'Course',
-  name: 'Mécanique céleste, Temps et Calendriers',
-  description: 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).',
+  '@type': 'CollectionPage',
+  name: 'Lumières sur l’Univers',
+  description: 'Collection de cours libres d’astronomie et d’astrophysique de l’Observatoire de Paris.',
   inLanguage: 'fr',
-  author: { '@type': 'Person', name: 'Jean-Eudes Arlot' },
-  isBasedOn: 'https://media4.obspm.fr/public/ressources_lu/pages_mctc/index.html',
-  hasPart: chapitres.filter((c) => c.slug).map((c) => ({
-    '@type': 'LearningResource', name: c.titre, description: c.resume, position: c.numero,
-    url: Astro.site ? new URL(url(`/cours/${c.slug}/`), Astro.site).href : undefined,
+  isBasedOn: 'https://media4.obspm.fr/public/ressources_lu/index.html',
+  hasPart: tous.map((c) => ({
+    '@type': 'Course', name: c.titre, description: c.description, url: c.moderne ? absolu(url(c.local!)) : c.entree,
+    ...(c.auteurs ? { author: c.auteurs.split(/,\s*/).map((name) => ({ '@type': 'Person', name })) } : {}),
   })),
 };
 ---
@@ -32,45 +35,70 @@ const jsonld = {
       <circle cx="490" cy="300" r="7" fill="var(--sun)" stroke="none" />
     </svg>
     <div class="hero-inner">
-      <div>
-        <p class="source">D’après les ressources libres de l’Observatoire de Paris, collection « Lumières sur l’Univers »</p>
-        <h1>Mécanique céleste, <span>Temps et Calendriers</span></h1>
-        <p class="author">Un cours de Jean-Eudes Arlot</p>
-        <p class="lede">Le Soleil et la Lune rythment nos journées, nos mois et nos années. Ce cours montre comment la mesure du temps et les calendriers découlent de leurs mouvements apparents, puis comment la mécanique céleste explique ce qui se passe réellement, des premières observations jusqu’à la compréhension du système solaire.</p>
-        <div class="actions">
-          <a class="btn" href="#plan">Voir le plan du cours</a>
-          {premier && <a class="btn ghost" href={url(`/cours/${premier.slug}/`)}>Commencer la lecture</a>}
-        </div>
+      <p class="source">Ressources libres de l’Observatoire de Paris</p>
+      <h1>Lumières <span>sur l’Univers</span></h1>
+      <p class="lede">{nombreDeCours} cours d’astronomie et d’astrophysique en accès libre, de la mesure du temps aux exoplanètes et à la cosmologie. Ce site les rassemble et les réécrit un à un : textes adaptés, formules lisibles, simulations interactives, exercices corrigés et recherche dans tout le contenu.</p>
+      <div class="actions">
+        <a class="btn" href="#cours">Parcourir les {nombreDeCours} cours</a>
+        <a class="btn ghost" href={url('/mctc/')}>Commencer par Mécanique céleste</a>
       </div>
-      <Almanach />
+      <p class="chiffres">{nombreDeCours} cours · {nombreDeParties} parties · {modernes.length} en version modernisée</p>
     </div>
   </section>
 
-  <section id="plan" class="plan">
+  {modernes.length > 0 && (
+    <section class="vedette" aria-labelledby="vedette-titre">
+      <div class="wrap">
+        <h2 id="vedette-titre">En version modernisée</h2>
+        {modernes.map((c) => (
+          <article class="vedette-carte">
+            <div>
+              <p class="sur">Cours {c.numero} · {espacesFines(plan.find((t) => t.cours.includes(c))!.titre)}</p>
+              <h3><a href={c.href}>{espacesFines(c.titre)}</a></h3>
+              {c.auteurs && <p class="auteurs">{c.auteurs}</p>}
+              <p class="desc">{espacesFines(c.description)} {nbChapitres} chapitres, des simulations interactives et des exercices corrigés.</p>
+              <p class="actions">
+                <a class="btn" href={c.href}>Ouvrir le cours</a>
+                {premierChapitre && <a class="btn ghost" href={url(`/cours/${premierChapitre.slug}/`)}>Commencer la lecture</a>}
+              </p>
+            </div>
+            <ol class="vedette-parties">
+              {c.affichees.map((p) => (
+                <li><a href={p.href}><span class="n">{p.numero}</span>{espacesFines(p.titre)}{p.externe && <span class="ext" aria-hidden="true"> ↗</span>}</a></li>
+              ))}
+            </ol>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section id="cours" class="catalogue">
     <div class="wrap">
       <div class="section-head">
-        <h2>Plan du cours</h2>
-        <p>Huit chapitres, du repérage des astres jusqu’aux éphémérides, chacun avec ses schémas, ses simulations interactives et ses exercices corrigés.</p>
+        <h2>Tous les cours</h2>
+        <p>Regroupés par thème. Le menu <strong>Cours</strong> de l’en-tête (touche <kbd>c</kbd>) donne accès à chacun, depuis n’importe quelle page. Les cours sans mention s’ouvrent sur le site d’origine, en attendant leur modernisation.</p>
       </div>
-      <div class="prereq">
-        <h3>Prérequis</h3>
-        <ul>
-          <li>Niveau physique de terminale scientifique pour le corps du cours.</li>
-          <li>Niveau licence scientifique pour les approfondissements, repliés dans le texte et marqués <span class="tag plus">Niveau licence</span>, <span class="tag plus">En savoir plus</span> ou <span class="tag hist">Histoire</span>.</li>
-        </ul>
-      </div>
-      <ol class="chapters">
-        {chapitres.map((c) => (
-          <li class={c.slug ? 'local' : undefined}>
-            <a href={c.slug ? url(`/cours/${c.slug}/`) : c.source}>
-              <span class="n">{c.numero}</span>
-              <span class="t">{espacesFines(c.titre)}</span>
-              <span class="d">{espacesFines(c.resume)}</span>
-              {c.slug && parSlug.has(c.slug) && <span class="m">{parSlug.get(c.slug)!.join(' · ')}</span>}
-            </a>
-          </li>
-        ))}
-      </ol>
+      {plan.map((t) => (
+        <section class="theme" aria-labelledby={`theme-${t.id}`}>
+          <h3 id={`theme-${t.id}`}>{espacesFines(t.titre)}</h3>
+          <ul class="cartes">
+            {t.cours.map((c) => (
+              <li class:list={['carte', { moderne: c.moderne }]}>
+                <span class="n" aria-hidden="true">{String(c.numero).padStart(2, '0')}</span>
+                <h4><a href={c.href} rel={c.externe ? 'noopener' : undefined}>{espacesFines(c.titre)}{c.externe && <span class="visually-hidden"> (site d’origine)</span>}</a></h4>
+                {c.auteurs && <p class="auteurs">{c.auteurs}</p>}
+                <p class="desc">{espacesFines(c.description)}</p>
+                <p class="meta">
+                  {c.parties.length} {c.parties.length > 1 ? 'parties' : 'partie'}
+                  {c.moderne ? <span class="etiquette">version modernisée</span> : <span class="origine">site d’origine <span aria-hidden="true">↗</span></span>}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="note small">Le site de l’Observatoire appelle « chapitres » ces {nombreDeCours} ensembles. Ils sont nommés « cours » ici, pour ne pas les confondre avec les chapitres d’un cours.</p>
     </div>
   </section>
 </BaseLayout>
@@ -78,27 +106,51 @@ const jsonld = {
 <style>
   .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--rule)}
   .hero-orbits{position:absolute;right:-12%;top:50%;transform:translateY(-50%);width:min(900px,120vw);opacity:.5;pointer-events:none}
-  .hero-inner{position:relative;max-width:1180px;margin:0 auto;padding:clamp(3rem,8vw,6.5rem) 1.25rem clamp(3rem,6vw,5rem);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(2rem,5vw,4.5rem);align-items:end}
-  .source{font-size:.95rem;color:var(--ink-soft);margin-bottom:1.4rem}
-  h1{font-size:clamp(2.9rem,7.4vw,5.6rem);font-weight:500;line-height:.98;margin-bottom:1.5rem}
+  .hero-inner{position:relative;max-width:1180px;margin:0 auto;padding:clamp(3rem,8vw,6.5rem) 1.25rem clamp(3rem,6vw,5rem)}
+  .source{font-size:.95rem;color:var(--ink-soft);margin-bottom:1.2rem}
+  h1{font-size:clamp(3rem,8vw,6rem);font-weight:500;line-height:.98;margin-bottom:1.5rem}
   h1 span{display:block;font-style:italic;color:var(--brass)}
-  .author{font-size:1.05rem;color:var(--ink-soft);margin-bottom:1.3rem}
-  .lede{max-width:58ch;font-size:1.15rem}
-  .actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
-  .plan{padding:clamp(3rem,7vw,5rem) 0}
-  .section-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:2rem}
-  .section-head h2{font-size:clamp(2.1rem,4.5vw,3rem);font-weight:500}
-  .section-head p{margin:0;color:var(--ink-soft);max-width:46ch}
-  .prereq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:2rem;padding:1.4rem 0;margin-bottom:2.2rem;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-  .prereq h3{font-size:1.5rem}
-  .prereq ul{margin:0;padding-left:1.1rem}
-  .chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:2.5rem}
-  .chapters li{border-top:1px solid var(--rule)}
-  .chapters a{display:grid;grid-template-columns:3rem 1fr;gap:.2rem 1rem;padding:1.1rem .25rem 1.25rem;color:var(--ink);text-decoration:none}
-  .n{grid-row:span 2;font-family:var(--display);font-size:2.3rem;line-height:1;color:var(--brass)}
-  .t{font-family:var(--display);font-size:1.45rem;font-weight:600;line-height:1.15}
-  .d{font-size:.95rem;color:var(--ink-soft);line-height:1.55}
-  .m{grid-column:2;font-size:.82rem;color:var(--ink-soft);margin-top:.35rem;font-variant-numeric:tabular-nums}
-  .chapters a:hover .t{color:var(--orbit)}
-  @media (max-width:900px){ .hero-inner{grid-template-columns:1fr} .prereq{grid-template-columns:1fr;gap:.8rem} }
+  .lede{max-width:60ch;font-size:1.18rem}
+  .actions{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.8rem 0 0}
+  .chiffres{margin:1.6rem 0 0;font-size:.95rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .vedette{padding:clamp(2.5rem,6vw,4rem) 0;border-bottom:1px solid var(--rule);background:var(--surface)}
+  .vedette h2,.section-head h2{font-size:clamp(2rem,4.2vw,2.8rem);font-weight:500;margin-bottom:1.4rem}
+  .vedette-carte{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:start}
+  .vedette-carte h3{font-size:clamp(2.1rem,4.5vw,3rem);font-weight:500;line-height:1.05}
+  .vedette-carte h3 a{color:var(--ink);text-decoration:none}
+  .vedette-carte h3 a:hover{color:var(--orbit)}
+  .sur{margin:0 0 .4rem;font-size:.9rem;color:var(--ink-soft)}
+  .auteurs{margin:.5rem 0 0;font-size:.95rem;color:var(--ink-soft)}
+  .vedette .desc{margin:1rem 0 0;max-width:50ch;font-size:1.1rem}
+  .vedette .actions{margin-top:1.4rem}
+  .vedette-parties{list-style:none;margin:0;padding:0}
+  .vedette-parties li{border-top:1px solid var(--rule)}
+  .vedette-parties a{display:flex;gap:.9rem;padding:.5rem .2rem;color:var(--ink);text-decoration:none;line-height:1.35}
+  .vedette-parties a:hover{color:var(--orbit)}
+  .vedette-parties .n{flex:none;width:1rem;color:var(--brass);font-variant-numeric:tabular-nums}
+  .ext{color:var(--ink-soft)}
+  .catalogue{padding:clamp(3rem,7vw,5rem) 0}
+  .section-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:1rem}
+  .section-head h2{margin-bottom:0}
+  .section-head p{margin:0;color:var(--ink-soft);max-width:52ch;font-size:1rem}
+  .section-head kbd{font:inherit;font-size:.8rem;border:1px solid var(--rule);border-radius:4px;padding:0 .3rem}
+  .theme{margin-top:2.6rem}
+  .theme h3{font-family:var(--text);font-size:.8rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--brass);padding-bottom:.6rem;border-bottom:1px solid var(--rule)}
+  .cartes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem 1.5rem}
+  .carte{position:relative;display:grid;grid-template-columns:2.6rem 1fr;gap:.15rem .8rem;padding:1.1rem .3rem 1.1rem;border-bottom:1px solid var(--rule)}
+  .carte .n{grid-row:span 4;font-family:var(--display);font-size:2rem;line-height:1;color:var(--brass);font-variant-numeric:lining-nums}
+  .carte h4{font-family:var(--display);font-size:1.4rem;font-weight:600;line-height:1.15}
+  .carte h4 a{color:var(--ink);text-decoration:none}
+  /* Toute la carte est cliquable */
+  .carte h4 a::after{content:"";position:absolute;inset:0}
+  .carte:hover h4 a{color:var(--orbit)}
+  .carte:focus-within{outline:2px solid var(--brass);outline-offset:2px;border-radius:4px}
+  .carte h4 a:focus-visible{outline:none}
+  .carte .auteurs{margin:0;font-size:.85rem}
+  .carte .desc{margin:.2rem 0 0;font-size:.95rem;line-height:1.5;color:var(--ink-soft)}
+  .carte .meta{margin:.4rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .8rem;font-size:.82rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .etiquette{padding:0 .6rem;border:1px solid var(--brass);border-radius:999px;color:var(--brass)}
+  .carte.moderne{background:var(--surface);border-radius:6px 6px 0 0}
+  .note{margin-top:3rem;max-width:70ch}
+  @media (max-width:900px){.vedette-carte{grid-template-columns:1fr}}
 </style>

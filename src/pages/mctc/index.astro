@@ -13,7 +13,7 @@ const jsonld = {
   '@context': 'https://schema.org',
   '@type': 'Course',
   name: 'Mécanique céleste, Temps et Calendriers',
-  description: 'Cours de mécanique céleste, de mesure du temps et de calendriers, d’après Jean-Eudes Arlot (Observatoire de Paris).',
+  description: 'Les mouvements apparents du Soleil et de la Lune, la mesure du temps, les calendriers et la mécanique céleste, d’après Jean-Eudes Arlot (Observatoire de Paris).',
   inLanguage: 'fr',
   author: { '@type': 'Person', name: 'Jean-Eudes Arlot' },
   isBasedOn: 'https://media4.obspm.fr/public/ressources_lu/pages_mctc/introduction-mctc.html',
@@ -38,7 +38,7 @@ const jsonld = {
         <p class="source">D’après les ressources libres de l’Observatoire de Paris, collection <a href={url('/')}>« Lumières sur l’Univers »</a></p>
         <h1>Mécanique céleste, <span>Temps et Calendriers</span></h1>
         <p class="author">Un cours de Jean-Eudes Arlot</p>
-        <p class="lede">Le Soleil et la Lune rythment nos journées, nos mois et nos années. Ce cours montre comment la mesure du temps et les calendriers découlent de leurs mouvements apparents, puis comment la mécanique céleste explique ce qui se passe réellement, des premières observations jusqu’à la compréhension du système solaire.</p>
+        <p class="lede">Les mouvements apparents du Soleil et de la Lune rythment notre vie depuis toujours. La mesure du temps, la mise en place des calendriers reposent sur ces mouvements. Ce chapitre de cours a pour but de montrer les liens qui les unissent ainsi que ce qu’est la réalité de ces mouvements, expliqués par la mécanique céleste. Des rappels historiques seront nécessaires pour suivre l’évolution de nos connaissances depuis la constatation des mouvements apparents jusqu’à la compréhension de ce qu’est l’ensemble du système solaire.</p>
         <div class="actions">
           <a class="btn" href="#plan">Voir le plan du cours</a>
           {premier && <a class="btn ghost" href={url(`/cours/${premier.slug}/`)}>Commencer la lecture</a>}
@@ -57,8 +57,8 @@ const jsonld = {
       <div class="prereq">
         <h3>Prérequis</h3>
         <ul>
-          <li>Niveau physique de terminale scientifique pour le corps du cours.</li>
-          <li>Niveau licence scientifique pour les approfondissements, repliés dans le texte et marqués <span class="tag plus">Niveau licence</span>, <span class="tag plus">En savoir plus</span> ou <span class="tag hist">Histoire</span>.</li>
+          <li>Niveau physique terminale scientifique pour le corps du cours.</li>
+          <li>Niveau physique licence scientifique pour les approfondissements, repliés dans le texte et marqués <span class="tag plus">Niveau licence</span>, <span class="tag plus">En savoir plus</span> ou <span class="tag hist">Histoire</span>.</li>
         </ul>
       </div>
       <ol class="chapters">
